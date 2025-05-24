@@ -1,0 +1,175 @@
+<div class="auth-container">
+    <canvas #canvas class="background-canvas"></canvas>
+    
+    <div class="auth-card">
+
+      <div class="alerts-container">
+      <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+        <button class="close-btn" (click)="dismissSuccess()">&times;</button>
+      </div>
+      
+      <div *ngIf="errorMessage" class="alert alert-error">
+        {{ errorMessage }}
+        <button class="close-btn" (click)="dismissError()">&times;</button>
+      </div>
+    </div>
+
+    
+      <div class="auth-header">
+        <h1 class="app-title">SARA</h1>
+        <p>Smart Analysis & Research Assistant</p>
+      </div>
+      
+      <div class="form-container" [ngClass]="{'sign-in': isSignIn, 'sign-up': !isSignIn}">
+        <!-- Sign In Form -->
+        <form *ngIf="isSignIn" [formGroup]="signInForm" (ngSubmit)="onLogin()" class="auth-form">
+          <h2>Sign In</h2>
+          
+          <div class="form-group">
+            <label for="email">Email</label>
+            <div class="input-container">
+              <input 
+                type="email" 
+                id="email" 
+                formControlName="email" 
+                placeholder="Enter your email"
+                [ngClass]="{'invalid': signInForm.get('email')?.invalid && signInForm.get('email')?.touched}"
+                [attr.aria-invalid]="signInForm.get('email')?.invalid"
+              >
+            </div>
+            <div class="error-message" *ngIf="signInForm.get('email')?.invalid && signInForm.get('email')?.touched">
+              <span *ngIf="signInForm.get('email')?.errors?.['required']">Email is required</span>
+              <span *ngIf="signInForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-container">
+              <input 
+                type="password" 
+                id="password" 
+                formControlName="password" 
+                placeholder="Enter your password"
+                [ngClass]="{'invalid': signInForm.get('password')?.invalid && signInForm.get('password')?.touched}"
+              >
+            </div>
+            <div class="error-message" *ngIf="signInForm.get('password')?.invalid && signInForm.get('password')?.touched">
+              <span *ngIf="signInForm.get('password')?.errors?.['required']">Password is required</span>
+              <span *ngIf="signInForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" [disabled]="signInForm.invalid" class="btn-primary">Sign In</button>
+            <!-- Toggle Button for Sign-In Form -->
+            <p class="toggle-text">
+              Don't have an account? <a href="javascript:void(0)" (click)="toggleForm()">Sign Up</a>
+            </p>
+          </div>
+        </form>
+        
+        <!-- Sign Up Form -->
+        <form *ngIf="!isSignIn" [formGroup]="signUpForm" (ngSubmit)="onSignUp()" class="auth-form signup-form">
+          <h2>Create Account</h2>
+          
+          <div class="form-group">
+            <label for="username">Username</label>
+            <div class="input-container">
+              <input 
+                type="text" 
+                id="username" 
+                formControlName="username" 
+                placeholder="Choose a username"
+                [ngClass]="{'invalid': signUpForm.get('username')?.invalid && signUpForm.get('username')?.touched}"
+              >
+            </div>
+            <div class="error-message" *ngIf="signUpForm.get('username')?.invalid && signUpForm.get('username')?.touched">
+              <span *ngIf="signUpForm.get('username')?.errors?.['required']">Username is required</span>
+              <span *ngIf="signUpForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="signup-email">Email</label>
+            <div class="input-container">
+              <input 
+                type="email" 
+                id="signup-email" 
+                formControlName="email" 
+                placeholder="Enter your email"
+                [ngClass]="{'invalid': signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched}"
+              >
+            </div>
+            <div class="error-message" *ngIf="signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched">
+              <span *ngIf="signUpForm.get('email')?.errors?.['required']">Email is required</span>
+              <span *ngIf="signUpForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="role">Role</label>
+            <div class="input-container">
+              <select 
+                id="role" 
+                formControlName="role"
+                [ngClass]="{'invalid': signUpForm.get('role')?.invalid && signUpForm.get('role')?.touched}"
+              >
+                <option value="">Select your role</option>
+                <option value="researcher">Researcher</option>
+                <option value="faculty">Faculty Member</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div class="error-message" *ngIf="signUpForm.get('role')?.invalid && signUpForm.get('role')?.touched">
+              <span *ngIf="signUpForm.get('role')?.errors?.['required']">Please select a role</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="signup-password">Password</label>
+            <div class="input-container">
+              <input 
+                type="password" 
+                id="signup-password" 
+                formControlName="password" 
+                placeholder="Create a password"
+                [ngClass]="{'invalid': signUpForm.get('password')?.invalid && signUpForm.get('password')?.touched}"
+              >
+            </div>
+            <div class="error-message" *ngIf="signUpForm.get('password')?.invalid && signUpForm.get('password')?.touched">
+              <span *ngIf="signUpForm.get('password')?.errors?.['required']">Password is required</span>
+              <span *ngIf="signUpForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="confirm-password">Confirm Password</label>
+            <div class="input-container">
+              <input 
+                type="password" 
+                id="confirm-password" 
+                formControlName="confirmPassword" 
+                placeholder="Confirm your password"
+                [ngClass]="{'invalid': (signUpForm.get('confirmPassword')?.invalid || signUpForm.hasError('passwordMismatch')) && signUpForm.get('confirmPassword')?.touched}"
+              >
+            </div>
+            <div class="error-message" *ngIf="(signUpForm.get('confirmPassword')?.invalid || signUpForm.hasError('passwordMismatch')) && signUpForm.get('confirmPassword')?.touched">
+              <span *ngIf="signUpForm.get('confirmPassword')?.errors?.['required']">Please confirm your password</span>
+              <span *ngIf="signUpForm.hasError('passwordMismatch')">Passwords do not match</span>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" [disabled]="signUpForm.invalid" class="btn-primary">Create Account</button>
+            <!-- Toggle Button for Sign-Up Form -->
+            <p class="toggle-text">
+              Already have an account? <a href="javascript:void(0)" (click)="toggleForm()">Sign In</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+

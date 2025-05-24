@@ -1,0 +1,286 @@
+{
+    "info": {
+      "name": "Real-Time Monitoring API Tests",
+      "description": "Comprehensive test cases for sensor monitoring SSE API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "1. Valid Requests",
+        "item": [
+          {
+            "name": "Basic Valid Subscription",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8002/monitoring/uoa/box1/temperature",
+                "protocol": "http",
+                "host": ["localhost"],
+                "port": "8002",
+                "path": ["monitoring", "uoa", "box1", "temperature"]
+              }
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Connection established', function() {",
+                    "    pm.expect(pm.response.stream).to.be.true;",
+                    "});",
+                    "",
+                    "// Wait for first message",
+                    "setTimeout(function() {",
+                    "    const msg = pm.response.stream.messages[0];",
+                    "    pm.test('Valid data structure', function() {",
+                    "        const data = JSON.parse(msg.data);",
+                    "        pm.expect(data).to.have.property('event', 'update');",
+                    "        pm.expect(data.data).to.have.keys(['reading', 'timestamp']);",
+                    "    });",
+                    "}, 2000);"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          {
+            "name": "Valid Subscription with Controls",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8002/monitoring/uoa/box1/temperature?frequency=10&aggregation_metric=average&buffer_time=300",
+                "protocol": "http",
+                "host": ["localhost"],
+                "port": "8002",
+                "path": ["monitoring", "uoa", "box1", "temperature"],
+                "query": [
+                  {
+                    "key": "frequency",
+                    "value": "10"
+                  },
+                  {
+                    "key": "aggregation_metric",
+                    "value": "average"
+                  },
+                  {
+                    "key": "buffer_time",
+                    "value": "300"
+                  }
+                ]
+              }
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Control parameters accepted', function() {",
+                    "    pm.expect(pm.response.stream).to.be.true;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "2. Invalid Requests",
+        "item": [
+          {
+            "name": "Invalid Facility",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8002/monitoring/invalid/box1/temperature",
+                "protocol": "http",
+                "host": ["localhost"],
+                "port": "8002",
+                "path": ["monitoring", "invalid", "box1", "temperature"]
+              }
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Invalid facility error', function() {",
+                    "    pm.response.to.have.status(400);",
+                    "    pm.expect(pm.response.json()).to.have.property('detail', 'Invalid facility');",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          {
+            "name": "Invalid Sensor Type",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8002/monitoring/uoa/box1/invalid_sensor",
+                "protocol": "http",
+                "host": ["localhost"],
+                "port": "8002",
+                "path": ["monitoring", "uoa", "box1", "invalid_sensor"]
+              }
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Validation error', function() {",
+                    "    pm.response.to.have.status(422);",
+                    "    pm.expect(pm.response.json()).to.have.property('detail');",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "3. Control Parameter Tests",
+        "item": [
+          {
+            "name": "Pause Functionality",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8002/monitoring/uoa/box1/temperature?pause=true",
+                "protocol": "http",
+                "host": ["localhost"],
+                "port": "8002",
+                "path": ["monitoring", "uoa", "box1", "temperature"],
+                "query": [
+                  {
+                    "key": "pause",
+                    "value": "true"
+                  }
+                ]
+              }
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Pause acknowledged', function() {",
+                    "    const msg = pm.response.stream.messages[0];",
+                    "    const data = JSON.parse(msg.data);",
+                    "    pm.expect(data.data).to.be.empty;",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          {
+            "name": "Maximum Frequency Test",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8002/monitoring/uoa/box1/temperature?frequency=1",
+                "protocol": "http",
+                "host": ["localhost"],
+                "port": "8002",
+                "path": ["monitoring", "uoa", "box1", "temperature"],
+                "query": [
+                  {
+                    "key": "frequency",
+                    "value": "1"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "4. Edge Cases",
+        "item": [
+          {
+            "name": "Large Buffer Time",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8002/monitoring/uoa/box1/temperature?buffer_time=3600",
+                "protocol": "http",
+                "host": ["localhost"],
+                "port": "8002",
+                "path": ["monitoring", "uoa", "box1", "temperature"],
+                "query": [
+                  {
+                    "key": "buffer_time",
+                    "value": "3600"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "No Query Parameters",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8002/monitoring/uoa/box1/temperature",
+                "protocol": "http",
+                "host": ["localhost"],
+                "port": "8002",
+                "path": ["monitoring", "uoa", "box1", "temperature"]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "event": [
+      {
+        "listen": "prerequest",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "console.log('Test started at:', new Date().toISOString());"
+          ]
+        }
+      },
+      {
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "console.log('Test completed at:', new Date().toISOString());"
+          ]
+        }
+      }
+    ],
+    "variable": [
+      {
+        "key": "base_url",
+        "value": "http://localhost:8002"
+      },
+      {
+        "key": "valid_box",
+        "value": "box1"
+      },
+      {
+        "key": "valid_sensor",
+        "value": "temperature"
+      }
+    ]
+  }

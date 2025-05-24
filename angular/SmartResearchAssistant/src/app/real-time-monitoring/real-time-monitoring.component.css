@@ -1,0 +1,376 @@
+/* Main container */
+.monitoring-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #F8F9FA;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Header styles */
+.monitoring-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 24px;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: white;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-title h1 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+  padding-right: 10px;
+}
+
+.global-location-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.global-location-selector i {
+  color: #64748b;
+  font-size: 16px;
+}
+
+.global-location-selector select {
+  width: 280px;
+  min-width: 280px; 
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  font-size: 14px;
+}
+
+/* Alerts dropdown */
+.alerts-dropdown {
+  position: relative;
+}
+
+.alerts-button {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 20px;
+  color: #6b7280 !important;
+}
+
+.alerts-button.has-unread::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ef4444;
+}
+
+.alerts-dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 320px;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.alerts-dropdown:hover .alerts-dropdown-content {
+  display: block;
+}
+
+.alerts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.alerts-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alerts-title i {
+  color: #f59e0b;
+  font-size: 16px;
+}
+
+.alerts-title h3 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.mark-read-button {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.alerts-list {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.no-alerts {
+  padding: 16px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.alert-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 13px;
+}
+
+.alert-item.unread {
+  background-color: #fef7de;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-title {
+  font-weight: 600;
+  font-size: 12px;
+
+}
+
+.alert-time {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.dismiss-button {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 14px;
+}
+
+/* Main content */
+.monitoring-content {
+  flex: 1;
+  padding: 24px;
+  overflow: auto;
+}
+
+/* Tabs */
+.monitoring-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  color: #64748b;
+}
+
+/* Replace your existing .tab-button.active rules with this */
+.tab-button.active:nth-child(1) { /* All Sensors */
+
+  border-bottom-color: #7FAFD1;
+  color: #2c5282;
+}
+
+.tab-button.active:nth-child(2) { /* Environmental */
+  border-bottom-color: #9AA58D;
+  color: #3c6255;
+}
+
+.tab-button.active:nth-child(3) { /* Occupancy */
+  border-bottom-color: #FFB347;
+  color: #805b36;
+}
+
+.tab-button.active:nth-child(4) { /* Thermal */
+  border-bottom-color: #FF7F87;
+  color: #822727;
+}
+
+/* Base styles */
+.tab-button {
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+  background-color: transparent;
+}
+
+.tab-button:hover {
+  opacity: 0.8;
+}
+
+/* Sensor grid layout */
+.sensor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  grid-auto-flow: dense;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Sensor card wrapper */
+.sensor-card-wrapper {
+  transition: all 0.3s ease-in-out;
+  min-width: 0; /* Fix grid overflow */
+}
+
+/* Expanded card behavior */
+.sensor-card-wrapper.expanded {
+  grid-column:  1 / -1;
+  grid-row: span 2;
+  min-height: 200px;
+  z-index: 2;
+}
+.sensor-card.expanded {
+  transform: scale(1);
+  min-height: 375px;
+}
+.sensor-card {
+  transition: 
+    transform 0.3s ease-in-out,
+    min-height 0.3s ease-in-out;
+}
+
+
+/* Adjust grid for smaller screens */
+@media (min-width: 768px) {
+  .sensor-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .sensor-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 1023px) {
+  .sensor-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .sensor-card-wrapper.expanded {
+    grid-column: span 2;
+  }
+}
+
+
+@media (max-width: 767px) {
+  .sensor-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .sensor-card-wrapper.expanded {
+    grid-column: span 1;
+  }
+}
+/* Footer */
+.monitoring-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 24px;
+  background-color: white;
+  border-top: 1px solid #e2e8f0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.footer-update-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-update-time i {
+  font-size: 12px;
+}
+
+/* Icon styles */
+[class^="icon-"] {
+  font-family: 'Lucide' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+}
+.icon-bell {
+  color: #6b7280;
+  font-size: 1.2rem;
+}
+@font-face {
+  font-family: 'Lucide';
+  src: url('https://cdn.jsdelivr.net/npm/lucide-static@latest/font/Lucide.ttf') format('truetype');
+}
+.alerts-button .fa-bell {
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin-top: 2px;
+}
+.fa-location-dot {
+  color: #6b7280;
+  font-size: 1.2rem;
+  margin-top: 2px;
+}
+/* Alert triangle icon */
+.fa-exclamation-triangle {
+  color: #f59e0b;
+  margin-right: 8px;
+}

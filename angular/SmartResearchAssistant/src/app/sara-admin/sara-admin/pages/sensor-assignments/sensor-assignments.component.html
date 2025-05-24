@@ -1,0 +1,268 @@
+<!-- src/app/sara-admin/pages/sensor-assignments/sensor-assignments.component.html -->
+<div class="sensor-assignments-container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Sensor Assignments</h1>
+        <p class="page-description">Manage sensor type assignments to sensor boxes.</p>
+      </div>
+      <button class="btn btn-primary" (click)="openDialog()">
+        <i class="fas fa-plus"></i>
+        <span>Add Assignment</span>
+      </button>
+    </div>
+  
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="card-title">Sensor Assignment Management</h2>
+            <p class="card-description">View and manage all sensor assignments in the system.</p>
+          </div>
+          <div class="search-container bordered-search">
+            <div class="search-input-wrapper">
+              <i class="fas fa-search search-icon"></i>
+              <input 
+                type="text" 
+                class="search-input" 
+                placeholder="Search assignments..." 
+                (input)="search($event)"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="sensor-box-filter" class="filter-label">Sensor Box:</label>
+          <select 
+            id="sensor-box-filter" 
+            class="form-select" 
+            [(ngModel)]="selectedSensorBoxFilter" 
+            (change)="filterBySensorBox(selectedSensorBoxFilter)"
+          >
+            <option value="all">All Sensor Boxes</option>
+            <option *ngFor="let sensorBox of sensorBoxes" [value]="sensorBox.agentSerial">
+              {{ sensorBox.agentSerial }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="sensor-type-filter" class="filter-label">Sensor Type:</label>
+          <select 
+            id="sensor-type-filter" 
+            class="form-select" 
+            [(ngModel)]="selectedSensorTypeFilter" 
+            (change)="filterBySensorType(selectedSensorTypeFilter)"
+          >
+            <option value="all">All Sensor Types</option>
+            <option *ngFor="let sensorType of sensorTypes" [value]="sensorType.name">
+              {{ sensorType.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="card-content">
+        <div class="loading-container" *ngIf="isLoading">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Loading sensor assignments...</p>
+        </div>
+        
+        <div class="table-container" *ngIf="!isLoading">
+          <table class="table">
+            <thead>
+              <tr>
+                <th >
+                  Sensor Box 
+                </th>
+                <th >
+                  Sensor Type 
+                </th>
+                <th>Display Color</th>
+                <th >
+                  Created
+                </th>
+                <th class="actions-column">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let assignment of filteredAssignments">
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="fas fa-microchip text-muted"></i>
+                    <span>{{ assignment.sensorBoxAgentSerial }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="fas fa-gauge text-muted"></i>
+                    <span>{{ assignment.sensorTypeName }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="color-swatch" [style.backgroundColor]="assignment.displayColor"></div>
+                    <span>{{ assignment.displayColor }}</span>
+                  </div>
+                </td>
+                <td>{{ formatDate(assignment.createdAt )}}</td>
+                <td>
+                  <div class="table-row-actions">
+                    <button class="btn btn-sm btn-outline btn-icon" (click)="openDialog(assignment)" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline btn-icon text-danger" (click)="confirmDelete(assignment)" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="empty-state" *ngIf="filteredAssignments.length === 0">
+            <div class="empty-state-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <h3 class="empty-state-title">No sensor assignments found</h3>
+            <p class="empty-state-description">
+              No sensor assignments match your search criteria. Try adjusting your filters or create a new assignment.
+            </p>
+            <button class="btn btn-primary" (click)="openDialog()">
+              <i class="fas fa-plus"></i>
+              <span>Add Assignment</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sensor Assignment Form Dialog -->
+    <div class="dialog-overlay" *ngIf="showDialog" (click)="closeDialog()"></div>
+    <div class="dialog" *ngIf="showDialog">
+      <div class="dialog-header">
+        <h3 class="dialog-title">{{ editingAssignment ? 'Edit Sensor Assignment' : 'Add New Sensor Assignment' }}</h3>
+        <button class="dialog-close" (click)="closeDialog()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="dialog-content">
+        <form [formGroup]="assignmentForm" (ngSubmit)="submitForm()">
+          <div class="form-group">
+            <label for="sensorBoxId" class="form-label">Sensor Box</label>
+            <select 
+              id="sensorBoxId" 
+              class="form-select" 
+              formControlName="sensorBoxId"
+              [class.error]="assignmentForm.get('sensorBoxId')?.invalid && assignmentForm.get('sensorBoxId')?.touched"
+            >
+              <option value="" disabled>Select a sensor box</option>
+              <option *ngFor="let sensorBox of sensorBoxes" [value]="sensorBox.sensorBoxId">
+                {{ sensorBox.agentSerial }} ({{ sensorBox.locationName }})
+              </option>
+            </select>
+            <div class="form-error" *ngIf="assignmentForm.get('sensorBoxId')?.invalid && assignmentForm.get('sensorBoxId')?.touched">
+              <span *ngIf="assignmentForm.get('sensorBoxId')?.errors?.['required']">Sensor box is required</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="sensorTypeId" class="form-label">Sensor Type</label>
+            <select 
+              id="sensorTypeId" 
+              class="form-select" 
+              formControlName="sensorTypeId"
+              [class.error]="assignmentForm.get('sensorTypeId')?.invalid && assignmentForm.get('sensorTypeId')?.touched"
+            >
+              <option value="" disabled>Select a sensor type</option>
+              <option *ngFor="let sensorType of sensorTypes" [value]="sensorType.sensorTypeId">
+                {{ sensorType.name }} ({{ sensorType.unit }})
+              </option>
+            </select>
+            <div class="form-error" *ngIf="assignmentForm.get('sensorTypeId')?.invalid && assignmentForm.get('sensorTypeId')?.touched">
+              <span *ngIf="assignmentForm.get('sensorTypeId')?.errors?.['required']">Sensor type is required</span>
+            </div>
+          </div>
+          
+          <div class="form-error" *ngIf="assignmentForm.errors?.['duplicateAssignment']">
+            {{ assignmentForm.errors?.['duplicateAssignment'] }}
+          </div>
+          
+          <div class="form-group">
+            <label for="displayColor" class="form-label">Display Color</label>
+            <div class="color-picker-container">
+              <input 
+                type="color" 
+                id="displayColor" 
+                class="color-picker" 
+                formControlName="displayColor"
+                [class.error]="assignmentForm.get('displayColor')?.invalid && assignmentForm.get('displayColor')?.touched"
+              >
+              <input 
+                type="text" 
+                class="form-input color-code-input" 
+                formControlName="displayColor"
+                [class.error]="assignmentForm.get('displayColor')?.invalid && assignmentForm.get('displayColor')?.touched"
+                placeholder="#RRGGBB"
+              >
+            </div>
+            <div class="form-error" *ngIf="assignmentForm.get('displayColor')?.invalid && assignmentForm.get('displayColor')?.touched">
+              <span *ngIf="assignmentForm.get('displayColor')?.errors?.['required']">Display color is required</span>
+              <span *ngIf="assignmentForm.get('displayColor')?.errors?.['pattern']">Invalid color format (use #RRGGBB)</span>
+            </div>
+          </div>
+          
+          <div class="color-presets">
+            <label class="form-label">Preset Colors</label>
+            <div class="preset-colors">
+              <button 
+                type="button" 
+                *ngFor="let color of defaultColors" 
+                class="color-preset-button" 
+                [style.backgroundColor]="color"
+                (click)="assignmentForm.get('displayColor')?.setValue(color)"
+              ></button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="dialog-footer">
+        <button class="btn btn-outline" (click)="closeDialog()" [disabled]="isSubmitting">Cancel</button>
+        <button class="btn btn-primary" (click)="submitForm()" [disabled]="isSubmitting">
+          <span *ngIf="isSubmitting" class="loading-spinner-sm"></span>
+          <span>{{ editingAssignment ? 'Update' : 'Create' }}</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Delete Confirmation Dialog -->
+    <div class="dialog-overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()"></div>
+    <div class="dialog" *ngIf="showDeleteConfirm">
+      <div class="dialog-header">
+        <h3 class="dialog-title">Confirm Delete</h3>
+        <button class="dialog-close" (click)="cancelDelete()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="dialog-content">
+        <div class="confirm-delete-message">
+          <i class="fas fa-exclamation-triangle text-warning"></i>
+          <p>
+            Are you sure you want to delete the sensor assignment for 
+            <strong>{{ assignmentToDelete?.sensorTypeName }}</strong> on 
+            <strong>{{ assignmentToDelete?.sensorBoxAgentSerial }}</strong>?
+            This action cannot be undone.
+          </p>
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button class="btn btn-outline" (click)="cancelDelete()">Cancel</button>
+        <button class="btn btn-destructive" (click)="deleteAssignment()">
+          <i class="fas fa-trash"></i>
+          <span>Delete</span>
+        </button>
+      </div>
+    </div>
+  </div>

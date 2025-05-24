@@ -1,0 +1,17 @@
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .main-content {
+    flex: 1;
+    margin-top: 60px; /* Match top bar height */
+  }
+  
+  app-sidebar {
+    height: calc(100vh - 60px);
+    display: block;
+    position: sticky;
+    top: 60px;
+  }

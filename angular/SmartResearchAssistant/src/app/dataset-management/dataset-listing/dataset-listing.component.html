@@ -1,0 +1,78 @@
+<div class="listing-container">
+  <div class="search-toolbar-row">
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="Search datasets by name or description..." 
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()"
+        >
+        @if (searchQuery) {
+          <button class="clear-search-btn" (click)="clearSearch()" aria-label="Clear search">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        }
+      </div>
+    </div>
+    <a class="btn btn-primary new-dataset-btn-inline" routerLink="/dataset-wizard">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      New Dataset
+    </a>
+  </div>
+
+
+          
+  
+  @if (isLoading) {
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Loading datasets...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-container">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="error-icon">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <p>{{ error }}</p>
+      <button class="retry-btn" (click)="loadDatasets()">Try Again</button>
+    </div>
+  } @else if (filteredDatasets.length === 0) {
+    <div class="empty-container">
+      @if (searchQuery) {
+        <p class="empty-title">No datasets found matching "<span class="highlight">{{ searchQuery }}</span>"</p>
+        <p class="empty-subtitle">Try a different search term or clear the search</p>
+        <button class="clear-search-btn-large" (click)="clearSearch()">Clear Search</button>
+      } @else {
+        <p class="empty-title">No datasets yet</p>
+        <p class="empty-subtitle">Create your first dataset to get started</p>
+        <a class="create-dataset-btn" routerLink="/datasets/new">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Create Dataset
+        </a>
+      }
+    </div>
+  } @else {
+    <div class="datasets-grid enhanced-grid">
+      @for (dataset of filteredDatasets; track dataset.id) {
+        <app-dataset-entry [dataset]="dataset" (selected)="onSelectDataset($event)"></app-dataset-entry>
+      }
+    </div>
+  }
+</div>

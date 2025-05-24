@@ -1,0 +1,76 @@
+/* activity-classification.component.css */
+.container-fluid {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.bg-white {
+    width: 100%;
+    padding: 20px;
+}
+
+/* Vertical spacing between stacked containers */
+.mt-3 {
+    margin-top: 1rem !important;
+}
+
+/* Adjust font sizes */
+body {
+    font-size: 0.8rem;
+}
+
+h2, h3 {
+    font-size: 1.1rem;
+}
+
+.form-control, .form-select, .btn, .accordion-button {
+    font-size: 0.8rem;
+}
+
+.progress-section .text-secondary, .text-primary {
+    font-size: 0.8rem;
+}
+
+/* Accordion adjustments */
+.accordion-button {
+    padding: 0.75rem;
+    font-size: 0.8rem;
+}
+
+.accordion-body {
+    padding: 0.75rem;
+}
+
+/* Progress bar height */
+.progress {
+    height: 6px;
+}
+/* Custom right padding for the header container */
+.container-fluid.bg-white.shadow {
+    padding-left: 2rem !important;
+    padding-right: 2.5rem !important;
+}
+.accordion-scrollable {
+    scrollbar-width: thin;
+    scrollbar-color: #dee2e6 transparent;
+    flex: 1 1 auto;
+    overflow-y: auto;
+}
+
+.accordion-scrollable::-webkit-scrollbar {
+    width: 6px;
+}
+
+.accordion-scrollable::-webkit-scrollbar-thumb {
+    background-color: #dee2e6;
+    border-radius: 3px;
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+}

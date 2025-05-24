@@ -1,0 +1,188 @@
+{
+    "info": {
+      "_postman_id": "a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6",
+      "name": "SARA Dataset API v2",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Create Dataset",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"name\": \"Climate Data 2024\",\n  \"description\": \"Global temperature readings\",\n  \"payload\": {\n    \"January\": 12.5,\n    \"February\": 13.1,\n    \"March\": 14.2\n  },\n  \"schema\": {\n    \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n      \"January\": { \"type\": \"number\" },\n      \"February\": { \"type\": \"number\" },\n      \"March\": { \"type\": \"number\" }\n    },\n    \"required\": [\"January\", \"February\", \"March\"]\n  },\n  \"visibility\": \"RESTRICTED\",\n  \"collaborators\": [\"researcher@example.com\", \"analyst@example.com\"]\n}"
+          },
+          "url": {
+            "raw": "{{base_url}}/datasets",
+            "host": ["{{base_url}}"],
+            "path": ["datasets"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status code is 201\", function () {",
+                "    pm.response.to.have.status(201);",
+                "});",
+                "pm.test(\"Location header exists\", function () {",
+                "    pm.expect(pm.response.headers.get(\"Location\")).to.exist;",
+                "});",
+                "const response = pm.response.json();",
+                "pm.collectionVariables.set(\"dataset_id\", response.id);"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Update Dataset",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"name\": \"Updated Climate Data 2024\",\n  \"description\": \"Revised global temperatures\",\n  \"payload\": {\n    \"January\": 12.6,\n    \"February\": 13.2,\n    \"March\": 14.3\n  },\n  \"visibility\": \"RESTRICTED\",\n  \"collaborators\": [\"researcher@example.com\", \"senior-analyst@example.com\"]\n}"
+          },
+          "url": {
+            "raw": "{{base_url}}/datasets/{{dataset_id}}",
+            "host": ["{{base_url}}"],
+            "path": ["datasets", "{{dataset_id}}"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});",
+                "pm.test(\"Name updated\", function () {",
+                "    const response = pm.response.json();",
+                "    pm.expect(response.name).to.eql(\"Updated Climate Data 2024\");",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Validate Data",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"data\": {\n    \"January\": \"invalid\",\n    \"February\": 13.2,\n    \"March\": 14.3\n  },\n  \"schema\": {\n    \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n      \"January\": { \"type\": \"number\" },\n      \"February\": { \"type\": \"number\" },\n      \"March\": { \"type\": \"number\" }\n    },\n    \"required\": [\"January\", \"February\", \"March\"]\n  }\n}"
+          },
+          "url": {
+            "raw": "{{base_url}}/datasets/validate",
+            "host": ["{{base_url}}"],
+            "path": ["datasets", "validate"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});",
+                "pm.test(\"Validation failed\", function () {",
+                "    const response = pm.response.json();",
+                "    pm.expect(response.valid).to.be.false;",
+                "    pm.expect(response.errors).to.have.lengthOf(1);",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Delete Dataset",
+        "request": {
+          "method": "DELETE",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "url": {
+            "raw": "{{base_url}}/datasets/{{dataset_id}}",
+            "host": ["{{base_url}}"],
+            "path": ["datasets", "{{dataset_id}}"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status code is 204\", function () {",
+                "    pm.response.to.have.status(204);",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ]
+      }
+    ],
+    "variable": [
+      {
+        "key": "base_url",
+        "value": "http://localhost:8081"
+      },
+      {
+        "key": "token",
+        "value": "your_jwt_token_here"
+      },
+      {
+        "key": "dataset_id",
+        "value": ""
+      }
+    ],
+    "event": [
+      {
+        "listen": "prerequest",
+        "script": {
+          "exec": [
+            "console.log('Running test for:', pm.request.name);"
+          ],
+          "type": "text/javascript"
+        }
+      }
+    ]
+  }

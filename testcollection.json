@@ -1,0 +1,757 @@
+{
+    "info": {
+      "_postman_id": "b2f0e6a4-1234-4567-89ab-cdef01234567",
+      "name": "SARA API Test Collection",
+      "description": "This collection tests all endpoints for Sites, Locations, SensorBoxes, SensorTypes, SensorAssignments, and Hierarchy endpoints. Non-GET operations include an Authorization header (replace YOUR_ADMIN_JWT_HERE with a valid JWT).",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Sites",
+        "item": [
+          {
+            "name": "Get All Sites",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8081/api/sites",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sites"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Count Sites",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8081/api/sites/count",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sites",
+                  "count"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Create Site",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"Test Site\",\n    \"type\": \"CAMPUS\"\n}"
+              },
+              "url": {
+                "raw": "http://localhost:8081/api/sites",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sites"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Update Site",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"Updated Site Name\",\n    \"type\": \"MUSEUM\"\n}"
+              },
+              "url": {
+                "raw": "http://localhost:8081/api/sites/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sites",
+                  "1"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Delete Site",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "http://localhost:8081/api/sites/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sites",
+                  "1"
+                ]
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "Locations",
+        "item": [
+          {
+            "name": "Get All Locations",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8081/api/locations",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "locations"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Count Locations",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8081/api/locations/count",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "locations",
+                  "count"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Create Location",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"Test Location\",\n    \"siteId\": 1\n}"
+              },
+              "url": {
+                "raw": "http://localhost:8081/api/locations",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "locations"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Update Location",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"Updated Location\",\n    \"siteId\": 1\n}"
+              },
+              "url": {
+                "raw": "http://localhost:8081/api/locations/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "locations",
+                  "1"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Delete Location",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "http://localhost:8081/api/locations/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "locations",
+                  "1"
+                ]
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "SensorBoxes",
+        "item": [
+          {
+            "name": "Get All SensorBoxes",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8081/api/sensorboxes",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensorboxes"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Count SensorBoxes",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8081/api/sensorboxes/count",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensorboxes",
+                  "count"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Create SensorBox",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"agentSerial\": \"SN-001\",\n    \"locationId\": 1\n}"
+              },
+              "url": {
+                "raw": "http://localhost:8081/api/sensorboxes",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensorboxes"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Update SensorBox",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"agentSerial\": \"SN-002\",\n    \"locationId\": 1\n}"
+              },
+              "url": {
+                "raw": "http://localhost:8081/api/sensorboxes/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensorboxes",
+                  "1"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Delete SensorBox",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "http://localhost:8081/api/sensorboxes/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensorboxes",
+                  "1"
+                ]
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "SensorTypes",
+        "item": [
+          {
+            "name": "Get All SensorTypes",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8081/api/sensortypes",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensortypes"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Count SensorTypes",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8081/api/sensortypes/count",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensortypes",
+                  "count"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Create SensorType",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"Temperature\",\n    \"unit\": \"C\"\n}"
+              },
+              "url": {
+                "raw": "http://localhost:8081/api/sensortypes",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensortypes"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Update SensorType",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"Humidity\",\n    \"unit\": \"%\"\n}"
+              },
+              "url": {
+                "raw": "http://localhost:8081/api/sensortypes/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensortypes",
+                  "1"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Delete SensorType",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "http://localhost:8081/api/sensortypes/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensortypes",
+                  "1"
+                ]
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "SensorAssignments",
+        "item": [
+          {
+            "name": "Get All SensorAssignments",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8081/api/sensorassignments",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensorassignments"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Create SensorAssignment",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"sensorBoxId\": 1,\n    \"sensorTypeId\": 1,\n    \"displayColor\": \"#FF0000\"\n}"
+              },
+              "url": {
+                "raw": "http://localhost:8081/api/sensorassignments",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensorassignments"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Update SensorAssignment",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"sensorBoxId\": 1,\n    \"sensorTypeId\": 1,\n    \"displayColor\": \"#00FF00\"\n}"
+              },
+              "url": {
+                "raw": "http://localhost:8081/api/sensorassignments/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensorassignments",
+                  "1"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Delete SensorAssignment",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer YOUR_ADMIN_JWT_HERE",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "http://localhost:8081/api/sensorassignments/1",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "sensorassignments",
+                  "1"
+                ]
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "Hierarchy",
+        "item": [
+          {
+            "name": "Get Sensor-Centric Hierarchy",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8081/api/hierarchy/sensor-centric",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "hierarchy",
+                  "sensor-centric"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Get Location-Centric Hierarchy",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "http://localhost:8081/api/hierarchy/location-centric",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8081",
+                "path": [
+                  "api",
+                  "hierarchy",
+                  "location-centric"
+                ]
+              }
+            },
+            "response": []
+          }
+        ]
+      }
+    ]
+  }
+  

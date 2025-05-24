@@ -1,0 +1,299 @@
+/* src/app/sara-admin/components/admin-header/admin-header.component.css */
+.admin-header {
+    display: flex;
+    align-items: center;
+    height: 4rem;
+    padding: 0 1.5rem;
+    background-color: var(--background);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+  
+  .header-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.375rem;
+    border: none;
+    background-color: transparent;
+    color: var(--foreground);
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .header-button:hover {
+    background-color: var(--muted);
+  }
+  
+  .sidebar-toggle {
+    margin-right: 0.5rem;
+  }
+  
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+  
+  .notification-button {
+    position: relative;
+  }
+  
+  .notification-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--primary);
+  }
+  
+  .user-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .avatar-fallback {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--foreground);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+  .avatar-fallback .fa-user {
+    font-size: 1rem;
+    color: var(--muted-foreground);
+  }
+  .notification-dropdown,
+  .user-dropdown {
+    position: relative;
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 16rem;
+    margin-top: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(4px); 
+    border: 1px solid rgba(0, 0, 0, 0.05); 
+    border-radius: 0.375rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 40;
+    display: none;
+    overflow: hidden;
+  }
+  .dark .dropdown-menu {
+    background-color: rgba(15, 23, 42, 0.98); /* Dark background with 98% opacity */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .dropdown-menu.show {
+    display: block;
+    animation: fadeIn 0.2s ease-out;
+  }
+  
+  .dropdown-header {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .dropdown-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    margin-bottom: 0.1rem;
+  }
+  
+  .user-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin: 0;
+    margin-bottom: 0.1rem;
+  }
+  
+  .user-email {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    margin: 0.25rem 0 0 0;
+  }
+  
+  .dropdown-content {
+    max-height: 20rem;
+    overflow-y: auto;
+  }
+  
+  .notification-item {
+    display: flex;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    transition: background-color 0.2s;
+  }
+  
+  .notification-item:hover {
+    background-color: var(--muted);
+  }
+  
+  .notification-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+  }
+  
+  .notification-icon.info {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+  }
+  
+  .notification-icon.success {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+  }
+  
+  .notification-icon.warning {
+    background-color: rgba(234, 179, 8, 0.1);
+    color: #eab308;
+  }
+  
+  .notification-icon.error {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+  
+  .notification-content {
+    flex: 1;
+  }
+  
+  .notification-text {
+    font-size: 0.875rem;
+    margin: 0 0 0.25rem 0;
+  }
+  
+  .notification-time {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    margin: 0;
+  }
+  
+  .dropdown-footer {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  
+  .view-all-button {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  
+  .dropdown-divider {
+    height: 1px;
+    background-color: var(--border);
+    margin: 0;
+  }
+  
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: none;
+    text-align: left;
+    font-size: 0.875rem;
+    color: var(--foreground);
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .dropdown-item:hover {
+    background-color: var(--muted);
+  }
+  
+  .dropdown-item i {
+    margin-right: 0.75rem;
+    width: 1rem;
+    text-align: center;
+  }
+  
+  .empty-state {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--muted-foreground);
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  :root {
+    --background-rgb: 255, 255, 255; /* Set according to your theme */
+    --border-rgb: 228, 228, 231;
+  }
+
+  .fa-cog {
+    font-size: 1.1rem;
+    color: var(--foreground); /* Ensure color matches other icons */
+    transition: color 0.2s ease;
+  }
+  .header-button:hover .fa-cog {
+    color: var(--primary);
+  }
+  .admin-header {
+    position: relative;
+  }
+  
+  .header-divider {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color:  #d1d5db; /* Light gray */
+    margin: 0 1rem 0;
+  }
+  
+  /* If you want the divider to stay visible when menus are open */
+  .dropdown-menu {
+    z-index: 50;
+  }

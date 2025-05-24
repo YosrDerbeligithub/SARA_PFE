@@ -1,0 +1,88 @@
+<div class="wizard-container">
+  <app-appbar></app-appbar>
+    
+    <div class="wizard-content">
+      <div class="wizard-tabs">
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'data'"
+          (click)="setActiveTab('data')"
+        >
+          1. Data
+        </button>
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'schema'"
+          [disabled]="!dataUploaded"
+          (click)="setActiveTab('schema')"
+        >
+          2. Schema
+        </button>
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'preview'"
+          [disabled]="!schemaValid && !dataUploaded"
+          (click)="setActiveTab('preview')"
+        >
+          3. Preview
+        </button>
+      </div>
+      
+      <div class="tab-content">
+        @if (activeTab === 'data') {
+          <app-data-tab 
+            [(datasetName)]="datasetName"
+            [(datasetDescription)]="datasetDescription"
+
+            [dataUploaded]="dataUploaded"
+            [visibility]="visibility"
+            [collaborators]="collaborators"
+            [jsonContent]="jsonContent"
+
+            (dataUploadedChange)="onDataUploaded($event)"
+            (visibilityChange)="onVisibilityChange($event)"
+            (collaboratorsChange)="onCollaboratorsChange($event)"
+            (nextStep)="setActiveTab('schema')"
+            (dataParsed)="onDataParsed($event)"
+            (jsonContentChange)="onJsonContentChange($event)"
+
+
+          ></app-data-tab>
+        }
+        
+        @if (activeTab === 'schema') {
+          <app-schema-tab
+            [schemaInput]="schemaInput"
+            [parsedData]="parsedData"
+            [schemaValid]="schemaValid"
+            [showInvalidSchema]="showInvalidSchema"
+            (schemaInputChange)="onSchemaInputChange($event)"
+            [validationErrors]="validationErrors"
+
+            (schemaValidChange)="onSchemaValidChange($event)"
+            (showInvalidSchemaChange)="onShowInvalidSchemaChange($event)"
+            (prevStep)="setActiveTab('data')"
+            (nextStep)="setActiveTab('preview')"
+            (validationErrorsChange)="onValidationErrorsChange($event)"
+
+          ></app-schema-tab>
+        }
+        
+        @if (activeTab === 'preview') {
+          <app-preview-tab
+            [validationErrors]="validationErrors"
+            [parsedData]="parsedData"
+            [schemaValid]="schemaValid"
+            [showInvalidSchema]="showInvalidSchema"
+            [visibility]="visibility"
+            [collaborators]="collaborators"
+            [canCreate]="canCreateDataset"
+
+            (prevStep)="setActiveTab('schema')"
+            (createDataset)="handleCreateDataset()"
+
+          ></app-preview-tab>
+        }
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,41 @@
+/* src/app/sara-admin/components/breadcrumb/breadcrumb.component.css */
+.breadcrumb-container {
+    margin-bottom: 1.5rem;
+  }
+  
+  .breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+  }
+  
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .breadcrumb-link {
+    color: var(--muted-foreground);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.2s;
+  }
+  
+  .breadcrumb-link:hover {
+    color: var(--foreground);
+  }
+  
+  .breadcrumb-current {
+    color: var(--foreground);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .breadcrumb-separator {
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    margin: 0 0.5rem;
+  }

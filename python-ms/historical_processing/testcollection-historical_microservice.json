@@ -1,0 +1,225 @@
+{
+    "info": {
+      "_postman_id": "a5c8f5e7-8b0c-4b8d-ba8a-0f4e8a7d3f1d",
+      "name": "Sensor Aggregation Service Tests",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Health Check",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/health",
+            "host": ["{{base_url}}"],
+            "path": ["health"]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Positive Tests",
+        "item": [
+          {
+            "name": "Valid Hourly Temperature Average",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{valid_api_key}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"facility\": \"uoa\",\n  \"sensor_type\": \"temperature\",\n  \"agent_serial\": [\"AGENT_001\"],\n  \"start\": \"2023-10-01T00:00:00Z\",\n  \"end\": \"2023-10-01T23:59:59Z\",\n  \"aggregation_level\": \"hourly\",\n  \"metric\": \"average\"\n}"
+              },
+              "url": {
+                "raw": "{{base_url}}/process",
+                "host": ["{{base_url}}"],
+                "path": ["process"]
+              }
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Status code is 200', function () {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Valid response structure', function () {",
+                    "    const jsonData = pm.response.json();",
+                    "    pm.expect(jsonData).to.have.property('aggregated_results');",
+                    "    pm.expect(jsonData.agent_serial).to.eql(['AGENT_001']);",
+                    "    pm.expect(jsonData.aggregation_level).to.eql('hourly');",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          {
+            "name": "Daily Motion Event Count",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{valid_api_key}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"facility\": \"uoa\",\n  \"sensor_type\": \"motion\",\n  \"agent_serial\": [\"AGENT_002\"],\n  \"start\": \"2023-10-01T00:00:00Z\",\n  \"end\": \"2023-10-07T23:59:59Z\",\n  \"aggregation_level\": \"daily\",\n  \"metric\": \"event_count\"\n}"
+              },
+              "url": {
+                "raw": "{{base_url}}/process",
+                "host": ["{{base_url}}"],
+                "path": ["process"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Error Tests",
+        "item": [
+          {
+            "name": "Invalid Date Range",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{valid_api_key}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"facility\": \"uoa\",\n  \"sensor_type\": \"temperature\",\n  \"agent_serial\": [\"AGENT_001\"],\n  \"start\": \"2023-10-02T00:00:00Z\",\n  \"end\": \"2023-10-01T23:59:59Z\",\n  \"aggregation_level\": \"hourly\",\n  \"metric\": \"average\"\n}"
+              },
+              "url": {
+                "raw": "{{base_url}}/process",
+                "host": ["{{base_url}}"],
+                "path": ["process"]
+              }
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Bad Request', function () {",
+                    "    pm.response.to.have.status(400);",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Authentication Tests",
+        "item": [
+          {
+            "name": "Missing API Key",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"sensor_type\": \"temperature\",\n  \"agent_serial\": [\"AGENT_001\"],\n  \"start\": \"2023-10-01T00:00:00Z\",\n  \"end\": \"2023-10-01T23:59:59Z\",\n  \"aggregation_level\": \"hourly\",\n  \"metric\": \"average\"\n}"
+              },
+              "url": {
+                "raw": "{{base_url}}/process",
+                "host": ["{{base_url}}"],
+                "path": ["process"]
+              }
+            },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('Unauthorized', function () {",
+                    "    pm.response.to.have.status(401);",
+                    "});"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Cache Tests",
+        "item": [
+          {
+            "name": "Clear Cache (Valid Key)",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{valid_api_key}}"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/cache/clear",
+                "host": ["{{base_url}}"],
+                "path": ["cache", "clear"]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "event": [
+      {
+        "listen": "prerequest",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.collectionVariables.set('base_url', 'http://localhost:5000');",
+            "pm.collectionVariables.set('valid_api_key', 'your-secure-key-here');",
+            "pm.collectionVariables.set('invalid_api_key', 'invalid-key');",
+            ""
+          ]
+        }
+      }
+    ],
+    "variable": [
+      {
+        "key": "base_url",
+        "value": "http://localhost:5000"
+      },
+      {
+        "key": "valid_api_key",
+        "value": "your-secure-key-here"
+      }
+    ]
+  }

@@ -1,0 +1,1191 @@
+/* Custom CSS for Sensor Dashboard */
+.container-fluid {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+.container-fluid.py-2.bg-white.shadow-sm {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+.bg-grey { 
+    background-color: #f8f9fa; 
+}
+.col-3.h-100 {
+    max-width: 17% !important;      /* Reduced from 25% */
+    flex: 1 0 20% !important;
+    padding-right: 2px !important;
+}
+.shadow-panel {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.5rem;
+}
+/* Custom smaller button size */
+.btn-xs {
+    padding: 0.25rem 0.5rem;
+    line-height: 1.2;
+}
+
+/* Header text size */
+.historical-header h3 {
+    font-size: 2rem !important;
+    letter-spacing: 0.5px;
+}
+/* Height Adjustments */
+.full-height-container {
+    height: calc(100vh - 160px) !important; /* Keep original value */
+    display: flex;
+    min-height: 0; /* Allow content compression */
+    margin-bottom: 60px;
+    padding-top: 20px;
+    flex-direction: column;
+}
+
+.bg-white.shadow-panel.h-100.d-flex.flex-column {
+    min-height: 0; /* Add this line */
+  }
+  
+.fixed-sidebar {
+    width: 240px;
+    height: 100%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    margin-right:20px;
+    margin-left:-2px;
+}
+
+.visualization-main { 
+    min-width: 0; 
+    flex: 1 1 60% !important;      /* Increased flex basis */
+    margin-left: -20px !important; 
+}
+
+
+
+/* Chart Section */
+.chart-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    max-height: 200px; /* Limited height */
+    overflow-y: auto;
+}
+
+.chart-icon {
+    width: 100%;
+    height: 40px;
+    background-color: #e9ecef;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.chart-icon i {
+  color: #495057;
+  transition: color 0.2s ease;
+}
+.chart-icon:hover {
+    background-color: #dee2e6;
+}
+h6.fw-bold.mt-3.mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+/* Metrics Section */
+.metrics-container {
+    background-color: white; /* Match sidebar color */
+    border-radius: 0.5rem;
+    padding: 1rem;
+    height: 280px;
+    overflow-y: auto; /* Make entire section scrollable */
+}
+.metric-category {
+    margin-bottom: 1.5rem;
+    display: block !important;
+    opacity: 1 !important;
+}
+.metric-scroll-container {
+    height: 100px; /* Reduced height */
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: #dee2e6 transparent;
+    margin-top: 0.2rem;
+}
+
+.metric-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    padding: 0.25rem 0;
+    padding: 0.5rem 0;
+    font-size: 0.875rem;
+}
+
+.metric-switch {
+    width: 40px;
+    height: 18px;
+    background: #e9ecef;
+    border-radius: 9px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+/* Adjust switch sizing if needed */
+.form-switch .form-check-input {
+    height: 1.1em;
+    width: 2.7em;
+}
+
+/* Optional: Tighten up the layout */
+.form-switch {
+    padding-left: 3.5em;
+}
+.text-muted.small.mb-2 {
+    margin-top: 0.2rem !important; 
+    margin-bottom: 0.2rem !important; /* Reduced from 0.5rem */
+}
+/* Drag & Drop Area */
+.drag-target {
+    width: 96% !important; /* Slightly adjusted for perfect centering */
+    height: 95% !important;
+    border: 2px dashed #dee2e6;
+    background: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    margin: 0 auto; /* Center horizontally */
+    margin-right: -10px; /* Pull content to the left */
+}
+.drag-target:hover {
+    border-color: #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+
+/* Sensor Colors */
+.color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.bg-camera { background-color: #6f42c1; }
+.bg-motion { background-color: #d63384; }
+.bg-noise { background-color: #0dcaf0; }
+.bg-thermalamp { background-color: #fd7e14; }
+.bg-thermography { background-color: #20c997; }
+
+.sensor-item {
+    transition: all 0.2s ease;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.sensor-item:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+/* X-Axis Container */
+.border-top.p-3 {
+    min-height: 155px !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+}
+/* Time Range Controls */
+.time-range-btn {
+    background-color: white !important;
+    border: 1px solid #dee2e6 !important;
+    padding: 0.25rem 0.75rem !important;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    color: #495057 !important;
+    transition: all 0.2s ease;
+}
+.time-range-btn:hover {
+    background-color: #f8f9fa !important;
+}
+
+.time-range-btn.active {
+    background-color: #e9ecef !important;
+    border-color: #dee2e6 !important;
+    color: #212529 !important;
+}
+.form-control-sm {
+    padding: 0.5rem 0.75rem !important;
+}
+/* Reduced opacity for the time inputs container */
+.p-2.rounded-2.mt-2[style*="background-color: rgba(108, 117, 125, 0.1)"] {
+    background-color: rgba(108, 117, 125, 0.05) !important; /* Reduced opacity */
+}
+/* Input Group Spacing */
+.d-flex.gap-2 {
+    gap: 1rem !important;
+}
+.time-range-btn.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+.time-range-btn {
+    font-size: 0.75rem !important;
+    white-space: nowrap;
+}
+
+.fs-12 {
+    font-size: 12px !important;
+}
+.time-range-container > * {
+    opacity: 1 !important;
+}
+.bg-opacity-15 {
+    opacity: 0.15;
+}
+.datetime-input {
+    width: 160px;  /* Reduced from 200px */
+    height: 32px;
+    padding: 0.25rem 0.5rem;  /* Adjusted padding */
+    font-size: 0.825rem;
+}
+
+
+/* Remove conflicting overflow rules */
+
+/* Y-Axis Container */
+.y-axis-container small {
+    width: 100%;
+    padding-top: 0.25rem !important; /* Reduced from 0.5rem (pt-2) */
+    margin-top: -0.25rem;
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+.y-axis-container {
+    width: 128px;
+    background: #fff;
+    padding: 8px; /* Space between container and inner dashed area */
+    border-top-left-radius: 0.5rem; /* Match shadow-panel radius */
+    border-bottom-left-radius: 0.5rem;
+    overflow: hidden; /* Keep children within rounded bounds */
+}
+
+.y-axis-drop-area {
+    border: 2px dashed #dee2e6;
+    height: calc(100% - 40px); /* Account for title + padding */
+    border-radius: 4px;
+    margin: 0 8px; /* Fixed tiny space from container borders */
+    background: rgba(255, 255, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    position: relative;
+    justify-content: center; /* Center when empty */
+    align-items: center;
+}
+    
+/* Y-Axis Container Hover */
+.y-axis-container:hover {
+    border-right-color: #0d6efd; /* Blue border */
+}
+
+.y-axis-container:hover .y-axis-drop-area {
+    border-color: #0d6efd; /* Blue border for inner drop area */
+    background: rgba(13, 110, 253, 0.05);
+}
+
+/* Add transition for smooth effect */
+
+.y-axis-drop-area {
+    transition: all 0.3s ease;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* Add cursor pointer */
+.y-axis-container:hover {
+    cursor: pointer;
+}
+.visualization-content {
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    overflow: hidden;
+}
+.drop-instruction {
+    color: #6c757d; /* Grey color */
+    font-size: 0.75rem; /* Small font size */
+    line-height: 1.4;
+    padding: 10px;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.drop-instruction span {
+    display: inline-block;
+    line-height: 1.3;
+    text-align: center;
+}
+.drop-instruction br {
+    display: block;
+    content: "";
+    margin-bottom: 0.3em;
+}
+/* Add to same-sensor-type.component.css */
+:host ::ng-deep .drop-instruction {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 100% !important;
+    color: #6c757d !important;
+    font-size: 0.75rem !important;
+    line-height: 1.4 !important;
+    padding: 10px !important;
+    text-align: center !important;
+    pointer-events: none !important;
+    background-color: white !important;
+}
+
+/* Ensure drop zone maintains size */
+:host ::ng-deep .y-axis-drop-area {
+    position: relative !important;
+    min-height: 120px !important; /* Adjust based on your needs */
+}
+/* Ensure proper chart sizing */
+.chart-container {
+    position: relative;
+    min-height: 360px;
+  }
+  
+  /* Hide placeholder when chart is active */
+  .drag-target {
+    position: relative;
+  }
+  
+  .drag-target > div:not(.chart-container) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+/* Match visualization area border */
+.drag-target {
+    border: 2px dashed #dee2e6;
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+/*.flex-column.justify-content-center {
+    padding: 1rem 0;
+}*/
+/* Fix switch alignment */
+.form-switch {
+    padding-left: 2.5em;
+    margin-bottom: 0;
+}
+
+.form-switch .form-check-input {
+    height: 1.1em;
+    width: 2.2em;
+    margin-left: -2.5em;
+}
+
+/* Metric item hover state */
+.metric-item:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+    border-radius: 4px;
+}
+
+/* Visualization area layout fix */
+.visualization-main .d-flex {
+    min-height: 0; /* Fix flexbox overflow */
+}
+.sensor-item {
+    cursor: grab;
+    transition: all 0.2s ease;
+    position: relative; /* Needed for accurate offset calculations */
+}
+
+.sensor-item:active {
+    cursor: grabbing;
+}
+
+/* Drag-drop specific styles */
+.ghost-sensor {
+    opacity: 0.7 !important;
+    background: white !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transform: scale(0.95);
+    transition: none !important;
+    pointer-events: none;
+    pointer-events: none !important;
+  }
+  
+  .dropped-sensor[data-sensor-type] {
+    animation: drop-appear 0.3s ease;
+    cursor: pointer;
+    margin: 4px 0;
+    font-size: 0.64em; /* Reduced from original 0.9em */
+    padding: 4px 8px; /* Tighter padding */
+    position: relative;
+    z-index: 1;
+  }
+  /* Classroom elements - reduce by 0.2 */
+.dropped-sensor[data-classroom] {
+    font-size: 0.65em !important; /* 0.8 - 0.2 = 0.6 */
+    font-weight: 500;
+  }
+  
+  /* Sensor box elements - reduce by 0.4 */
+  .dropped-sensor[data-sensor-box] {
+    font-size: 0.56em !important; /* 0.8 - 0.4 = 0.4 */
+    letter-spacing: -0.2px;
+  }
+  .dropped-sensor .color-dot {
+    width: 6px !important;       /* Further reduced size */
+    height: 6px !important;
+    margin-right: 2px !important; /* Consistent spacing */
+    flex-shrink: 0;
+}
+  .dropped-sensor {
+    transition: all 0.2s ease;
+  }
+  .dropped-sensor span {
+    display: inline-block;
+    max-width: calc(100% - 14px); /* Account for color dot */
+    overflow: visible !important;
+    text-overflow: unset !important;
+    white-space: nowrap;
+    margin-left: 2px !important;
+    padding-left: 0 !important;
+    
+  }  
+  .dropped-sensor {
+    margin-left: 12px !important;  /* Increased from 5px */
+    padding-left: 12px !important; /* Increased from 6px */
+    border-left: 2px solid transparent; /* Visual alignment aid */
+}
+
+/* Location-specific adjustments */
+.dropped-sensor[data-location] {
+    margin-left: 4px !important;   /* Changed from -6px */
+    padding-left: 10px !important;
+    border-left-color: rgba(0,0,0,0.1); /* Subtle visual guide */
+}
+
+/* Classroom elements */
+.dropped-sensor[data-classroom] {
+    margin-left: 8px !important;
+    padding-left: 14px !important;
+}
+
+/* Sensor box elements */
+.dropped-sensor[data-sensor-box] {
+    margin-left: 16px !important;
+    padding-left: 16px !important;
+}
+
+/* Color dot alignment */
+.dropped-sensor .color-dot {
+    margin-right: 6px !important; /* Increased spacing after dot */
+    margin-left: -4px; /* Pull dot closer to left edge */
+} 
+  @keyframes drop-appear {
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+/* Notes Section */
+.notes-container {
+    position: fixed;
+    bottom: -40px;
+    left: 40px;
+    width: 140px;
+    z-index: 1000;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    background: transparent;
+    transform: translateY(0); /* Force position */
+
+}
+
+.notes-container.expanded {
+    bottom: calc(20px + 150px);
+}
+
+.notes-toggle-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px !important; /* Changed from 50% for square with rounded edges */
+    background-color: #0d6efd !important; /* Primary blue color */
+    border: 1px solid #0d6efd !important;
+
+}
+.notes-toggle-btn:hover {
+    background-color: #f8f9fa !important;
+}
+.notes-toggle-btn i {
+    font-size: 1.1rem;
+    margin: 0 !important;
+    color: white !important; /* White icon */
+
+}
+.notes-toggle-btn.active {
+    background-color: white !important;
+    border-color: #dee2e6 !important;
+}
+.notes-toggle-btn.active i {
+    color: #495057 !important; /* Original text color */
+}
+.notes-textarea {
+    width: 470px;
+    height: 150px;
+    transition: all 0.15s ease;
+    transform-origin: bottom right;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+}
+
+.notes-textarea.collapsed {
+    height: 0;
+    opacity: 0;
+    transform: scaleY(0);
+    overflow: hidden;
+    padding: 0 !important;
+    border: none !important;
+}
+/* Remove original bottom space */
+body.bg-grey.d-flex.flex-column {
+    overflow: hidden;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.visualization-main {
+    position: relative;
+    z-index: 1;
+}
+.notes-close-btn {
+
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #dee2e6;
+    
+
+}
+.notes-close-btn:hover {
+    background: #f8f9fa;
+    border-color: #0d6efd;
+}
+
+.notes-close-btn i {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.smaller {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Base Colors */
+.color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Temperature */
+.bg-temperature { background-color: #dc3545; }
+.bg-temperature-4 { background-color: #f8d7da; }
+.bg-temperature-3 { background-color: #f1aeb5; }
+.bg-temperature-2 { background-color: #ea868f; }
+.bg-temperature-1 { background-color: #e35d6a; }
+
+/* Humidity */
+.bg-humidity { background-color: #0d6efd; }
+.bg-humidity-4 { background-color: #cfe2ff; }
+.bg-humidity-3 { background-color: #9ec5fe; }
+.bg-humidity-2 { background-color: #6ea8fe; }
+.bg-humidity-1 { background-color: #3d8bfd; }
+
+/* Luminance */
+.bg-luminance { background-color: #ffc107; }
+.bg-luminance-4 { background-color: #fff3cd; }
+.bg-luminance-3 { background-color: #ffe69c; }
+.bg-luminance-2 { background-color: #ffda6a; }
+.bg-luminance-1 { background-color: #ffcd39; }
+
+/* Microphone */
+.bg-microphone { background-color: #6f42c1; }
+.bg-microphone-4 { background-color: #e0d9f6; }
+.bg-microphone-3 { background-color: #c1b3ed; }
+.bg-microphone-2 { background-color: #a28ee3; }
+.bg-microphone-1 { background-color: #8368da; }
+
+/* Motion */
+.bg-motion { background-color: #d63384; }
+.bg-motion-4 { background-color: #f7d6e6; }
+.bg-motion-3 { background-color: #efadce; }
+.bg-motion-2 { background-color: #e685b5; }
+.bg-motion-1 { background-color: #de5c9d; }
+
+/* Pressure */
+.bg-pressure { background-color: #198754; }
+.bg-pressure-4 { background-color: #d1e7dd; }
+.bg-pressure-3 { background-color: #a3cfbb; }
+.bg-pressure-2 { background-color: #75b798; }
+.bg-pressure-1 { background-color: #479f76; }
+
+/* Observation */
+.bg-observation { background-color: #6c757d; }
+.bg-observation-4 { background-color: #e2e3e5; }
+.bg-observation-3 { background-color: #c4c8cb; }
+.bg-observation-2 { background-color: #a7acb1; }
+.bg-observation-1 { background-color: #898f97; }
+
+/* Presence */
+.bg-presence { background-color: #0dcaf0; }
+.bg-presence-4 { background-color: #cff4fc; }
+.bg-presence-3 { background-color: #9eeaf9; }
+.bg-presence-2 { background-color: #6edff6; }
+.bg-presence-1 { background-color: #3dd5f3; }
+
+/* Thermalamp */
+.bg-thermalamp { background-color: #fd7e14; }
+.bg-thermalamp-4 { background-color: #ffe5d0; }
+.bg-thermalamp-3 { background-color: #fecba1; }
+.bg-thermalamp-2 { background-color: #feb272; }
+.bg-thermalamp-1 { background-color: #fd9843; }
+
+/* Thermography */
+.bg-thermography { background-color: #20c997; }
+.bg-thermography-4 { background-color: #d2f4ea; }
+.bg-thermography-3 { background-color: #a5e9d5; }
+.bg-thermography-2 { background-color: #77dfc0; }
+.bg-thermography-1 { background-color: #4ad4ab; }
+
+/* Classroom Color Dots (Mid-shade between sensor type and first sensor box) */
+.bg-temperature-classroom { background-color: #db4660; } /* Between #dc3545 and #e35d6a */
+.bg-humidity-classroom { background-color: #2579fd; }    /* Between #0d6efd and #3d8bfd */
+.bg-luminance-classroom { background-color: #ffd340; }   /* Between #ffc107 and #ffcd39 */
+.bg-microphone-classroom { background-color: #986ed4; }  /* Between #6f42c1 and #8368da */
+.bg-motion-classroom { background-color: #e04a9f; }      /* Between #d63384 and #de5c9d */
+.bg-pressure-classroom { background-color: #2e9d68; }    /* Between #198754 and #479f76 */
+.bg-observation-classroom { background-color: #858e96; } /* Between #6c757d and #898f97 */
+.bg-presence-classroom { background-color: #1fd2f4; }    /* Between #0dcaf0 and #3dd5f3 */
+.bg-thermalamp-classroom { background-color: #fdaa45; }  /* Between #fd7e14 and #fd9843 */
+.bg-thermography-classroom { background-color: #2fddae; } /* Between #20c997 and #4ad4ab */
+.pe-none {
+    pointer-events: none;
+  }
+  .echarts {
+    margin-bottom: 40px; /* Adjust based on your offset value */
+  }
+/* historical-visualization.component.css */
+:host {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+  
+  #chartContainer {
+    width: 100%;
+    height: 500px;
+    min-height: 400px;
+  }
+/* historical-visualization.component.css */
+
+  .echarts {
+    margin-bottom: 50px;
+  }
+  
+  .echarts div:last-child canvas {
+    margin-bottom: 30px !important;
+  }
+  .echarts .xAxis .axisLabel {
+    padding: 5px;
+  }
+  .echarts .xAxis:nth-child(2) .axisLabel {
+    margin-top: 10px;
+  }
+  .custom-x-axis-container {
+    width: 100%;
+    padding: 10px 0;
+  }
+  
+  .x-axis-drop-area {
+    border: 2px dashed #dee2e6;
+    height: 80px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+  
+  .x-axis-drop-area:hover {
+    border-color: #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+  }
+  
+  .custom-data-options {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    margin-top: -0.5rem;
+  }
+  
+  /* Ensure consistent styling for dropped elements */
+  .x-axis-drop-area .dropped-sensor,
+  .y-axis-drop-area .dropped-sensor {
+    background-color: rgba(13, 110, 253, 0.1);
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin: 4px 0;
+    font-size: 0.8em;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  /* Mode toggle button styling */
+  .custom-data-toggle .btn {
+    font-size: 0.85rem;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .custom-data-toggle .btn i {
+    margin-right: 0.5rem;
+  }
+  .custom-data-x-axis .border-top.p-3 {
+    min-height: 120px !important; /* Reduced from 155px */
+    padding-top: 1rem !important; /* Reduced from 1.5rem */
+    padding-bottom: 1rem !important;
+}
+
+/* Lower the visualization area */
+.custom-data-x-axis .drag-target {
+    height: 90% !important; /* Reduced from 95% */
+    margin-bottom: 10px;
+}
+/* Add to component CSS */
+.custom-data-panel .dropped-item {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    margin: 2px 0;
+    background: #f8f9fa;
+    border-radius: 4px;
+  }
+  
+  .custom-data-panel .color-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  
+  .custom-data-panel .drop-instruction span {
+    color: #6c757d;
+    font-size: 0.8em;
+    text-align: center;
+  }
+/* Add to component CSS */
+.custom-data-item {
+    cursor: grab;
+    transition: transform 0.2s;
+  }
+  
+  .custom-data-item:active {
+    cursor: grabbing;
+  }
+  
+  .dropped-custom-item {
+    background: #f8f9fa;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin: 2px 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .custom-drop-instruction {
+    font-size: 0.9em;
+    color: #6c757d;
+    text-align: center;
+  }
+  .custom-x-axis-container {
+    width: 100%;
+    padding: 10px 0;
+  }
+  
+  .x-axis-drop-area {
+    border: 2px dashed #dee2e6;
+    height: 80px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+  
+  .x-axis-drop-area:hover {
+    border-color: #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+  }
+  
+  .custom-data-options {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    margin-top: -0.5rem;
+  }
+  
+  /* Add these styles to ensure consistent styling for both sensor and custom data elements */
+  
+  /* Dropped elements styling */
+  .dropped-item,
+  .dropped-sensor {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    margin: 4px 0;
+    background-color: rgba(13, 110, 253, 0.1);
+    border-radius: 4px;
+    font-size: 0.8em;
+    cursor: pointer;
+    animation: drop-appear 0.3s ease;
+    transition: all 0.2s ease;
+  }
+  
+  .dropped-item:hover,
+  .dropped-sensor:hover {
+    background-color: rgba(13, 110, 253, 0.15);
+  }
+  
+  .dropped-item .color-dot,
+  .dropped-sensor .color-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    flex-shrink: 0;
+  }
+  
+  .dropped-item span,
+  .dropped-sensor span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 14px);
+  }
+  
+  /* Drop zone styling */
+  .y-axis-drop-area,
+  .x-axis-drop-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  .y-axis-drop-area:hover,
+  .x-axis-drop-area:hover,
+  .drop-zone-active {
+    border-color: #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+  }
+  
+  /* Ghost element styling */
+  .ghost-sensor {
+    opacity: 0.7 !important;
+    background: white !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transform: scale(0.95);
+    transition: none !important;
+    pointer-events: none !important;
+    z-index: 9999;
+  }
+  
+  /* Drop instructions */
+  .drop-instruction {
+    color: #6c757d;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    padding: 10px;
+    text-align: center;
+    pointer-events: none;
+  }
+  
+  .drop-instruction span {
+    display: inline-block;
+    line-height: 1.3;
+  }
+  
+  /* Animation for dropped elements */
+  @keyframes drop-appear {
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Custom data mode specific styles */
+  body.custom-data-mode .metrics-container {
+    display: none;
+  }
+  
+  /* Make custom data items draggable */
+  .custom-data-item {
+    cursor: grab;
+    transition: all 0.2s ease;
+  }
+  
+  .custom-data-item:active {
+    cursor: grabbing;
+  }
+  
+  /* Mode toggle button styling */
+  .custom-data-toggle .btn {
+    font-size: 0.85rem;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .custom-data-toggle .btn i {
+    margin-right: 0.5rem;
+  }
+  /* State Visualization Styles */
+
+
+.metrics-container.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.time-range-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.drop-zone-active {
+    border-color: var(--bs-primary) !important;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.alert-danger {
+  z-index: 1001;
+  margin: 0 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.granularity-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #495057;
+    min-width: auto;
+    text-align: center;
+    margin-left: 4px;
+    margin-right: -4px;
+    padding: 0 2px;
+}
+:root {
+  --chart-line: #4e73df;
+  --chart-heatmap: #fd7e14;
+  --chart-bar: #1cc88a;
+  --chart-boxplot: #36b9cc;
+  --chart-area: #f6c23e;
+  --chart-surface3d: #e74a3b;
+  --chart-errorband: #858796;
+  --chart-scatter: #6f42c1;
+  --chart-eventfrequency: #20c997;
+  --chart-step: #6610f2;
+}
+.chart-icon.chart-compatible {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.chart-icon.chart-selected {
+  transform: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.chart-icon.chart-disabled {
+  opacity: 0.5;
+  background-color: #e9ecef !important;
+}
+.chart-icon.chart-disabled i {
+  color: #495057 !important;
+}
+.chart-icon.chart-compatible i {
+  color: inherit !important; /* Force icon to inherit color from parent */
+}
+.chart-icon.chart-compatible[data-chart-type="Line"] { color: var(--chart-line); }
+.chart-icon.chart-compatible[data-chart-type="Heatmap"] { color: var(--chart-heatmap); }
+.chart-icon.chart-compatible[data-chart-type="Bar"] { color: var(--chart-bar); }
+.chart-icon.chart-compatible[data-chart-type="BoxPlot"] { color: var(--chart-boxplot); }
+.chart-icon.chart-compatible[data-chart-type="Area"] { color: var(--chart-area); }
+.chart-icon.chart-compatible[data-chart-type="Surface3D"] { color: var(--chart-surface3d); }
+.chart-icon.chart-compatible[data-chart-type="ErrorBand"] { color: var(--chart-errorband); }
+.chart-icon.chart-compatible[data-chart-type="Scatter"] { color: var(--chart-scatter); }
+.chart-icon.chart-compatible[data-chart-type="EventFrequency"] { color: var(--chart-eventfrequency); }
+.chart-icon.chart-compatible[data-chart-type="Step"] { color: var(--chart-step); }
+
+.fab-action-row {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 1040;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.95);
+  border-radius: 2rem;
+  box-shadow: 0 2px 12px rgba(13,110,253,0.10); /* subtle blue shadow */
+  padding: 0.2rem 0.7rem;
+  align-items: center;
+  transition: box-shadow 0.2s;
+}
+
+.fab-action-row:hover,
+.fab-action-row:focus-within {
+  box-shadow: 0 8px 32px rgba(13,110,253,0.22); /* stronger blue shadow */
+}
+
+.fab-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(13,110,253,0.10);
+  border: none;
+  transition: box-shadow 0.18s, background 0.18s, transform 0.18s;
+  color: #0d6efd; /* app accent color */
+  font-size: 1.15rem;
+}
+
+.fab-btn i {
+  color: #0d6efd !important; /* app accent color */
+  font-size: 1.15rem;
+}
+
+.fab-btn:hover,
+.fab-btn:focus {
+  background: #e7f1ff;
+  box-shadow: 0 6px 24px rgba(13,110,253,0.22);
+  transform: scale(1.12);
+  color: #0a58ca;
+}
+
+.fab-btn.active,
+.fab-btn.active i {
+  background: #e7f1ff;
+  color: #0a58ca !important;
+}
+.chart-icon.chart-compatible[data-chart-type="Heatmap"] {
+  color: #fd7e14; /* Orange accent for heatmap */
+}
+.sara-appbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1050;
+}
+
+.dropped-item.fa-folder {
+  color: #ffc107; /* Yellow color for groups */
+}
+
+.custom-data-ghost.fa-folder {
+  border-color: #ffc107 !important;
+}
+
+.drop-zone-active .drop-instruction {
+  border-color: #0d6efd;
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+.custom-data-item .fa-folder {
+  margin-right: 0.5rem;
+}
+.custom-data-item.group {
+  font-weight: 500;
+  background-color: #f8f9fa;
+}
+
+.custom-data-item .fa-folder {
+  margin-right: 8px;
+  color: #6c757d;
+}
+
+.dropped-item.group {
+  border-left: 3px solid #0d6efd;
+  padding-left: 8px;
+}
+.group-node {
+  border-left: 3px solid rgba(13, 110, 253, 0.3);
+  background: rgba(13, 110, 253, 0.05);
+}
+
+.custom-data-ghost.group-node {
+  border-style: double;
+  opacity: 0.9;
+}
+
+.drop-zone-active .group-node {
+  border-color: var(--bs-primary);
+}
+.group-node {
+  background-color: #f8f9fa;
+  border-left: 3px solid var(--displayColor);
+  padding-left: 0.5rem;
+}
+
+.group-node .fa-folder {
+  color: var(--displayColor);
+}
+

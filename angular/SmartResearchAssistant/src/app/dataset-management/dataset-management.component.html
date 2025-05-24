@@ -1,0 +1,16 @@
+<div class="management-container">
+<app-appbar></app-appbar>
+    
+    <div class="management-content">
+      @if (selectedDatasetId) {
+        <app-dataset-details 
+          [datasetId]="selectedDatasetId"
+          (backToList)="onBackToList()"
+        ></app-dataset-details>
+      } @else {
+        <app-dataset-listing
+          (selectDataset)="onSelectDataset($event)"
+        ></app-dataset-listing>
+      }
+    </div>
+  </div>

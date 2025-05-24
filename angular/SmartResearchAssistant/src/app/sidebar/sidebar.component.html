@@ -1,0 +1,28 @@
+<aside class="sidebar" [class.collapsed]="sidebarService.isCollapsed()">
+    <div class="sidebar-header">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9D84D2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="2" x2="12" y2="22"></line>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+        <span class="logo-text">SARA</span>
+      </div>
+    </div>
+    
+    <div class="sidebar-content">
+      <ul class="menu">
+        @for (item of menuItems; track item.label) {
+          <li class="menu-item" [class.active]="item.active">
+            <a href="#" class="menu-link" [attr.title]="item.label">
+              <span class="menu-icon" [innerHTML]="item.icon"></span>
+              <span class="menu-text">{{ item.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+    
+    <div class="sidebar-toggle" (click)="sidebarService.toggleSidebar()">
+      <div class="toggle-handle"></div>
+    </div>
+  </aside>

@@ -1,0 +1,19 @@
+<div class="schema-viewer">
+    @if (isEditing) {
+      <div class="schema-editor">
+        @if (error) {
+          <div class="error-message">{{ error }}</div>
+        }
+        <textarea 
+          class="schema-textarea"
+          [(ngModel)]="schemaString"
+          [class.has-error]="error"
+        ></textarea>
+        <div class="editor-actions">
+          <button class="save-btn" (click)="saveSchema()">Save Schema</button>
+        </div>
+      </div>
+    } @else {
+      <pre class="schema-display">{{ schemaString }}</pre>
+    }
+  </div>

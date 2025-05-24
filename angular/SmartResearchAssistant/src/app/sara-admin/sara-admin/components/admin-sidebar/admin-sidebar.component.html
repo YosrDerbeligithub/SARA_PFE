@@ -1,0 +1,57 @@
+
+<!-- src/app/sara-admin/components/admin-sidebar/admin-sidebar.component.html -->
+<aside class="sidebar" 
+       [class.collapsed]="sidebarService.isCollapsed" 
+       [class.mobile-open]="sidebarService.isMobileOpen">
+  <div class="sidebar-header">
+    <div class="logo-container">
+      <div class="logo">
+        <i class="fas fa-gauge"></i>
+      </div>
+      <div class="logo-text" [class.hidden]="sidebarService.isCollapsed && !sidebarService.isMobileOpen">
+        <span class="app-name">SARA</span>
+        <span class="app-description">Admin Panel</span>
+      </div>
+    </div>
+    <hr class="header-divider">
+  </div>
+  
+  <div class="sidebar-content">
+    <div class="header-separator"></div>
+    <ng-container *ngFor="let group of navGroups">
+      <div class="nav-group">
+        <h3 class="nav-group-title" *ngIf="!sidebarService.isCollapsed || sidebarService.isMobileOpen">
+          {{ group.label }}
+        </h3>
+        <ul class="nav-list">
+          <li *ngFor="let item of group.items" class="nav-item">
+            <a 
+              [routerLink]="item.route" 
+              routerLinkActive="active"
+              class="nav-link"
+              [attr.title]="sidebarService.isCollapsed ? item.label : null"
+              [class.clicked]="isActive(item.route)"
+            >
+              <i [class]="item.icon"></i>
+              <span class="nav-label"  *ngIf="!sidebarService.isCollapsed || sidebarService.isMobileOpen">
+                {{ item.label }}
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </ng-container>
+  </div>
+  
+  <div class="sidebar-footer">
+
+  </div>
+  
+  <button class="sidebar-rail" (click)="toggleSidebar()" *ngIf="!isMobile" aria-label="Toggle sidebar" title="Toggle sidebar">
+    <i class="icon-toggle"></i>
+  </button>  
+  <div class="sidebar-overlay" 
+       [class.active]="sidebarService.isMobileOpen" 
+       (click)="sidebarService.closeMobile()"
+       *ngIf="isMobile"></div>
+</aside>

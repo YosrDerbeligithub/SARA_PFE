@@ -1,0 +1,396 @@
+<app-appbar></app-appbar>
+
+
+<body class="bg-grey d-flex flex-column">
+
+<div class="fab-action-row">
+  <button class="btn fab-btn"
+          (click)="toggleNotes()"
+          [class.active]="showNotes"
+          title="Notes">
+    <i class="fas fa-comment-dots"></i>
+  </button>
+  <button class="btn fab-btn"
+          title="Save Experiment">
+    <i class="fas fa-save"></i>
+  </button>
+  <button class="btn fab-btn"
+          (click)="onExportDataClick()"
+          [disabled]="!sensorDropped || !startDate || !endDate"
+          title="Export Data">
+    <i class="fas fa-file-export"></i>
+  </button>
+</div>
+
+
+
+
+
+
+
+
+    <div class="container-fluid mt-3 full-height-container flex-grow-1 rounded-2">
+        <div class="row gx-3 h-100">
+            <!-- Left Sensor Sidebar -->
+            <div class="col-3 h-100">
+                <type-based-list
+                    [isHistoricalInterface]="true"
+                    (customDataModeChanged)="onCustomDataModeChanged($event)"
+                    [dragDropService]="dragDropService"
+                    (sensorsRendered)="onSensorsRendered()">
+                </type-based-list>
+            </div>
+            
+            <!-- Visualization Sidebar -->
+            <div class="fixed-sidebar">
+                <div class="bg-white shadow-panel h-100 p-3">
+                  <h6 class="fw-bold mb-3">Chart Type</h6>
+                    <div class="chart-icon-grid">
+                      <!-- Chart type icons with forced enabled state in custom data mode -->
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.Line"
+                           [class.chart-disabled]="!isCustomDataMode && (!uiState.chartsEnabled || !isChartCompatible(ChartType.Line))"
+                           [class.chart-compatible]="isCustomDataMode || (uiState.chartsEnabled && isChartCompatible(ChartType.Line))"
+                           [class.chart-selected]="selectedChartType === ChartType.Line">
+                          <i class="fas fa-chart-line" 
+                             (click)="selectChartType(ChartType.Line)"></i>
+                      </div>
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.Heatmap"
+                           [class.chart-disabled]="!isCustomDataMode && (!uiState.chartsEnabled || !isChartCompatible(ChartType.Heatmap))"
+                           [class.chart-compatible]="isCustomDataMode || (uiState.chartsEnabled && isChartCompatible(ChartType.Heatmap))"
+                           [class.chart-selected]="selectedChartType === ChartType.Heatmap">
+                          <i class="fas fa-fire" 
+                             (click)="selectChartType(ChartType.Heatmap)"></i>
+                      </div>
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.Bar"
+                           [class.chart-disabled]="!isCustomDataMode && (!uiState.chartsEnabled || !isChartCompatible(ChartType.Bar))"
+                           [class.chart-compatible]="isCustomDataMode || (uiState.chartsEnabled && isChartCompatible(ChartType.Bar))"
+                           [class.chart-selected]="selectedChartType === ChartType.Bar">
+                          <i class="fas fa-chart-column" 
+                             (click)="selectChartType(ChartType.Bar)"></i>
+                      </div>
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.Area"
+                           [class.chart-disabled]="!isCustomDataMode && (!uiState.chartsEnabled || !isChartCompatible(ChartType.Area))"
+                           [class.chart-compatible]="isCustomDataMode || (uiState.chartsEnabled && isChartCompatible(ChartType.Area))"
+                           [class.chart-selected]="selectedChartType === ChartType.Area">
+                          <i class="fas fa-chart-area" 
+                             (click)="selectChartType(ChartType.Area)"></i>
+                      </div>
+
+
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.Scatter"
+                           [class.chart-disabled]="!isCustomDataMode && (!uiState.chartsEnabled || !isChartCompatible(ChartType.Scatter))"
+                           [class.chart-compatible]="isCustomDataMode || (uiState.chartsEnabled && isChartCompatible(ChartType.Scatter))"
+                           [class.chart-selected]="selectedChartType === ChartType.Scatter">
+                          <i class="fas fa-braille" 
+                             (click)="selectChartType(ChartType.Scatter)"></i>
+                      </div>
+
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.Step"
+                           [class.chart-disabled]="!isCustomDataMode && (!uiState.chartsEnabled || !isChartCompatible(ChartType.Step))"
+                           [class.chart-compatible]="isCustomDataMode || (uiState.chartsEnabled && isChartCompatible(ChartType.Step))"
+                           [class.chart-selected]="selectedChartType === ChartType.Step">
+                          <i class="fas fa-wave-square" 
+                             (click)="selectChartType(ChartType.Step)"></i>
+                      </div>
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.BleDevices"
+                           [class.chart-disabled]="!uiState.chartsEnabled || !isChartCompatible(ChartType.BleDevices)"
+                           [class.chart-compatible]="uiState.chartsEnabled && isChartCompatible(ChartType.BleDevices)"
+                           [class.chart-selected]="selectedChartType === ChartType.BleDevices">
+                          <i class="fas fa-bluetooth-b"
+                             (click)="selectChartType(ChartType.BleDevices)"></i>
+                      </div>
+                  </div>
+    
+                  <!-- Statistical Metrics Section (only show in sensor mode) -->
+                  <div *ngIf="!isCustomDataMode">
+                      <h6 class="fw-bold mt-3 mb-2">Statistical Metrics</h6>
+                      <div class="metrics-container"  style="margin-top: -1.2rem">
+                          <!-- Metrics content (unchanged) -->
+                          <!-- Central Tendency -->
+                          <div class="metric-category">
+                              <p class="text-muted small mb-2">Central Tendency</p>
+                              <div class="metric-scroll-container">
+                                  <!-- Metric items (unchanged) -->
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Mean</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch" 
+                                                 [checked]="selectedMetric === 'average'"
+                                                 [disabled]="!sensorDropped"
+                                                 (change)="updateMetric('average', $any($event.target).checked)">
+                                      </div>
+                                  </div>
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Median</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"           
+                                            [checked]="selectedMetric === 'median'"
+                                            (change)="updateMetric('median', $any($event.target).checked)" [disabled]="!sensorDropped">
+                                      </div>
+                                  </div>
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Mode</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                            [checked]="selectedMetric === 'mode'"
+                                            (change)="updateMetric('mode', $any($event.target).checked)" [disabled]="!sensorDropped">
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+    
+                          <!-- Dispersion -->
+                          <div class="metric-category">
+                              <p class="text-muted small mb-2">Dispersion</p>
+                              <div class="metric-scroll-container">
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Maximum</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                            [checked]="selectedMetric === 'max'"
+                                            (change)="updateMetric('max', $any($event.target).checked)" [disabled]="!sensorDropped">
+                                      </div>
+                                  </div>
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Minimum</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                            [checked]="selectedMetric === 'min'"
+                                            (change)="updateMetric('min', $any($event.target).checked)" [disabled]="!sensorDropped">
+                                      </div>
+                                  </div>
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Range</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                            [checked]="selectedMetric === 'range'"
+                                            (change)="updateMetric('range', $any($event.target).checked)" [disabled]="!sensorDropped">
+                                      </div>
+                                  </div>
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Standard Deviation</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                            [checked]="selectedMetric === 'standardDeviation'"
+                                            (change)="updateMetric('standardDeviation', $any($event.target).checked)" [disabled]="!sensorDropped">
+                                      </div>
+                                  </div>
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Variance</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                            [checked]="selectedMetric === 'variance'"
+                                            (change)="updateMetric('variance', $any($event.target).checked)" [disabled]="!sensorDropped">
+                                      </div>
+                                  </div>
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>IQR</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                            [checked]="selectedMetric === 'iqr'"
+                                            (change)="updateMetric('iqr', $any($event.target).checked)" [disabled]="!sensorDropped">
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+    
+                          <!-- Distribution -->
+                          <div class="metric-category">
+                              <p class="text-muted small mb-2">Distribution</p>
+                              <div class="metric-scroll-container">
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Skewness</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                            [checked]="selectedMetric === 'skewness'"
+                                            (change)="updateMetric('skewness', $any($event.target).checked)" [disabled]="!sensorDropped">
+                                      </div>
+                                  </div>
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Kurtosis</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                            [checked]="selectedMetric === 'kurtosis'"
+                                            (change)="updateMetric('kurtosis', $any($event.target).checked)" [disabled]="!sensorDropped">
+                                      </div>
+                                  </div>
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Entropy</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                            [checked]="selectedMetric === 'entropy'"
+                                            (change)="updateMetric('entropy', $any($event.target).checked)" [disabled]="!sensorDropped">
+                                      </div>
+                                  </div>
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Z-Score</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                            [checked]="selectedMetric === 'zScore'"
+                                            (change)="updateMetric('zScore', $any($event.target).checked)" [disabled]="!sensorDropped">
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                          
+                      </div>
+
+
+                                        <!--add the button-->
+             
+                  
+                  <!-- Removed custom data options section as requested -->
+              </div>
+
+                   <div *ngIf="isCustomDataMode" class="p-2 border-top">
+                    <button class="btn btn-primary btn-sm w-100"
+                           
+                            (click)="applyChanges()">
+                        <i class="fas fa-play me-2"></i>Apply Changes
+                    </button>
+                    </div><!--to here-->
+                  </div>
+          </div>
+    
+          <!-- Main Visualization Area -->
+          <div class="visualization-main">
+              <div class="bg-white shadow-panel h-100 d-flex flex-column">
+                  <div class="d-flex flex-grow-1">
+                      <!-- Y-Axis Section -->
+                      <div class="y-axis-container flex-shrink-0" style="margin-right: -10px;">
+                          <small class="text-muted px-2 pt-1 text-center d-block">Y-Axis</small>
+                          <div #yAxisDropZone class="y-axis-drop-area d-flex align-items-center justify-content-center mt-2" data-dropzone-id="main-y-axis">
+                              <div class="drop-instruction">
+                                <span class="centered-text"
+                                [innerHTML]="(isCustomDataMode ? 'Drop custom&lt;br&gt;data here' : 'Drop sensor&lt;br&gt;here') | safeHtml">
+                          </span>                            </div>
+                              <!-- Dropped sensors will appear here -->
+                          </div>
+                      </div>                          
+                      
+                      <!-- Visualization Canvas -->
+                      <div class="flex-grow-1 d-flex flex-column">
+                          <div *ngIf="isLoading" class="loading-overlay">
+                          <div class="spinner-border text-primary"></div>
+                            </div>
+                          <!-- Modified spacing container -->
+                          <div class="flex-grow-1 d-flex flex-column" style="padding-top: 1.2rem;">
+                              <div class="drag-target mx-auto" style="height: 95%; margin-top: 0;">
+                                  <!-- Add chart container inside drag-target -->
+                                  <div #chartContainer class="chart-container h-100 w-100"></div>  
+
+                                  
+
+                                  
+                                      <!-- Keep placeholder for empty state -->
+                                      <div class="h-100 d-flex flex-column align-items-center justify-content-center">
+                                            <div *ngIf="!allConditionsMet()" class="h-100 d-flex flex-column align-items-center justify-content-center"><
+                                          <i class="fas fa-chart-area fa-3x text-muted mb-3"></i>
+                                          <p class="text-muted small mb-0">Configure axes to create visualization</p>
+                                      </div>
+                                 </div>
+                              </div>
+                          </div>
+                          
+                          <!-- X-Axis Controls -->
+                          <div class="border-top p-3" style="min-height: 140px; padding: 1rem !important;">
+                              <!-- Time Range Controls (only show in sensor mode) -->
+                              <div *ngIf="!isCustomDataMode" class="time-range-container">
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-nowrap">
+                                    <small class="text-muted">X-Axis (Time)</small>
+                                    <div class="d-flex align-items-center">
+                                        <p class="granularity-label mb-0 me-2">
+                                            {{ visualizationService.currentGranularity | titlecase }}
+                                        </p>
+                                        <div class="d-flex gap-1">
+                                            <i class="fas fa-arrow-up cursor-pointer" 
+                                                [class.text-muted]="!canIncreaseGranularity() || !sensorDropped"
+                                                (click)="increaseGranularity()"></i>
+                                            <i class="fas fa-arrow-down cursor-pointer" 
+                                                [class.text-muted]="!canDecreaseGranularity() || !sensorDropped"
+                                                (click)="decreaseGranularity()"></i>
+                                        </div>
+                                    </div>
+                                </div>          
+                                  <div class="p-2 rounded-2 mt-2" style="background-color: rgba(108, 117, 125, 0.1)">
+                                      <div class="d-flex justify-content-center align-items-center">
+                                          <!-- Start Date -->
+                                          <div class="d-flex flex-column" style="width: 160px; margin-right: 15px;">
+                                              <small class="text-muted mb-1">Start Date</small>
+                                              <input type="datetime-local" #startInput class="form-control form-control-sm datetime-input" [disabled]="!sensorDropped" (input)="onStartDateChange($any($event.target).value)">
+                                          </div>
+                                          
+                                          <!-- Center "to" text -->
+                                          <div class="d-flex align-items-center">
+                                              <span class="text-muted" style="margin-top: 22px; padding: 0 15px;">to</span>
+                                          </div>
+                                          
+                                          <!-- End Date -->
+                                          <div class="d-flex flex-column" style="width: 160px; margin-left: 15px;">
+                                            <small class="text-muted mb-1">End Date</small>
+                                            <input
+                                              type="datetime-local"
+                                              #endInput
+                                              class="form-control form-control-sm datetime-input"
+                                              [disabled]="!sensorDropped || (selectedChartType === 'heatmap' || currentSensor?.sensorType === 'thermalmap') || (selectedChartType === 'bledevices' || currentSensor?.sensorType === 'ble')"
+                                              (input)="onEndDateChange($any($event.target).value)"
+                                            >
+                                          </div>
+                                          
+                                          <!-- Apply Button -->
+                                          <button class="btn btn-primary btn-sm" style="margin-top: 22px; margin-left: 20px;" 
+                                                  [disabled]="!canApply()"
+                                                  (click)="applyChanges()">Apply Changes</button>
+                                      </div>
+                                  </div>
+                              </div>
+                              
+                              <!-- Custom Data X-Axis Drop Zone (only show in custom data mode) -->
+                              <div *ngIf="isCustomDataMode" class="custom-x-axis-container">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted">X-Axis (Custom Data)</small>
+                                </div>
+                                <div #xAxisDropZone class="x-axis-drop-area d-flex align-items-center justify-content-center" 
+                                     data-dropzone-id="x-axis-drop">
+                                    <div class="drop-instruction custom-drop-instruction">
+                                        <span>Drop custom data<br>column here</span>
+                                    </div>
+                                    <!-- Dropped custom column will appear here -->
+                                </div>
+                            </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    
+    <!-- Bottom Notes -->
+    <div class="notes-container bg-transparent" [class.expanded]="showNotes">
+        <div class="position-relative bg-transparent">
+            <textarea class="form-control notes-textarea" 
+                      [class.collapsed]="!showNotes"
+                      rows="3" 
+                      placeholder="Add your notes and observations..."
+                      [value]="notesContent"
+                      (input)="onNotesInput($event)"></textarea>
+                      <button class="btn btn-icon notes-close-btn" 
+                      (click)="toggleNotes()"
+                      [hidden]="!showNotes">
+                      <i class="fas fa-times"></i>
+                      </button>
+        </div>
+    </div>
+    
+
+    
+
+    
+
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+</body>

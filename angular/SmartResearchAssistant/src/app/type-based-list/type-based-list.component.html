@@ -1,0 +1,218 @@
+<div class="fixed-sidebar">
+    <div class="bg-white shadow-panel h-100 d-flex flex-column">
+        <div class="p-3 border-bottom">
+            <div class="input-group">
+                <input type="text" class="form-control form-control-sm" 
+                       placeholder="Search..." 
+                       [(ngModel)]="searchQuery" 
+                       (input)="filterItems(searchQuery)">
+                <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                </span>
+            </div>
+            <h6 class="fw-bold mt-3 mb-2">
+                {{ showCustomDataPanel ? 'Custom Data' : 'Sensor Explorer' }}
+            </h6>
+            <p class="text-muted small mb-0">
+                {{ showCustomDataPanel ? 'Drag columns to X or Y axis' : 'Drag sensors to Y-axis' }}
+            </p>
+        </div>
+        
+        <!-- Accordion Section -->
+        <div class="scrollable-area" [class.custom-data-active]="showCustomDataPanel">
+            <!-- Custom Data Panel (Only visible when toggled) -->
+                    <!-- Custom Data Panel -->
+            <div class="custom-data-panel" *ngIf="showCustomDataPanel && isHistoricalInterface">
+   
+            
+            <div class="accordion" id="customDataAccordion">
+                <div class="accordion-item border-0" *ngFor="let dataset of customDatasets">
+                <h2 class="accordion-header">
+                    <!-- Dataset node as accordion header and draggable -->
+<!-- Dataset node: keep database icon -->
+<button class="accordion-button collapsed py-2 px-3 small draggable-custom-node custom-data-item group"
+        [attr.data-dataset-id]="dataset.id"
+        [attr.data-path]="dataset.path"
+        [attr.data-display-color]="dataset.displayColor"
+        [attr.data-column-name]="dataset.name"
+        [attr.data-column-id]="dataset.path"
+        [attr.data-column-type]="'dataset'"
+        draggable="true"
+        (dragstart)="handleCustomNodeDragStart($event, dataset)"
+        (click)="toggleCustomDataset(dataset.id)">
+    <i class="fas fa-database me-2"></i>
+    {{ dataset.name }}
+</button>
+                </h2>
+                <div [id]="'datasetCollapse' + dataset.id" 
+                    class="accordion-collapse collapse"
+                    [class.show]="isCustomDatasetOpen(dataset.id)">
+                    <div class="accordion-body p-0">
+                    <div class="accordion">
+                        <ng-container *ngTemplateOutlet="nodeTemplate; context: { 
+                        $implicit: dataset.attributes, 
+                        depth: 1,
+                        datasetId: dataset.id 
+                        }"></ng-container>                    
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+            
+            <ng-template #nodeTemplate let-nodes let-depth="depth" let-datasetId="datasetId">
+  <ng-container *ngFor="let node of nodes">
+    <div class="accordion-item border-0" *ngIf="!node.isLeaf; else leafNode">
+      <h2 class="accordion-header">
+        <!-- Group/column node: use pastel dot -->
+<button class="accordion-button collapsed py-2 px-3 small draggable-custom-node custom-data-item group"
+        [attr.data-dataset-id]="datasetId"
+        [attr.data-path]="node.path"
+        [attr.data-display-color]="node.displayColor"
+        [attr.data-column-name]="node.name"
+        [attr.data-column-id]="node.path"
+        [attr.data-column-type]="node.children.length > 0 ? 'group' : 'column'"
+        (mousedown)="onAccordionHeaderMouseDown($event, node)"
+        (mouseup)="onAccordionHeaderMouseUp($event, node)"
+        (mouseleave)="onAccordionHeaderMouseLeave($event, node)"
+        (click)="toggleCustomNode(node)">
+    <div class="pastel-dot me-2" [ngClass]="'depth-' + depth"></div>
+    {{ node.name }}
+</button>
+      </h2>
+      <div [id]="'nodeCollapse' + node.path"
+           class="accordion-collapse collapse"
+           [class.show]="isCustomNodeOpen(node)">
+        <div class="accordion-body p-0">
+          <div class="accordion">
+            <!-- Recursive call for children -->
+            <ng-container *ngTemplateOutlet="nodeTemplate; context: { 
+              $implicit: node.children, 
+              depth: depth + 1,
+              datasetId: datasetId 
+            }"></ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #leafNode>
+      <div class="sensor-item d-flex align-items-center py-1 custom-data-item"
+        [attr.data-dataset-id]="datasetId"
+        [attr.data-path]="node.path"
+        [attr.data-display-color]="node.displayColor"
+        [attr.data-column-name]="node.name"
+        [attr.data-column-id]="node.path"
+        [attr.data-column-type]="'column'"
+        draggable="true"
+        (dragstart)="handleCustomNodeDragStart($event, node)">
+        <div class="pastel-dot me-2" [ngClass]="'depth-' + depth"></div>
+        <span class="small">{{ node.name }}</span>
+      </div>
+    </ng-template>
+  </ng-container>
+</ng-template>
+            <!-- Sensor Accordion (Hidden when custom data panel is active) -->
+            <div class="accordion" id="mainAccordion" *ngIf="!showCustomDataPanel">
+                <!-- Sensor Type Level -->
+                <ng-container *ngFor="let sensorType of sensorTypes">
+                    <div class="accordion-item border-0" *ngIf="matchesSearch(sensorType.sensorType)">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-2 px-3 small draggable-sensor-type"
+                                    type="button"
+                                    (click)="toggleSensorType(sensorType.sensorTypeId)">
+                                <div class="color-dot me-2" [style.backgroundColor]="sensorType.displayColor"></div>
+                                {{ sensorType.sensorType }}
+                            </button>
+                        </h2>
+                        <div [id]="'sensorTypeCollapse' + sensorType.sensorTypeId" 
+                             class="accordion-collapse collapse"
+                             appAccordion
+                             [isOpenState]="isSensorTypeOpen(sensorType.sensorTypeId)">
+                            <div class="accordion-body p-0">
+                                <div class="accordion">
+                                    <!-- Facility Level -->
+                                    <ng-container *ngFor="let site of sensorType.sites">
+                                        <div class="accordion-item border-0" *ngIf="matchesSearch(site.siteName)">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed py-2 px-3 smaller draggable-facility" 
+                                                        type="button" 
+                                                        (click)="toggleSite(site.siteId)">
+                                                    <div class="color-dot me-2" [style.backgroundColor]="site.displayColor"></div>
+                                                    {{ site.siteName }}
+                                                </button>
+                                            </h2>
+                                            <div [id]="'siteCollapse' + site.siteId" 
+                                                 class="accordion-collapse collapse"
+                                                 appAccordion
+                                                 [isOpenState]="isSiteOpen(site.siteId)">
+                                                <div class="accordion-body p-0 ps-3">
+                                                    <div class="accordion" id="locationAccordion{{site.siteId}}">
+                                                        <!-- Location Level -->
+                                                        <ng-container *ngFor="let location of site.locations">
+                                                            <div class="accordion-item border-0" *ngIf="matchesSearch(location.locationName)">
+                                                                <h2 class="accordion-header">
+                                                                    <button class="accordion-button collapsed py-2 px-3 smaller draggable-location" 
+                                                                            type="button" 
+                                                                            (click)="toggleLocation(location.locationId)"
+                                                                            [attr.data-sensor-type]="sensorType.sensorType"
+                                                                            [attr.data-site]="site.siteName"
+                                                                            [attr.data-location]="location.locationName"
+                                                                            [attr.data-display-color]="location.displayColor">
+                                                                        <div class="color-dot me-2" [style.backgroundColor]="location.displayColor"></div>
+                                                                        {{ location.locationName }}
+                                                                    </button>
+                                                                </h2>
+                                                                <div [id]="'locationCollapse' + location.locationId" 
+                                                                     class="accordion-collapse collapse"
+                                                                     appAccordion
+                                                                     [isOpenState]="isLocationOpen(location.locationId)">
+                                                                    <div class="accordion-body p-0 ps-3">
+                                                                        <!-- Sensor Box List -->
+                                                                        <div class="list-group list-group-flush">
+                                                                            <ng-container *ngFor="let sensorBox of location.sensorBoxes">
+                                                                                <div class="sensor-item d-flex align-items-center py-1"
+                                                                                    *ngIf="matchesSearch(sensorBox.agentSerial)"
+                                                                                    [attr.data-sensor-type]="sensorType.sensorType"
+                                                                                    [attr.data-site]="site.siteName"
+                                                                                    [attr.data-location]="location.locationName"
+                                                                                    [attr.data-agent-serial]="sensorBox.agentSerial"
+                                                                                    [attr.data-unit]="sensorType.unit"
+                                                                                    [attr.data-display-color]="sensorBox.displayColor"
+                                                                                    draggable="true"
+                                                                                    (dragstart)="handleDragStart($event, sensorType, site, location, sensorBox)">
+                                                                                    <div class="color-dot me-2" 
+                                                                                         [style.backgroundColor]="sensorBox.displayColor"></div>
+                                                                                    <span class="small">{{ sensorBox.agentSerial }}</span>
+                                                                                </div>
+                                                                            </ng-container>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+        
+        <!-- Custom Data Toggle Button (Only for Historical Interface) -->
+        <div class="custom-data-toggle p-2 border-top" *ngIf="isHistoricalInterface">
+            <button class="btn btn-sm w-100" 
+                    [class.btn-primary]="showCustomDataPanel" 
+                    [class.btn-outline-primary]="!showCustomDataPanel"
+                    (click)="toggleCustomDataPanel()">
+                <i class="fas" [class.fa-table]="!showCustomDataPanel" [class.fa-chart-line]="showCustomDataPanel"></i>
+                {{ showCustomDataPanel ? 'Show Sensors' : 'Visualize Custom Data' }}
+            </button>
+        </div>
+    </div>
+</div>

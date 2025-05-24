@@ -1,0 +1,281 @@
+<div class="details-container">
+  <button class="back-btn" (click)="backToList.emit()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Back to Datasets
+  </button>
+
+  <!-- Loading State -->
+  <ng-container *ngIf="isLoading; else notLoading">
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Loading dataset details...</p>
+    </div>
+  </ng-container>
+
+  <ng-template #notLoading>
+    <!-- Error State -->
+    <ng-container *ngIf="error; else hasData">
+      <div class="error-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="error-icon">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <p>{{ error }}</p>
+        <button class="retry-btn" (click)="loadDataset()">Try Again</button>
+      </div>
+    </ng-container>
+
+    <!-- Data State -->
+    <ng-template #hasData>
+      <div *ngIf="dataset">
+        <div class="dataset-header">
+          <div class="dataset-title-section">
+            <h2 class="dataset-title">{{ dataset.name }}</h2>
+            <div class="dataset-meta">
+              <div class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                Created: {{ formatDate(dataset.createdAt) }}
+              </div>
+              <div class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                {{ dataset.rowCount }} rows, {{ dataset.columnCount }} columns
+              </div>
+            </div>
+          </div>
+          <div class="dataset-actions">
+            <button class="delete-btn" (click)="confirmDelete()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+              Delete Dataset
+            </button>
+          </div>
+        </div>
+
+        <p *ngIf="dataset.description" class="dataset-description">{{ dataset.description }}</p>
+
+        <hr class="section-divider" />
+
+        <!-- Visibility -->
+        <div class="visibility-section">
+          <h3 class="section-title">Visibility</h3>
+          <div class="visibility-options">
+            <!-- Public -->
+            <div class="visibility-option">
+              <input type="radio" id="public" name="visibility" [checked]="dataset.visibility === 'PUBLIC'" (change)="updateVisibility('PUBLIC')">
+              <label for="public" class="visibility-label">
+                <span class="visibility-icon public">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </span>
+                <div class="visibility-text">
+                  <span class="visibility-name">Public</span>
+                  <span class="visibility-description">Anyone with the link can view this dataset</span>
+                </div>
+              </label>
+            </div>
+            <!-- Private -->
+            <div class="visibility-option">
+              <input type="radio" id="private" name="visibility" [checked]="dataset.visibility === 'PRIVATE'" (change)="updateVisibility('PRIVATE')">
+              <label for="private" class="visibility-label">
+                <span class="visibility-icon private">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                    <line x1="2" x2="22" y1="2" y2="22"></line>
+                  </svg>
+                </span>
+                <div class="visibility-text">
+                  <span class="visibility-name">Private</span>
+                  <span class="visibility-description">Only you can access this dataset</span>
+                </div>
+              </label>
+            </div>
+            <!-- Restricted -->
+            <div class="visibility-option">
+              <input 
+                type="radio" 
+                id="restricted" 
+                name="visibility" 
+                value="RESTRICTED"
+                [checked]="dataset.visibility === 'RESTRICTED' || selectedVisibility === 'RESTRICTED'"
+                (change)="onRestrictedSelected()"
+              >
+              <label for="restricted" class="visibility-label">
+                <span class="visibility-icon restricted">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                    <line x1="2" x2="22" y1="2" y2="22"></line>
+                  </svg>
+                </span>
+                <div class="visibility-text">
+                  <span class="visibility-name">Restricted</span>
+                  <span class="visibility-description">Only you and specified collaborators can access this dataset</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Collaborators -->
+          <div [ngSwitch]="true" class="collaborators-section">
+            <!-- Existing RESTRICTED dataset -->
+            <div *ngSwitchCase="dataset.visibility === 'RESTRICTED'">
+              <div class="collaborators-header">
+                <h4 class="collaborators-title">Collaborators</h4>
+                <button class="info-button" title="Current collaborators with access">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="8" cy="8" r="7"></circle>
+                    <line x1="8" y1="11" x2="8" y2="8"></line>
+                    <circle cx="8" cy="5" r="1"></circle>
+                  </svg>
+                </button>
+              </div>
+              <div class="collaborator-input-container">
+                <input
+                  type="email"
+                  class="collaborator-input"
+                  placeholder="Enter email address"
+                  [(ngModel)]="newCollaborator"
+                >
+                <button 
+                  class="add-collaborator-btn"
+                  (click)="addExistingCollaborator()"
+                  [disabled]=" !isValidEmail(newCollaborator)"
+                >
+                  ➕ Add
+                </button>
+              </div>
+              <div class="collaborators-list">
+                <ng-container *ngIf="existingPendingCollaborators.length; else noCollabs">
+                  <div *ngFor="let c of existingPendingCollaborators" class="collaborator-badge">
+                    <span class="collaborator-email">{{ c.email }}</span>
+                    <button 
+                      class="remove-collaborator-btn" 
+                      (click)="removeExistingPendingCollaborator(c.email)"
+                    >
+                      ✖️
+                    </button>
+                  </div>
+                </ng-container>
+                <ng-template #noCollabs>
+                  <p class="no-collaborators">No collaborators added yet</p>
+                </ng-template>
+                <div *ngIf="hasExistingCollaboratorChanges()" class="confirm-section">
+                  <button class="confirm-btn" [disabled]="existingPendingCollaborators.length === 0" (click)="confirmExistingCollaborators()">Save Changes</button>
+                  <button class="cancel-btn" (click)="cancelCollaborators()">Cancel</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- New RESTRICTED selection -->
+            <div *ngSwitchCase="selectedVisibility === 'RESTRICTED'">
+              <div class="collaborators-header">
+                <h4 class="collaborators-title">Add Collaborators</h4>
+                <button class="info-button" title="Collaborators will receive an email invitation">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="8" cy="8" r="7"></circle>
+                    <line x1="8" y1="11" x2="8" y2="8"></line>
+                    <circle cx="8" cy="5" r="1"></circle>
+                  </svg>
+                </button>
+              </div>
+              <div class="collaborator-input-container">
+                <input
+                  type="email"
+                  class="collaborator-input"
+                  placeholder="Enter email address"
+                  [(ngModel)]="newCollaborator"
+                >
+                <button 
+                  class="add-collaborator-btn"
+                  (click)="addPendingCollaborator()"
+                  [disabled]="!newCollaborator || !isValidEmail(newCollaborator)"
+                >
+                  ➕ Add
+                </button>
+              </div>
+              <div class="collaborators-list">
+                <ng-container *ngIf="pendingCollaborators.length; else noCollabs">
+                  <div *ngFor="let c of pendingCollaborators" class="collaborator-badge pending">
+                    {{ c.email }}
+                    <button class="remove-collaborator-btn" (click)="removePendingCollaborator(c.email)">
+                      ✖️
+                    </button>
+                  </div>
+                </ng-container>
+                <ng-template #noCollabs>
+                  <p class="no-collaborators">No collaborators added yet</p>
+                </ng-template>
+              </div>
+              <div class="confirm-section">
+                <button class="confirm-btn" (click)="confirmCollaborators()" [disabled]="pendingCollaborators.length === 0">
+                  Confirm Visibility Change
+                </button>
+                <button class="cancel-btn" (click)="cancelCollaborators()">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="section-divider" />
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+          <div class="tabs">
+            <button class="tab-button" [class.active]="activeTab==='data'" (click)="setActiveTab('data')">Data Preview</button>
+            <button class="tab-button" [class.active]="activeTab==='schema'" (click)="setActiveTab('schema')">Schema</button>
+          </div>
+          <div class="tab-content">
+            <ng-container *ngIf="activeTab==='data'; else schemaTab">
+              <div class="data-preview-container">
+                <app-data-preview-table [data]="dataset.payload | keyvalue"></app-data-preview-table>
+              </div>
+            </ng-container>
+            <ng-template #schemaTab>
+              <div class="schema-container">
+                <div class="schema-header">
+                  <h3 class="schema-title">JSON Schema</h3>
+                  <button class="edit-schema-btn" (click)="toggleSchemaEdit()">{{ isEditingSchema ? 'Cancel' : 'Edit Schema' }}</button>
+                </div>
+                <app-schema-viewer [schema]="dataset.schema" [isEditing]="isEditingSchema" (schemaUpdate)="updateSchema($event)"></app-schema-viewer>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Delete Confirmation -->
+        <div *ngIf="isDeleting" class="delete-confirmation-overlay">
+          <div class="delete-confirmation">
+            <h3 class="delete-title">Delete Dataset</h3>
+            <p class="delete-message">Are you sure you want to delete "{{ dataset.name }}"? This action cannot be undone.</p>
+            <div class="delete-actions">
+              <button class="cancel-btn" (click)="cancelDelete()">Cancel</button>
+              <button class="confirm-delete-btn" (click)="deleteDataset()">Delete Dataset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ng-template>
+</div>

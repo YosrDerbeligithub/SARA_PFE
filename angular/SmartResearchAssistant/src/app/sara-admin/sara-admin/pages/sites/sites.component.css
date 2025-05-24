@@ -1,0 +1,677 @@
+/* src/app/sara-admin/pages/sites/sites.component.css */
+
+.sites-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 1.5rem;
+  }
+  .btn-primary {
+    margin-right: 1.5rem; /* Match table's side spacing */
+  }
+  .page-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+  }
+  .fa-building {
+    margin-right: 1rem; /* Custom spacing */
+  }
+  .page-description {
+    color: var(--muted-foreground);
+    margin: 0.5rem 0 0 0;
+  }
+ /* For the description text */
+.page-description {
+  color: #71717a !important;
+}
+
+/* For the primary button */
+.btn-primary {
+  background-color: #7b39ed !important;
+  border: 1px solid #7b39ed !important;
+  padding: 0.5rem 1rem;
+  min-width: 130px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s ease;
+  justify-content: space-between; /* Add this */
+
+}
+.btn-primary span {
+  margin-left: auto;
+  margin-right: 0.5rem;
+}
+.btn-primary:hover {
+  background-color: #6a2ecd !important;
+} 
+  .search-container {
+    width: 100%;
+    max-width: 20rem;
+  }
+  
+  .search-input-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-60%);
+    color: var(--muted-foreground);
+  }
+  
+  .search-input {
+    width: 100%;
+    height: 36px;
+    padding: 0.375rem 0.75rem 0.375rem 1.75rem !important;
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    padding-left: 2rem !important;
+    margin-right: 1rem !important; 
+  }
+  .search-container {
+    margin-right: 1.3rem;
+    max-width: 14rem;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
+  }
+  .search-input {
+    margin-left: 0.9rem; /* Add this line */
+    padding-left: 2rem !important; /* Increase from 1.75rem */
+  }
+  .search-container.bordered-search {
+    padding-left: 0.5rem; /* Reduce left padding */
+  }
+  .search-input-wrapper {
+    margin-left: -0.95rem; /* Compensate for container padding */
+    width: calc(100% + 0.01rem);
+  }
+  .header-content {
+    margin-left: 0.8rem;
+    text-align: left;
+  }
+  .card-title,
+.card-description {
+  display: block;
+  margin: 0;
+  padding-left: 1rem; /* Same padding for both elements */
+}
+  .sortable-header {
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .sortable-header:hover {
+    background-color: var(--muted);
+  }
+  
+  .actions-column {
+    width: 6rem;
+    text-align: right;
+  }
+  
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+  }
+  
+  .empty-state-icon {
+    font-size: 2rem;
+    color: var(--muted-foreground);
+    margin-bottom: 1rem;
+  }
+  
+  .empty-state-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .empty-state-description {
+    color: var(--muted-foreground);
+    margin: 0 0 1.5rem 0;
+    max-width: 25rem;
+  }
+  
+  /* Dialog styles */
+  .dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    animation: fadeIn 0.2s ease-out;
+  }
+  
+  .dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 30rem;
+    background-color: white !important;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    z-index: 101;
+    animation: dialogIn 0.3s ease-out;
+    border-radius: 0.5rem;
+  }
+  
+  .dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .dialog-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .dialog-close {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s;
+  }
+  
+  .dialog-close:hover {
+    background-color: var(--muted);
+  }
+  
+  .dialog-content {
+    padding: 1.5rem;
+  }
+  
+  .dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  
+  .confirm-delete-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .confirm-delete-message i {
+    font-size: 1.5rem;
+    color: var(--amber-600);
+  }
+  
+  .loading-spinner-sm {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-foreground);
+    animation: spin 0.8s linear infinite;
+    margin-right: 0.5rem;
+  }
+  
+  @keyframes dialogIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -60%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .white-container {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 95%; /* Changed from full width */
+    max-width: 1200px; /* Added maximum width */
+    margin: 0 auto; /* Center the card */
+    display: flex;
+    flex-direction: column;
+  }
+  .card-content {
+    flex: 1;
+    padding-bottom: 2rem; /* Add this line */
+  }
+  .white-header {
+    background: white !important;
+    border-bottom: none !important;   
+    padding: 1rem;
+  }
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    padding-left: 0rem;
+  } 
+  .card-description {
+    color: #71717a !important;
+    margin-top: 0.5rem;
+    margin-left: -1rem;
+  }
+  .table-container {
+    max-width: 100%;
+    overflow-x: auto;
+    flex: 1;
+  }
+  
+  .table {
+    table-layout: fixed; /* Ensures consistent column sizing */
+    width: 96%;
+    min-width: 700px;
+    min-height: 100px;
+    transition: all 0.3s ease;
+    margin: 0 auto;
+    border: 1px solid #e5e7eb;
+    border-collapse: separate;
+    border-radius: 8px;
+    overflow: hidden;
+    
+  }
+  
+  th:nth-child(1), td:nth-child(1) { /* Serial Number */
+    width: 14%;
+    min-width: 140px; /* Reduced from 180px */
+  }
+  
+  th:nth-child(2), td:nth-child(2) { /* Location */
+    width: 14%;
+    max-width: 140px; /* Reduced from 240px */
+  }
+  
+  th:nth-child(3), td:nth-child(3) { /* Site */
+    width: 16%;
+    max-width: 180px; /* Reduced from 200px */
+  }
+  
+  th:nth-child(4), td:nth-child(4) { /* Sensors */
+    width: 8%;
+    min-width: 80px; /* Reduced from 100px */
+  }
+  
+  th:nth-child(5), td:nth-child(5) { /* Status */
+    width: 10%;
+    min-width: 100px; /* Reduced from 120px */
+  }
+  
+  th:nth-child(6), td:nth-child(6) { /* Last Seen */
+    width: 14%;
+    min-width: 130px; /* Reduced from 150px */
+  }
+  
+  th:nth-child(7), td:nth-child(7) { /* Actions */
+    width: 7%;
+    min-width: 80px; /* Reduced from 90px */
+  }
+  th.actions-column {
+    text-align: left !important;
+    padding-right: 3rem !important; 
+  }
+  
+  /* If you need to adjust the cell content alignment too */
+  td.actions-column {
+    padding-left: 2rem !important;
+    text-align: left !important;
+  }
+  tr:last-child td {
+    border-bottom: none !important;
+  }
+  .table th,
+  .table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.75rem;
+    white-space: nowrap;
+    padding-left: 1.1rem !important; /* Reduce left padding */
+    padding-right: 0.5rem !important;
+  }
+  td .d-flex.align-items-center.gap-2 {
+    gap: 0.5rem !important; /* Reduced from 0.75rem */
+    padding-left: 0.25rem;
+  }
+  
+  /* Add margin to icons */
+  td .text-muted {
+    margin-right: 0.5rem; /* Space between icon and text */
+    margin-left: 0.25rem; /* Push icon slightly right */
+  }
+  
+  /* Optional: Adjust overall table cell padding */
+  td {
+    font-size: 0.875rem;
+    padding-left: -2rem !important;
+    padding-right: 1rem !important;
+  } 
+  .table-row-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .d-flex.align-items-center.gap-2 {
+    gap: 0.5rem !important;
+  }
+  td.actions-column {
+    padding-left: 1rem !important; /* Reduce from 2rem */
+  }
+
+@media (max-width: 768px) {
+  .table-container {
+    min-width: 100%;
+  }
+  
+  table {
+    min-width: 600px; /* Smaller min-width for mobile */
+    border-bottom: none !important;
+  }
+}
+tr:last-child td {
+  border-bottom: none !important;
+}
+td {
+  font-size: 0.875rem;
+  padding-left: -2rem !important;
+  padding-right: 1rem !important;
+} 
+.bordered-search {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.25rem; /* Reduce padding */
+  width: fit-content;
+  transition: border-color 0.2s ease;
+}
+
+.bordered-search:focus-within {
+  border-color: #7b39ed;
+  box-shadow: 0 0 0 2px rgba(123, 57, 237, 0.1);
+}
+
+/* Remove input's individual border */
+.bordered-search .search-input {
+  border: none !important;
+  padding-left: 2rem;
+}
+
+/* Adjust icon position */
+.bordered-search .search-icon {
+  left: 1rem;
+}
+/* Add these styles */
+.badge-campus {
+  background-color: #7b39ed !important;
+  color: white !important;
+  padding: 4px 12px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.badge-museum {
+  background-color: #3b82f6 !important; /* Primary blue */
+  color: white !important;
+  padding: 4px 12px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.badge-other {
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid #e5e7eb;
+  padding: 4px 12px;
+  border-radius: 12px;
+  display: inline-block;
+}
+/* Update badge styles */
+.badge-campus,
+.badge-museum,
+.badge-other {
+  padding: 2px 8px;
+  border-radius: 16px;  /* Increased from 12px */
+  font-size: 12px;  /* 14px */
+  font-weight: 500;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Specific color styles remain the same */
+.badge-campus {
+  background-color: #7b39ed !important;
+  color: white !important;
+}
+
+.badge-museum {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.badge-other {
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid #e5e7eb;
+}
+/* Update dialog styles */
+.dialog-header {
+  padding: 1rem 1.5rem;
+}
+
+.dialog-close {
+  color: #6b7280 !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dialog-close i {
+  color: #6b7280 !important;
+}
+
+/* Form layout adjustments */
+.form-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.form-label {
+  min-width: 120px;
+  margin: 0;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease;
+}
+
+/* Description field specific */
+.form-group:last-child {
+  align-items: flex-start;
+}
+
+textarea.form-input {
+  height: 100px;
+  resize: vertical;
+}
+
+/* Button adjustments */
+.dialog-footer .btn-primary {
+  min-width: 90px;
+  margin-left: auto;
+  padding: 0.5rem 0.75rem;
+}
+.text{
+  position:center;
+}
+/* Style the placeholder option */
+select.form-select option[disabled][selected] {
+  color: #9ca3af;
+  background-color: white;
+}
+
+/* Style the select element when placeholder is shown */
+select.form-select:invalid {
+  color: #9ca3af! important ;
+}
+select.form-select:valid {
+  color: inherit;
+}
+
+/* Force option text color (works in modern browsers) */
+
+/* Add these styles */
+.form-error {
+  color: #dc2626; /* Red-600 */
+  font-size: 0.75rem; /* 12px */
+  margin-top: 0.25rem;
+  display: block;
+  width: 100%;
+  text-align: right;
+}
+
+.form-error span {
+  display: block;
+  margin-top: 0.25rem;
+}
+
+/* Adjust form group layout */
+.form-group {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.form-input, .form-select {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+}
+.btn-destructive {
+  background-color: #dc2626 !important; /* Red-600 */
+  color: white !important;
+  border-color: #dc2626 !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btn-destructive:hover {
+  background-color: #b91c1c !important; /* Red-700 */
+  border-color: #b91c1c !important;
+}
+
+.btn-destructive i {
+  color: white !important;
+}
+.loading-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-left: 1rem; /* Add left padding */
+}
+
+.loading-text {
+  color: #6b7280; /* Gray-600 */
+  margin: 0;
+  font-size: 0.875rem;
+}
+.error {
+  border-color: #dc2626 !important;
+}
+.error:focus {
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+.form-error {
+  color: #dc2626;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  width: 100%;
+  text-align: right;}
+  .color-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+  }
+  
+  .form-input-color {
+    width: 100%;
+    height: 40px;
+    padding: 2px;
+  }
+  /* Add to component CSS */
+.form-input.error, .form-select.error {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220,53,69,.25);
+}
+
+.color-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-right: 8px;
+  border: 1px solid #ddd;
+}
+.form-error span {
+  display: block;
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}

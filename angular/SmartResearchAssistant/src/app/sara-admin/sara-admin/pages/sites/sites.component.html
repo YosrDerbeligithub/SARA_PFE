@@ -1,0 +1,204 @@
+<!-- src/app/sara-admin/pages/sites/sites.component.html -->
+<div class="sites-container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Sites</h1>
+        <p class="page-description">Manage your sites and their locations.</p>
+      </div>
+      <button class="btn btn-primary" (click)="openDialog()">
+        <i class="fas fa-plus"></i>
+        <span>Add Site</span>
+      </button>
+    </div>
+  
+    <div class="card white-container">
+      <div class="card-header white-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="header-content" >
+            <h2 class="card-title">Site Management</h2>
+            <p class="card-description">View and manage all sites in the system.</p>
+          </div>
+          <div class="search-container bordered-search" >
+            <div class="search-input-wrapper">
+              <i class="fas fa-search search-icon"></i>
+              <input 
+                type="text" 
+                class="search-input" 
+                placeholder="Search sites..." 
+                (input)="search($event)"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-content">
+        <div class="loading-container" *ngIf="isLoading">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Loading sites...</p>
+        </div>
+        
+        <div class="table-container" *ngIf="!isLoading">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Display Color</th> 
+                <th>Locations</th>
+                <th>Sensor Boxes</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let site of filteredSites">
+                <td>
+                  <div class="d-flex align-items-center justify-content-left gap-3">
+                    <i class="fas fa-building text-muted"></i>
+                    <span>{{ site.name }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span [class]="getSiteTypeBadgeClass(site.type)">
+                    {{ site.type }}
+                  </span>
+                </td>
+                <td>  <!-- New Display Color cell -->
+                  <div class="color-swatch" [style.backgroundColor]="site.displayColor"></div>
+                  {{ site.displayColor }}
+                </td>
+                <td>{{ site.locationCount }}</td>
+                <td>{{ site.sensorBoxCount }}</td>
+                <td>{{ formatDate(site.createdAt) }}</td>
+                <td>
+                  <div class="table-row-actions">
+                    <button class="btn btn-sm btn-outline btn-icon" (click)="openDialog(site)" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline btn-icon text-danger" (click)="confirmDelete(site)" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="empty-state" *ngIf="filteredSites.length === 0">
+            <div class="empty-state-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <h3 class="empty-state-title">No sites found</h3>
+            <p class="empty-state-description">
+              No sites match your search criteria. Try adjusting your search or create a new site.
+            </p>
+            <button class="btn btn-primary" (click)="openDialog()">
+              <i class="fas fa-plus"></i>
+              <span>Add Site</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Site Form Dialog -->
+    <div class="dialog-overlay" *ngIf="showDialog" (click)="closeDialog()"></div>
+    <div class="dialog" *ngIf="showDialog">
+      <div class="dialog-header">
+        <h3 class="dialog-title">{{ editingSite ? 'Edit Site' : 'Add New Site' }}</h3>
+        <button class="dialog-close" (click)="closeDialog()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="dialog-content">
+        <form [formGroup]="siteForm" (ngSubmit)="submitForm()">
+          <div class="form-group">
+            <label for="name" class="form-label">Site Name</label>
+            <input 
+              type="text" 
+              id="name" 
+              class="form-input" 
+              [class.error]="siteForm.get('name')?.invalid && siteForm.get('name')?.touched"
+              formControlName="name" 
+              placeholder="Enter site name"
+            >
+            <div class="form-error" *ngIf="siteForm.get('name')?.invalid && siteForm.get('name')?.touched">
+              <span *ngIf="siteForm.get('name')?.errors?.['required']">Site name is required</span>
+              <span *ngIf="siteForm.get('name')?.errors?.['maxlength']">Site name cannot exceed 100 characters</span>
+              <span *ngIf="siteForm.get('name')?.errors?.['duplicate']">
+                {{ siteForm.get('name')?.errors?.['duplicate'] }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="type" class="form-label">Site Type</label>
+            <select 
+              id="type" 
+              class="form-select" 
+              formControlName="type" 
+              required
+              [class.error]="siteForm.get('type')?.invalid && siteForm.get('type')?.touched"
+            >
+              <option value="" disabled selected>Select a site type</option>
+              <option value="CAMPUS">Campus</option>
+              <option value="MUSEUM">Museum</option>
+              <option value="OTHER">Other</option>
+            </select>
+            <!-- Change siteId to type in these references -->
+            <div class="form-error" *ngIf="siteForm.get('type')?.invalid && siteForm.get('type')?.touched">
+              <span *ngIf="siteForm.get('type')?.errors?.['required']">Site Type is required</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="displayColor" class="form-label">Display Color</label>
+            <input 
+              type="color"
+              id="displayColor"
+              class="form-input-color"
+              [class.error]="siteForm.get('displayColor')?.invalid && siteForm.get('displayColor')?.touched"
+              formControlName="displayColor"
+            >
+            <div class="form-error" *ngIf="siteForm.get('displayColor')?.invalid && siteForm.get('displayColor')?.touched">
+              <span>Display color is required</span>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="dialog-footer">
+        <button class="btn btn-outline" (click)="closeDialog()" [disabled]="isSubmitting">Cancel</button>
+        <button class="btn btn-primary" (click)="submitForm()" [disabled]="isSubmitting">
+          <span *ngIf="isSubmitting" class="loading-spinner-sm"></span>
+          <span class="text">{{ editingSite ? 'Update' : 'Create' }}</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Delete Confirmation Dialog -->
+    <div class="dialog-overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()"></div>
+    <div class="dialog" *ngIf="showDeleteConfirm">
+      <div class="dialog-header">
+        <h3 class="dialog-title">Confirm Delete</h3>
+        <button class="dialog-close" (click)="cancelDelete()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="dialog-content">
+        <div class="confirm-delete-message">
+          <i class="fas fa-exclamation-triangle text-warning"></i>
+          <p>
+            Are you sure you want to delete the site <strong>{{ siteToDelete?.name }}</strong>?
+            This action cannot be undone.
+          </p>
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button class="btn btn-outline" (click)="cancelDelete()">Cancel</button>
+        <button class="btn btn-destructive" (click)="deleteSite()">
+          <i class="fas fa-trash"></i>
+          <span class="ml-2">Delete</span>
+        </button>
+      </div>
+    </div>
+  </div>

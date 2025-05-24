@@ -1,0 +1,16 @@
+<!-- src/app/sara-admin/components/breadcrumb/breadcrumb.component.html -->
+<nav class="breadcrumb-container" aria-label="Breadcrumb">
+    <ol class="breadcrumb-list">
+      <li class="breadcrumb-item" *ngFor="let breadcrumb of breadcrumbs; let last = last">
+        <a 
+          *ngIf="!last" 
+          [routerLink]="breadcrumb.url" 
+          class="breadcrumb-link"
+        >
+          {{ breadcrumb.label }}
+        </a>
+        <span *ngIf="last" class="breadcrumb-current">{{ breadcrumb.label }}</span>
+        <i *ngIf="!last" class="fas fa-chevron-right breadcrumb-separator"></i>
+      </li>
+    </ol>
+  </nav>

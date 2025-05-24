@@ -1,0 +1,116 @@
+<div class="sensor-card">
+  <div class="card-header">
+    <div class="card-title">
+      <h3>{{ sensorType?.name || sensor }}</h3>
+      <span *ngIf="isPaused" class="paused-badge">Paused</span>
+    </div>
+    <div class="card-value">
+      <span class="value">{{ latestValue }}</span>
+      <div class="card-actions">
+        <button 
+          class="action-button" 
+          (click)="togglePause()" 
+          title="{{ isPaused ? 'Resume live updates' : 'Pause live updates' }}" 
+          [attr.aria-label]="isPaused ? 'Resume live updates' : 'Pause live updates'"
+        >
+          <i [class]="isPaused ? 'fa-regular fa-circle-play fa-sm' : 'fa-regular fa-circle-stop fa-sm'"></i>
+        </button>
+        <button 
+          class="action-button" 
+          (click)="toggleExpand()" 
+          title="{{ isExpanded ? 'Collapse card' : 'Expand card' }}" 
+          [attr.aria-label]="isExpanded ? 'Collapse card' : 'Expand card'"
+        >
+          <i [class]="isExpanded ? 'fa-solid fa-down-left-and-up-right-to-center' : 'fa-solid fa-up-right-and-down-left-from-center'"></i>
+        </button>
+        <button 
+          class="action-button" 
+          (click)="toggleControls()" 
+          title="{{ showControls ? 'Hide controls' : 'Show controls' }}" 
+          [attr.aria-label]="showControls ? 'Hide controls' : 'Show controls'"
+        >
+          <i class="fa-solid fa-gear fa-sm"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="showControls" class="card-controls">
+    <div class="controls-container">
+      <div *ngIf="globalLocation" class="control-group">
+        <i class="fas fa-map-marker-alt"></i>
+        <select
+        [(ngModel)]="localLocation"
+        (ngModelChange)="onLocationChange($event)"
+        title="Select Local Location"
+      >
+        <option *ngFor="let loc of flatLocations" [value]="loc.id">
+          {{ loc.fullPath }}
+        </option>
+      </select>
+      </div>
+      <!-- Time Interval (Update Frequency) -->
+      <div class="control-group">
+        <i class="fas fa-clock"></i>
+        <select 
+          [(ngModel)]="timeInterval" 
+          (ngModelChange)="onTimeIntervalChange($event)" 
+          title="Select update frequency"
+        >
+          <option value="" disabled selected *ngIf="!timeInterval">Default / None</option>
+          <option *ngFor="let option of timeIntervals" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Aggregation Metric -->
+      <div class="control-group">
+        <i class="fas fa-sync-alt"></i>
+        <select 
+          [(ngModel)]="aggregationMetric" 
+          (ngModelChange)="onAggregationChange($event)" 
+          title="Select aggregation metric"
+        >
+          <option value="" disabled selected *ngIf="!aggregationMetric">None</option>
+          <option value="none">None</option>
+          <option *ngFor="let m of aggregationOptions" [value]="m">
+            {{ m | titlecase }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Time Window (only enabled if aggregation selected) -->
+      <div class="control-group">
+        <i class="fas fa-hourglass-half"></i>
+        <select 
+          [disabled]="aggregationMetric === 'none'" 
+          [(ngModel)]="timeWindow" 
+          (ngModelChange)="onTimeWindowChange($event)" 
+          title="Select time window (required if aggregation selected)"
+        >
+          <option value="" disabled selected *ngIf="!timeWindow">None</option>
+          <option *ngFor="let option of timeWindows" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+      <div class="chart-type-selector">
+        <button 
+          *ngFor="let type of chartTypes" 
+          class="chart-type-button" 
+          [class.active]="chartType === type.value" 
+          (click)="onChartTypeChange(type.value)" 
+          title="{{ type.label + ' chart' }}" 
+          [attr.aria-label]="type.label + ' chart'"
+        >
+          <i [class]="'fas fa-' + type.icon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+      <div class="card-content">
+       <div #chartContainer class="chart-container"></div>
+      </div>
+</div>

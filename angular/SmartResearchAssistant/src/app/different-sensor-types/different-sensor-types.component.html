@@ -1,0 +1,384 @@
+
+<app-appbar></app-appbar>
+
+<body class="bg-grey d-flex flex-column">
+    <div class="fab-action-row">
+  <button class="btn fab-btn"
+          (click)="toggleNotes()"
+          [class.active]="showNotes"
+          title="Notes">
+    <i class="fas fa-comment-dots"></i>
+  </button>
+  <button class="btn fab-btn"
+          (click)="saveExperiment()"
+          title="Save Experiment">
+    <i class="fas fa-save"></i>
+  </button>
+
+</div>
+
+
+
+<div class="container-fluid mt-3 full-height-container flex-grow-1">
+    <div class="row gx-3 h-100" cdkDropListGroup>
+<!-- location-based-list.component.html -->
+<!-- location-based-list.component.html -->
+<div class="fixed-sidebar">
+    <div class="bg-white shadow-panel h-100 d-flex flex-column">
+      <div class="p-3 border-bottom">
+        <div class="input-group">
+          <input type="text" 
+                 class="form-control form-control-sm" 
+                 placeholder="Search classrooms..."
+                 [(ngModel)]="searchQuery">
+          <span class="input-group-text">
+            <i class="fas fa-search"></i>
+          </span>
+        </div>
+        <h6 class="fw-bold mt-3 mb-2">Sensor Explorer</h6>
+        <p class="text-muted small mb-0">Drag sensors to Y-axis</p>
+      </div>
+  
+      <div class="scrollable-area">
+        <div class="accordion" id="locationAccordion">
+          <div *ngFor="let site of filteredData" class="accordion-item border-0">
+            <h2 class="accordion-header">
+                <button class="accordion-button py-2 px-3 small" 
+                        type="button"              
+                        (click)="toggleAccordion('site', site.siteId)">
+                    <div class="color-dot me-2" [style.backgroundColor]="site.displayColor"></div>
+                    {{ site.siteName }}
+                </button>
+            </h2>
+            <div [id]="'site' + site.siteId" 
+     class="accordion-collapse collapse" 
+     appAccordion
+     [isOpenState]="isOpen('site', site.siteId)">
+              
+              <div class="accordion-body p-0">
+                <div class="accordion" [id]="'locationGroup' + site.siteId">
+                  <div *ngFor="let location of site.locations" class="accordion-item border-0">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button py-2 px-3 small" 
+                                type="button" 
+                                [attr.data-bs-toggle]="'collapse'"
+                                [attr.data-bs-target]="'#loc' + location.locationId"
+                                (click)="toggleAccordion('location', location.locationId)">
+                            <div class="color-dot me-2" [style.backgroundColor]="location.displayColor"></div>
+                            {{ location.locationName }}
+                        </button>
+                    </h2>
+                    <div [id]="'loc' + location.locationId" 
+     class="accordion-collapse collapse" 
+     appAccordion
+    [isOpenState]="isOpen('location', location.locationId)">
+                        </div>
+                      <div class="accordion-body p-0">
+                        <div class="accordion">
+                          <div *ngFor="let sensorBox of location.sensorBoxes" class="accordion-item border-0">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button py-2 px-3 small" 
+                                        type="button" 
+                                        (click)="toggleAccordion('sensorBox', sensorBox.sensorBoxId)">
+                                    <div class="color-dot me-2" [style.backgroundColor]="sensorBox.displayColor"></div>
+                                    {{ sensorBox.agentSerial }}
+                                </button>
+                            </h2>
+                            <div [id]="'sbox' + sensorBox.sensorBoxId" 
+     class="accordion-collapse collapse" 
+     appAccordion
+     [isOpenState]="isOpen('sensorBox', sensorBox.sensorBoxId)">
+                              
+                                 <div class="sensor-list p-2" cdkDropListGroup>
+                                  <div cdkDropList [cdkDropListData]="sensorBox.assignments"
+                                   [cdkDropListConnectedTo]="getAllDropZoneIds()" 
+                                       class="sensor-list">
+                                    <div *ngFor="let assignment of sensorBox.assignments" 
+                                         cdkDrag
+                                         [cdkDragData]="assignment"
+                                         class="sensor-item d-flex align-items-center py-1">
+                                      <div class="color-dot me-2" 
+                                           [style.backgroundColor]="assignment.displayColor"></div>
+                                      <span class="small">{{ assignment.sensorType }}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+            <!-- Visualization Sidebar -->
+            <div class="fixed-sidebar">
+                <div class="bg-white shadow-panel h-100 p-3">
+                  <h6 class="fw-bold mb-3">Chart Type</h6>
+                  <div class="chart-icon-grid">
+                      <!-- Chart type icons with disabled state -->
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.Line"
+                           [class.chart-selected]="selectedChartType === ChartType.Line">
+                          <i class="fas fa-chart-line" 
+                             (click)="selectChartType(ChartType.Line)"></i>
+                      </div>
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.Heatmap"
+                           [class.chart-selected]="selectedChartType === ChartType.Heatmap">
+                          <i class="fas fa-fire" 
+                             (click)="selectChartType(ChartType.Heatmap)"></i>
+                      </div>
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.Bar"
+                           [class.chart-selected]="selectedChartType === ChartType.Bar">
+                          <i class="fas fa-chart-bar" 
+                             (click)="selectChartType(ChartType.Bar)"></i>
+                      </div>
+
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.Area"
+                           [class.chart-selected]="selectedChartType === ChartType.Area">
+                          <i class="fas fa-chart-area" 
+                             (click)="selectChartType(ChartType.Area)"></i>
+                      </div>
+
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.Scatter"
+                           [class.chart-selected]="selectedChartType === ChartType.Scatter">
+                          <i class="fas fa-braille" 
+                             (click)="selectChartType(ChartType.Scatter)"></i>
+                      </div>
+                      <div class="chart-icon" [attr.data-chart-type]="ChartType.Step"
+
+                           [class.chart-selected]="selectedChartType === ChartType.Step">
+                          <i class="fas fa-wave-square" 
+                             (click)="selectChartType(ChartType.Step)"></i>
+                      </div>
+                  </div>
+    
+                  <!-- Statistical Metrics Section (only show in sensor mode) -->
+                  <div>
+                      <h6 class="fw-bold mt-3 mb-2">Statistical Metrics</h6>
+                      <div class="metrics-container"  style="margin-top: -1.2rem">
+                          <!-- Metrics content (unchanged) -->
+                          <!-- Central Tendency -->
+                          <div class="metric-category">
+                              <p class="text-muted small mb-2">Central Tendency</p>
+                              <div class="metric-scroll-container">
+                                  <!-- Metric items (unchanged) -->
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Mean</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch" 
+                                                 [checked]="globalMetric === 'average'"
+                                                 (change)="updateGlobalMetric('average')">
+                                      </div>
+                                  </div>
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Median</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"           
+                                                 [checked]="globalMetric === 'median'"
+                                                 (change)="updateGlobalMetric('median')" >
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+    
+                          <!-- Dispersion -->
+                          <div class="metric-category">
+                              <p class="text-muted small mb-2">Dispersion</p>
+                              <div class="metric-scroll-container">
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Maximum</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                                 [checked]="globalMetric === 'max'"
+                                                 (change)="updateGlobalMetric('max')">
+                                      </div>
+                                  </div>
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Minimum</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                                 [checked]="globalMetric === 'min'"
+                                                 (change)="updateGlobalMetric('min')">
+                                      </div>
+                                  </div>
+
+                                  </div>
+
+                          </div>
+    
+                          <!-- Distribution -->
+                          <div class="metric-category">
+                              <p class="text-muted small mb-2">Distribution</p>
+                              <div class="metric-scroll-container">
+                                  <div class="metric-item d-flex justify-content-between align-items-center">
+                                      <span>Skewness</span>
+                                      <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" role="switch"
+                                                 [checked]="globalMetric === 'skewness'"
+                                                 (change)="updateGlobalMetric('skewness')" >
+                                      </div>
+                                  </div>
+
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <!-- Removed custom data options section as requested -->
+              </div>
+          </div>
+            <div class="add-graph-container">
+                <button class="btn btn-add-graph" (click)="addChart()">
+                    <i class="fas fa-plus me-2"></i> Add Graph
+                </button>
+            </div>
+            <!-- Main Visualization Area -->
+            <div class="visualization-main">
+                <div class="bg-white shadow-panel h-100 d-flex flex-column">
+                    <!-- Scrollable Chart Area -->
+                    <div id="chartScrollArea" class="scrollable-charts"
+     cdkDropList
+     [cdkDropListData]="charts"
+     (cdkDropListDropped)="onChartReorder($event)">
+    <div *ngIf="isLoading" class="loading-overlay">
+        <div class="spinner-border text-primary"></div>
+  </div>
+  <div *ngFor="let chart of charts; trackBy: trackByChartId"
+       class="chart-container mb-3"
+       #chartContainer
+       [attr.data-chart-id]="chart.id"
+       [class.expanded]="chart.isExpanded"
+       cdkDrag>
+    <div class="chart-drag-handle" cdkDragHandle>
+      <div class="drag-handle">
+        <i class="fas fa-grip-vertical"></i>
+      </div>
+    </div>
+                            <!-- Expand Button -->
+                                <button class="expand-btn" (click)="toggleExpand(chart)">
+                                    <i class="fas" [class.fa-expand]="!chart.isExpanded" [class.fa-compress]="chart.isExpanded"></i>
+                                </button>
+
+                                <!-- Trash Button -->
+                                <button class="trash-icon" (click)="removeChart(chart.id)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+
+                            <div class="d-flex flex-grow-1 h-100">
+                                <div class="y-axis-container flex-shrink-0" style="margin-right: -10px;">
+                                    <small class="text-muted px-2 pt-1 text-center d-block">Y-Axis</small>
+                                    <div class="y-axis-drop-area d-flex align-items-center justify-content-center mt-2" 
+                                    cdkDropList
+                                    [id]="chart.dropZoneId"
+                                    [cdkDropListConnectedTo]="getAllDropZoneIds()"
+                                    (cdkDropListDropped)="onSensorDrop($event, chart)">
+                                        
+                                        <div *ngIf="chart.droppedSensors.length === 0" 
+                                            class="drop-instruction text-center">
+                                            <span>Drop sensor<br>here</span>
+                                        </div>
+
+                                        <div *ngFor="let sensor of chart.droppedSensors" 
+                                            class="sensor-item d-flex align-items-center py-1"
+                                            (dblclick)="removeSensor(sensor, chart)">
+                                            <div class="color-dot me-2" [style.backgroundColor]="sensor.displayColor"></div>
+                                            <span class="small">{{ sensor.sensorType }}</span>
+                                        </div>
+                                    </div>                                
+                                    </div>
+                                <div class="flex-grow-1 d-flex flex-column">
+                                    <div class="flex-grow-1 d-flex flex-column" style="padding-top: 1rem;">
+                                        <div class="drag-target mx-auto" style="height: 92%; margin-top: 0;">
+                                            <div class="h-100 d-flex flex-column align-items-center justify-content-center">
+                                                
+                                                  <div class="chart-visualization"
+                                                    #chartVisualization [style.height.px]="chart.isExpanded ? 350 : 180"
+                                                    [style.display]="chart.droppedSensors.length > 0 ? 'block' : 'none'">
+
+                                            <!--<i class="fas fa-chart-area fa-3x text-muted mb-3"></i>
+                                                <p class="text-muted small mb-0">Configure axes to create visualization</p>--> 
+                                                  </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- X-Axis Controls (Fixed at bottom) -->
+                    <div class="x-axis-container" style="min-height: 140px; padding: 1rem !important;">
+                        <div class="d-flex justify-content-between align-items-center mb-2 flex-nowrap">
+                            <div class="d-flex align-items-center justify-content-between w-100">
+                                    <small class="text-muted">X-Axis (Time)</small>
+                                    <div class="d-flex align-items-center">
+                                        <p class="granularity-label mb-0 me-2">
+                                            {{ visualizationService.currentGranularity | titlecase }}
+                                        </p>
+                                        <div class="d-flex gap-1">
+                                            <i class="fas fa-arrow-up cursor-pointer" 
+                                                [class.text-muted]="!canIncreaseGranularity()"
+                                                (click)="canIncreaseGranularity() && increaseGranularity()"></i>
+                                          <i class="fas fa-arrow-down cursor-pointer" 
+                                                [class.text-muted]="!canDecreaseGranularity()"
+                                                (click)="decreaseGranularity()"></i>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="p-2 rounded-2 mt-2" style="background-color: rgba(108, 117, 125, 0.1)">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <!-- Start Date -->
+                                <div class="d-flex flex-column" style="width: 160px; margin-right: 15px;">
+                                    <small class="text-muted mb-1">Start Date</small>
+                                    <input type="datetime-local" #startInput class="form-control form-control-sm datetime-input" (input)="onStartDateChange($any($event.target).value)">                                </div>
+                                
+                                <!-- Center "to" text -->
+                                <div class="d-flex align-items-center">
+                                    <span class="text-muted" style="margin-top: 22px; padding: 0 15px;">to</span>
+                                </div>
+                                
+                                <!-- End Date -->
+                                <div class="d-flex flex-column" style="width: 160px; margin-left: 15px;">
+                                    <small class="text-muted mb-1">End Date</small>
+                                    <input type="datetime-local" #endInput class="form-control form-control-sm datetime-input"  (input)="onEndDateChange($any($event.target).value)">                                </div>
+                                
+                                <!-- Apply Button -->
+                                          <button class="btn btn-primary btn-sm" style="margin-top: 22px; margin-left: 20px;" 
+                                                   
+                                                  (click)="applyChanges()">Apply Changes</button>                            
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Notes -->
+    <div class="notes-container bg-transparent" [class.expanded]="showNotes">
+        <div class="position-relative bg-transparent">
+            <textarea class="form-control notes-textarea" 
+                      [class.collapsed]="!showNotes"
+                      rows="3" 
+                      placeholder="Add your notes and observations..."
+                      [value]="notesContent"
+                      (input)="onNotesInput($event)"></textarea>
+                      <button class="btn btn-icon notes-close-btn" 
+                      (click)="toggleNotes()"
+                      [hidden]="!showNotes">
+                      <i class="fas fa-times"></i>
+                      </button>
+        </div>
+    </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+</body>

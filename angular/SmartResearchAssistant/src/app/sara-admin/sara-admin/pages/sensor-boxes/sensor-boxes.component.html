@@ -1,0 +1,228 @@
+<!-- src/app/sara-admin/pages/sensor-boxes/sensor-boxes.component.html -->
+<div class="sensor-boxes-container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Sensor Boxes</h1>
+        <p class="page-description">Manage sensor boxes and their locations.</p>
+      </div>
+      <button class="btn btn-primary" (click)="openDialog()">
+        <i class="fas fa-plus"></i>
+        <span>Add Sensor Box</span>
+      </button>
+    </div>
+  
+    <div class="card white-container">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="card-title">Sensor Box Management</h2>
+            <p class="card-description">View and manage all sensor boxes in the system.</p>
+          </div>
+          <div class="search-container bordered-search">
+            <div class="search-input-wrapper">
+              <i class="fas fa-search search-icon"></i>
+              <input 
+                type="text" 
+                class="search-input" 
+                placeholder="Search sensor boxes..." 
+                (input)="search($event)"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="site-filter" class="filter-label">Site:</label>
+          <select 
+            id="site-filter" 
+            class="form-select" 
+            [(ngModel)]="selectedSiteFilter" 
+            (change)="filterBySite(selectedSiteFilter)"
+          >
+            <option value="all">All Sites</option>
+            <option *ngFor="let site of sites" [value]="site.siteId">{{ site.name }}</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="location-filter" class="filter-label">Location:</label>
+          <select 
+            id="location-filter" 
+            class="form-select" 
+            [(ngModel)]="selectedLocationFilter" 
+            (change)="filterByLocation(selectedLocationFilter)"
+          >
+            <option value="all">All Locations</option>
+            <option *ngFor="let location of filteredLocations" [value]="location.locationId">{{ location.name }}</option>
+          </select>
+        </div>
+
+      </div>
+      
+      <div class="card-content">
+        <div class="loading-container" *ngIf="isLoading">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Loading sensor boxes...</p>
+        </div>
+        
+        <div class="table-container" *ngIf="!isLoading">
+          <table class="table">
+            <thead>
+              <tr>
+                <th  >
+                  Serial Number 
+                </th>
+                <th >
+                  Location 
+                </th>
+                <th >
+                  Site
+                </th>
+                <th >
+                  Sensors
+                </th>
+                <th>Created</th>
+                <th class="actions-column">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sensorBox of filteredSensorBoxes">
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="fas fa-microchip text-muted"></i>
+                    <span>{{ sensorBox.agentSerial }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="fas fa-home text-muted"></i>
+                    <span>{{ sensorBox.locationName }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="fas fa-building text-muted"></i>
+                    <span>{{ sensorBox.siteName }}</span>
+                  </div>
+                </td>
+                <td>{{ sensorBox.sensorCount }}</td>
+                <td>{{formatDate(sensorBox.createdAt) }}</td>
+                <td>
+                  <div class="table-row-actions">
+                    <button class="btn btn-sm btn-outline btn-icon" (click)="openDialog(sensorBox)" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline btn-icon text-danger" (click)="confirmDelete(sensorBox)" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="empty-state" *ngIf="filteredSensorBoxes.length === 0">
+            <div class="empty-state-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <h3 class="empty-state-title">No sensor boxes found</h3>
+            <p class="empty-state-description">
+              No sensor boxes match your search criteria. Try adjusting your filters or create a new sensor box.
+            </p>
+            <button class="btn btn-primary" (click)="openDialog()">
+              <i class="fas fa-plus"></i>
+              <span>Add Sensor Box</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sensor Box Form Dialog -->
+    <div class="dialog-overlay" *ngIf="showDialog" (click)="closeDialog()"></div>
+    <div class="dialog" *ngIf="showDialog">
+      <div class="dialog-header">
+        <h3 class="dialog-title">{{ editingSensorBox ? 'Edit Sensor Box' : 'Add New Sensor Box' }}</h3>
+        <button class="dialog-close" (click)="closeDialog()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="dialog-content">
+        <form [formGroup]="sensorBoxForm" (ngSubmit)="submitForm()">
+          <div class="form-group">
+            <label for="agentSerial" class="form-label">Serial Number</label>
+            <input 
+              type="text" 
+              id="agentSerial" 
+              class="form-input" 
+              [class.error]="sensorBoxForm.get('agentSerial')?.invalid && sensorBoxForm.get('agentSerial')?.touched"        
+              formControlName="agentSerial" 
+              placeholder="Enter serial number (e.g., SB-1001)"
+            >
+            <div class="form-error" *ngIf="sensorBoxForm.get('agentSerial')?.invalid && sensorBoxForm.get('agentSerial')?.touched">              <span *ngIf="sensorBoxForm.get('agentSerial')?.errors?.['required']">Serial number is required</span>
+              <span *ngIf="sensorBoxForm.get('agentSerial')?.errors?.['pattern']">Serial number can only contain letters, numbers, and hyphens</span>
+              <span *ngIf="sensorBoxForm.get('agentSerial')?.errors?.['duplicate']">
+                {{ sensorBoxForm.get('agentSerial')?.errors?.['duplicate'] }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="locationId" class="form-label">Location</label>
+            <select 
+              id="locationId" 
+              class="form-select" 
+              formControlName="locationId"
+              [class.error]="sensorBoxForm.get('locationId')?.invalid && sensorBoxForm.get('locationId')?.touched"
+            >
+              <option value="" disabled>Select a location</option>
+              <option *ngFor="let location of locations" [value]="location.locationId">
+                {{ location.name }} ({{ location.siteName }})
+              </option>
+            </select>
+            <div class="form-error" *ngIf="sensorBoxForm.get('locationId')?.invalid && sensorBoxForm.get('locationId')?.touched">
+              <span *ngIf="sensorBoxForm.get('locationId')?.errors?.['required']">Location is required</span>
+            </div>
+          </div>
+          
+
+        </form>
+      </div>
+      <div class="dialog-footer">
+        <button class="btn btn-outline" (click)="closeDialog()" [disabled]="isSubmitting">Cancel</button>
+        <button class="btn btn-primary" (click)="submitForm()" [disabled]="isSubmitting">
+          <span *ngIf="isSubmitting" class="loading-spinner-sm"></span>
+          <span>{{ editingSensorBox ? 'Update' : 'Create' }}</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Delete Confirmation Dialog -->
+    <div class="dialog-overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()"></div>
+    <div class="dialog" *ngIf="showDeleteConfirm">
+      <div class="dialog-header">
+        <h3 class="dialog-title">Confirm Delete</h3>
+        <button class="dialog-close" (click)="cancelDelete()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="dialog-content">
+        <div class="confirm-delete-message">
+          <i class="fas fa-exclamation-triangle text-warning"></i>
+          <p>
+            Are you sure you want to delete the sensor box <strong>{{ sensorBoxToDelete?.agentSerial }}</strong>?
+            This action cannot be undone.
+          </p>
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button class="btn btn-outline" (click)="cancelDelete()">Cancel</button>
+        <button class="btn btn-destructive" (click)="deleteSensorBox()">
+          <i class="fas fa-trash"></i>
+          <span>Delete</span>
+        </button>
+      </div>
+    </div>
+  </div>

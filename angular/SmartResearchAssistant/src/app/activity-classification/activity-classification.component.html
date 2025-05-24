@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Classification</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    
+    <!-- Your custom CSS -->
+</head>
+<body>
+<!-- activity-classification.component.html -->
+<div class="container-fluid p-3 bg-white shadow">
+    <div class="row align-items-center gx-4">
+        <div class="col-auto">
+            <button class="btn btn-link p-0" (click)="sidebarService.toggleSidebar()">
+              <i class="fas fa-bars fa-lg text-dark"></i>
+            </button>
+          </div>
+        <div class="col">
+            <h2 class="fw-bold mb-0" style="font-size: 1.3rem;">Activity Classification</h2>
+        </div>
+        <div class="col-auto pe-4">  <!-- Added right padding here -->
+            <button class="btn btn-primary py-2">
+                Model Training Interface
+            </button>
+        </div>
+    </div>
+</div>
+<!--<sidebar></sidebar>-->
+<div class="container-fluid mt-4 px-4">
+    <div class="row gx-4">
+        <!-- Left Column -->
+        <div class="col-md-3">
+            <!-- Time Range Container -->
+            <div class="bg-white p-3 shadow rounded">
+                <h3 class="fw-bold mb-3">⏳ Time Range</h3>
+                <div class="mb-3">
+                    <label class="form-label text-secondary mb-2">Start Date & Time</label>
+                    <input type="datetime-local" class="form-control">
+                </div>
+                <div>
+                    <label class="form-label text-secondary mb-2">End Date & Time</label>
+                    <input type="datetime-local" class="form-control">
+                </div>
+            </div>
+ 
+<!-- Model Selection Container -->
+<div class="bg-white p-3 shadow rounded mt-3" style="height: 420px; overflow-y: auto;">
+    <h3 class="fw-bold mb-2 position-sticky top-0 bg-white pb-1" style="z-index: 1;">🧠 Model Selection</h3>
+
+    <!-- Model v2.1 -->
+    <div class="p-3 rounded mb-2 border border-1" 
+         [class.bg-primary-subtle]="selectedModel === 'v2.1'"
+         [class.border-primary]="selectedModel === 'v2.1'"
+         [class.bg-light]="selectedModel !== 'v2.1'"
+         [class.border-light]="selectedModel !== 'v2.1'">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <p class="fw-bold mb-1 fs-6" 
+               [ngClass]="{'text-primary': selectedModel === 'v2.1', 'text-dark': selectedModel !== 'v2.1'}">
+                Model v2.1
+            </p>
+            <button class="btn btn-sm" 
+                    [class.btn-primary]="selectedModel === 'v2.1'"
+                    [class.btn-outline-primary]="selectedModel !== 'v2.1'"
+                    (click)="selectModel('v2.1')">
+                {{ selectedModel === 'v2.1' ? 'Active' : 'Select' }}
+            </button>
+        </div>
+        <div class="row small text-muted">
+            <div class="col-6">F1-Score:</div>
+            <div class="col-6 text-end text-primary">0.94</div>
+            <div class="col-6">Weighted Avg:</div>
+            <div class="col-6 text-end text-primary">0.92</div>
+            <div class="col-6">Accuracy:</div>
+            <div class="col-6 text-end text-primary">95%</div>
+        </div>
+        <hr class="my-2">
+        <div class="small text-muted">
+            <div>Dataset: Campus-2024-Q1</div>
+            <div>Trained: Jan 15, 2025</div>
+        </div>
+    </div>
+
+    <!-- Model v2.0 -->
+    <div class="p-3 rounded mb-2 border border-1" 
+         [class.bg-primary-subtle]="selectedModel === 'v2.0'"
+         [class.border-primary]="selectedModel === 'v2.0'"
+         [class.bg-light]="selectedModel !== 'v2.0'"
+         [class.border-light]="selectedModel !== 'v2.0'">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <p class="fw-bold mb-1 fs-6" 
+               [ngClass]="{'text-primary': selectedModel === 'v2.0', 'text-dark': selectedModel !== 'v2.0'}">
+                Model v2.0
+            </p>
+            <button class="btn btn-sm" 
+                    [class.btn-primary]="selectedModel === 'v2.0'"
+                    [class.btn-outline-primary]="selectedModel !== 'v2.0'"
+                    (click)="selectModel('v2.0')">
+                {{ selectedModel === 'v2.0' ? 'Active' : 'Select' }}
+            </button>
+        </div>
+        <div class="row small text-muted">
+            <div class="col-6">F1-Score:</div>
+            <div class="col-6 text-end text-primary">0.91</div>
+            <div class="col-6">Weighted Avg:</div>
+            <div class="col-6 text-end text-primary">0.89</div>
+            <div class="col-6">Accuracy:</div>
+            <div class="col-6 text-end text-primary">92%</div>
+        </div>
+        <hr class="my-2">
+        <div class="small text-muted">
+            <div>Dataset: Campus-2023-Q4</div>
+            <div>Trained: Nov 20, 2024</div>
+        </div>
+    </div>
+
+    <!-- Model v1.9 -->
+    <div class="p-3 rounded mb-2 border border-1" 
+         [class.bg-primary-subtle]="selectedModel === 'v1.9'"
+         [class.border-primary]="selectedModel === 'v1.9'"
+         [class.bg-light]="selectedModel !== 'v1.9'"
+         [class.border-light]="selectedModel !== 'v1.9'">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <p class="fw-bold mb-1 fs-6" 
+               [ngClass]="{'text-primary': selectedModel === 'v1.9', 'text-dark': selectedModel !== 'v1.9'}">
+                Model v1.9
+            </p>
+            <button class="btn btn-sm" 
+                    [class.btn-primary]="selectedModel === 'v1.9'"
+                    [class.btn-outline-primary]="selectedModel !== 'v1.9'"
+                    (click)="selectModel('v1.9')">
+                {{ selectedModel === 'v1.9' ? 'Active' : 'Select' }}
+            </button>
+        </div>
+        <div class="row small text-muted">
+            <div class="col-6">F1-Score:</div>
+            <div class="col-6 text-end text-primary">0.88</div>
+            <div class="col-6">Weighted Avg:</div>
+            <div class="col-6 text-end text-primary">0.85</div>
+            <div class="col-6">Accuracy:</div>
+            <div class="col-6 text-end text-primary">89%</div>
+        </div>
+        <hr class="my-2">
+        <div class="small text-muted">
+            <div>Dataset: Campus-2023-Q2</div>
+            <div>Trained: Aug 10, 2024</div>
+        </div>
+    </div>
+
+    <!-- Model v1.8 -->
+    <div class="p-3 rounded border border-1" 
+         [class.bg-primary-subtle]="selectedModel === 'v1.8'"
+         [class.border-primary]="selectedModel === 'v1.8'"
+         [class.bg-light]="selectedModel !== 'v1.8'"
+         [class.border-light]="selectedModel !== 'v1.8'">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <p class="fw-bold mb-1 fs-6" 
+               [ngClass]="{'text-primary': selectedModel === 'v1.8', 'text-dark': selectedModel !== 'v1.8'}">
+                Model v1.8
+            </p>
+            <button class="btn btn-sm" 
+                    [class.btn-primary]="selectedModel === 'v1.8'"
+                    [class.btn-outline-primary]="selectedModel !== 'v1.8'"
+                    (click)="selectModel('v1.8')">
+                {{ selectedModel === 'v1.8' ? 'Active' : 'Select' }}
+            </button>
+        </div>
+        <div class="row small text-muted">
+            <div class="col-6">F1-Score:</div>
+            <div class="col-6 text-end text-primary">0.85</div>
+            <div class="col-6">Weighted Avg:</div>
+            <div class="col-6 text-end text-primary">0.82</div>
+            <div class="col-6">Accuracy:</div>
+            <div class="col-6 text-end text-primary">85%</div>
+        </div>
+        <hr class="my-2">
+        <div class="small text-muted">
+            <div>Dataset: Campus-2023-Q1</div>
+            <div>Trained: May 5, 2024</div>
+        </div>
+    </div>
+</div>
+            
+        </div>
+
+        <!-- Center Column -->
+        <div class="col-md-6 d-flex flex-column">
+            <!-- Sensor Data Selection -->
+<div class="bg-white p-3 shadow rounded h-100 d-flex flex-column">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0">📡 Sensor Data Selection</h3>
+        <div class="input-group w-50">
+            <input type="text" class="form-control" placeholder="Search classrooms...">
+            <span class="input-group-text">
+                <i class="fas fa-search"></i>
+            </span>
+        </div>
+    </div>
+
+    <div class="accordion-scrollable" style="max-height: 300px; overflow-y: auto;">
+        <div class="accordion" id="sensorAccordion">
+            <!-- Classroom B001 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#classroomB001">
+                        Classroom B001
+                    </button>
+                </h2>
+                <div id="classroomB001" class="accordion-collapse collapse" 
+                     data-bs-parent="#sensorAccordion">
+                    <div class="accordion-body p-2">
+                        <div class="accordion" id="sensorBoxB001">
+                            <!-- Sensor Box 1 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-2" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#sensorBoxB001-1">
+                                        Sensor Box 1
+                                    </button>
+                                </h2>
+                                <div id="sensorBoxB001-1" class="accordion-collapse collapse" 
+                                     data-bs-parent="#sensorBoxB001">
+                                     <div class="accordion-body">
+                                        <!-- Same sensor structure as Box 1 -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Temperature</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Motion</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Noise</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Sensor Box 2 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-2" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#sensorBoxB001-2">
+                                        Sensor Box 2
+                                    </button>
+                                </h2>
+                                <div id="sensorBoxB001-2" class="accordion-collapse collapse" 
+                                     data-bs-parent="#sensorBoxB001">
+                                     <div class="accordion-body">
+                                        <!-- Same sensor structure as Box 1 -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Temperature</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Motion</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Noise</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Sensor Box 3 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-2" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#sensorBoxB001-3">
+                                        Sensor Box 3
+                                    </button>
+                                </h2>
+                                <div id="sensorBoxB001-3" class="accordion-collapse collapse" 
+                                     data-bs-parent="#sensorBoxB001">
+                                     <div class="accordion-body">
+                                        <!-- Same sensor structure as Box 1 -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Temperature</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Motion</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Noise</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Sensor Box 4 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-2" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#sensorBoxB001-4">
+                                        Sensor Box 4
+                                    </button>
+                                </h2>
+                                <div id="sensorBoxB001-4" class="accordion-collapse collapse" 
+                                     data-bs-parent="#sensorBoxB001">
+                                     <div class="accordion-body">
+                                        <!-- Same sensor structure as Box 1 -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Temperature</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Motion</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Noise</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Classroom B002 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#classroomB002">
+                        Classroom B002
+                    </button>
+                </h2>
+                <div id="classroomB002" class="accordion-collapse collapse" 
+                     data-bs-parent="#sensorAccordion">
+                    <div class="accordion-body p-2">
+                        <div class="accordion" id="sensorBoxB002">
+                            <!-- Sensor Box 1 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-2" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#sensorBoxB002-1">
+                                        Sensor Box 1
+                                    </button>
+                                </h2>
+                                <div id="sensorBoxB002-1" class="accordion-collapse collapse" 
+                                     data-bs-parent="#sensorBoxB002">
+                                     <div class="accordion-body">
+                                        <!-- Same sensor structure as Box 1 -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Temperature</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Motion</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Noise</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Sensor Box 2 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-2" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#sensorBoxB002-2">
+                                        Sensor Box 2
+                                    </button>
+                                </h2>
+                                <div id="sensorBoxB002-2" class="accordion-collapse collapse" 
+                                     data-bs-parent="#sensorBoxB002">
+                                     <div class="accordion-body">
+                                        <!-- Same sensor structure as Box 1 -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Temperature</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Motion</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Noise</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Sensor Box 3 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-2" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#sensorBoxB002-3">
+                                        Sensor Box 3
+                                    </button>
+                                </h2>
+                                <div id="sensorBoxB002-3" class="accordion-collapse collapse" 
+                                     data-bs-parent="#sensorBoxB002">
+                                     <div class="accordion-body">
+                                        <!-- Same sensor structure as Box 1 -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Temperature</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Motion</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Noise</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Sensor Box 4 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-2" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#sensorBoxB002-4">
+                                        Sensor Box 4
+                                    </button>
+                                </h2>
+                                <div id="sensorBoxB002-4" class="accordion-collapse collapse" 
+                                     data-bs-parent="#sensorBoxB002">
+                                     <div class="accordion-body">
+                                        <!-- Same sensor structure as Box 1 -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Temperature</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Motion</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Noise</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Classroom B003 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#classroomB003">
+                        Classroom B003
+                    </button>
+                </h2>
+                <div id="classroomB003" class="accordion-collapse collapse" 
+                     data-bs-parent="#sensorAccordion">
+                    <div class="accordion-body p-2">
+                        <div class="accordion" id="sensorBoxB003">
+                            <!-- Sensor Box 1 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-2" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#sensorBoxB003-1">
+                                        Sensor Box 1
+                                    </button>
+                                </h2>
+                                <div id="sensorBoxB003-1" class="accordion-collapse collapse" 
+                                     data-bs-parent="#sensorBoxB003">
+                                     <div class="accordion-body">
+                                        <!-- Same sensor structure as Box 1 -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Temperature</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Motion</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Noise</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Sensor Box 2 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-2" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#sensorBoxB003-2">
+                                        Sensor Box 2
+                                    </button>
+                                </h2>
+                                <div id="sensorBoxB003-2" class="accordion-collapse collapse" 
+                                     data-bs-parent="#sensorBoxB003">
+                                     <div class="accordion-body">
+                                        <!-- Same sensor structure as Box 1 -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Temperature</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Motion</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Noise</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Sensor Box 3 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-2" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#sensorBoxB003-3">
+                                        Sensor Box 3
+                                    </button>
+                                </h2>
+                                <div id="sensorBoxB003-3" class="accordion-collapse collapse" 
+                                     data-bs-parent="#sensorBoxB003">
+                                     <div class="accordion-body">
+                                        <!-- Same sensor structure as Box 1 -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Temperature</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Motion</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Noise</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Sensor Box 4 -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-2" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#sensorBoxB003-4">
+                                        Sensor Box 4
+                                    </button>
+                                </h2>
+                                <div id="sensorBoxB003-4" class="accordion-collapse collapse" 
+                                     data-bs-parent="#sensorBoxB003">
+                                     <div class="accordion-body">
+                                        <!-- Same sensor structure as Box 1 -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Temperature</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Motion</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Noise</span>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary w-100 mt-3 py-2">
+        <i class="fas fa-play me-2"></i>Run Classification
+    </button>
+</div>
+                <!-- Current Activity -->
+    <div class="bg-white p-3 shadow rounded mt-3">
+        <h3 class="fw-bold d-flex justify-content-between align-items-center mb-3">
+            📊 Current Activity
+            <span class="text-secondary small fw-normal">Last updated: 2 mins ago</span>
+        </h3>
+        
+        <div class="p-2 bg-light rounded mb-3 border border-1 border-light">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-chalkboard-teacher fa-lg me-3 text-muted"></i>
+                <p class="fw-bold mb-0 fs-5 ms-1">Lecture</p>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <p class="text-secondary mb-0 fs-6">SHAP Values</p>
+            <a href="#" class="text-decoration-none">
+                <i class="fas fa-cog me-2 text-secondary"></i>
+                <span class="text-primary">Configure</span>
+            </a>
+        </div>
+
+        <div class="progress-section mb-3">
+            <div class="d-flex justify-content-between text-dark mb-1">
+                <span>Noise Level</span>
+                <span class="text-primary">0.75</span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-primary" style="width: 75%"></div>
+            </div>
+        </div>
+        
+        <div class="progress-section mb-3">
+            <div class="d-flex justify-content-between text-dark mb-1">
+                <span>Motion</span>
+                <span class="text-primary">0.60</span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-primary" style="width: 60%"></div>
+            </div>
+        </div>
+        
+        <div class="progress-section">
+            <div class="d-flex justify-content-between text-dark mb-1">
+                <span>Temperature</span>
+                <span class="text-primary">0.45</span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-primary" style="width: 45%"></div>
+            </div>
+        </div>
+    </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-md-3">
+            <!-- SHAP Settings -->
+            <div class="bg-white p-3 shadow rounded">
+                <h3 class="fw-bold mb-3">⚙️ SHAP Settings</h3>
+                <div class="mb-3">
+                    <label class="text-secondary mb-2">Sensor Type</label>
+                    <select class="form-select">
+                        <option>All Sensors</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="text-secondary mb-2">Time Moment</label>
+                    <select class="form-select">
+                        <option>All Moments</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="text-secondary mb-2">Display Top Features</label>
+                    <select class="form-select">
+                        <option>Top 5</option>
+                    </select>
+                </div>
+                <button class="btn btn-dark w-100">Apply Settings</button>
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

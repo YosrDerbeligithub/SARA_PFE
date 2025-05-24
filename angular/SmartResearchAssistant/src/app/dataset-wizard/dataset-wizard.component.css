@@ -1,0 +1,133 @@
+.wizard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .wizard-header {
+    height: 64px;
+    border-bottom: 1px solid #E2E8F0;
+    background-color: white;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .header-content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .header-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1E293B;
+    margin: 0;
+  }
+  
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .sidebar-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    color: #64748B;
+  }
+  
+  .sidebar-toggle-btn:hover {
+    background-color: #F1F5F9;
+    color: #1E293B;
+  }
+  
+  .btn {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+  }
+  
+  .btn-secondary {
+    background-color: white;
+    color: #64748B;
+    border: 1px solid #E2E8F0;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #F8FAFC;
+    border-color: #CBD5E1;
+  }
+  
+  .btn-primary {
+    background-color: #9D84D2;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: #8A6DC9;
+  }
+  
+  .wizard-content {
+    flex: 1;
+    padding: 24px;
+    overflow: auto;
+  }
+  
+  .wizard-tabs {
+    display: flex;
+    background-color: #F1F5F9;
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 24px;
+  }
+  
+  .tab-button {
+    flex: 1;
+    height: 40px;
+    border: none;
+    background-color: transparent;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    color: #64748B;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .tab-button.active {
+    background-color: white;
+    color: #9D84D2;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .tab-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .tab-content {
+    animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }

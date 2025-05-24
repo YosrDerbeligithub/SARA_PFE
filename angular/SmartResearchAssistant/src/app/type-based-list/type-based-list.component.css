@@ -1,0 +1,490 @@
+/* Custom CSS for Sensor Dashboard */
+.container-fluid {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+.container-fluid.py-2.bg-white.shadow-sm {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+.bg-grey { 
+    background-color: #f8f9fa; 
+}
+
+.shadow-panel {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.5rem;
+}
+/* Custom smaller button size */
+.btn-xs {
+    padding: 0.25rem 0.5rem;
+    line-height: 1.2;
+}
+
+/* Header text size */
+.historical-header h3 {
+    font-size: 2rem !important;
+    letter-spacing: 0.5px;
+}
+/* Height Adjustments */
+.full-height-container {
+    height: calc(100vh - 160px) !important; /* Keep original value */
+    flex: 1;
+    min-height: 0; /* Allow content compression */
+    margin-bottom: 60px;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.fixed-sidebar {
+    width: 227px;
+    height: 100%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.visualization-main { 
+    flex: 1; 
+    min-width: 0; 
+}
+.bg-white.shadow-panel.h-100.d-flex.flex-column {
+    height: 100% !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+  }
+  .full-height-container {
+    height: calc(100vh - 160px) !important; /* Keep original value */
+    flex: 1;
+    min-height: 0; /* Allow content compression */
+    margin-bottom: 60px;
+    padding-top: 20px;
+}
+/* Scrollable Areas */
+.scrollable-area {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #dee2e6 transparent;
+}
+
+/* Chart Section */
+.chart-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    max-height: 200px; /* Limited height */
+    overflow-y: auto;
+}
+
+.chart-icon {
+    width: 100%;
+    height: 40px;
+    background-color: #e9ecef;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.chart-icon:hover {
+    background-color: #dee2e6;
+}
+h6.fw-bold.mt-3.mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+/* Sensor Colors */
+.color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.bg-camera { background-color: #6f42c1; }
+.bg-motion { background-color: #d63384; }
+.bg-noise { background-color: #0dcaf0; }
+.bg-thermalamp { background-color: #fd7e14; }
+.bg-thermography { background-color: #20c997; }
+
+.sensor-item {
+    transition: all 0.2s ease;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.sensor-item:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+/* Fix accordion behavior */
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #dee2e6;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+/* Remove accordion highlight */
+.accordion {
+    /* Remove custom flex properties */
+    display: flex;
+    flex-direction: column;
+}
+.accordion-collapse {
+    transition: height 0.35s ease, opacity 0.2s linear;
+  }
+  .accordion-button:focus {
+    box-shadow: none !important;
+  }
+  .accordion-item {
+    transition: all 0.2s ease;
+  }    
+/* Accordion Behavior Fixes */
+.accordion-button:not(.collapsed) {
+    background-color: rgba(13, 110, 253, 0.05);
+    box-shadow: none;
+  }
+  .accordion-button::after {
+    transition: transform 0.25s ease;
+  }
+.accordion-button:not(.collapsed)::after {
+    transform: rotate(-180deg);
+}
+/* Base Colors */
+.color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Temperature */
+.bg-temperature { background-color: #dc3545; }
+.bg-temperature-4 { background-color: #f8d7da; }
+.bg-temperature-3 { background-color: #f1aeb5; }
+.bg-temperature-2 { background-color: #ea868f; }
+.bg-temperature-1 { background-color: #e35d6a; }
+
+/* Humidity */
+.bg-humidity { background-color: #0d6efd; }
+.bg-humidity-4 { background-color: #cfe2ff; }
+.bg-humidity-3 { background-color: #9ec5fe; }
+.bg-humidity-2 { background-color: #6ea8fe; }
+.bg-humidity-1 { background-color: #3d8bfd; }
+
+/* Luminance */
+.bg-luminance { background-color: #ffc107; }
+.bg-luminance-4 { background-color: #fff3cd; }
+.bg-luminance-3 { background-color: #ffe69c; }
+.bg-luminance-2 { background-color: #ffda6a; }
+.bg-luminance-1 { background-color: #ffcd39; }
+
+/* Microphone */
+.bg-microphone { background-color: #6f42c1; }
+.bg-microphone-4 { background-color: #e0d9f6; }
+.bg-microphone-3 { background-color: #c1b3ed; }
+.bg-microphone-2 { background-color: #a28ee3; }
+.bg-microphone-1 { background-color: #8368da; }
+
+/* Motion */
+.bg-motion { background-color: #d63384; }
+.bg-motion-4 { background-color: #f7d6e6; }
+.bg-motion-3 { background-color: #efadce; }
+.bg-motion-2 { background-color: #e685b5; }
+.bg-motion-1 { background-color: #de5c9d; }
+
+/* Pressure */
+.bg-pressure { background-color: #198754; }
+.bg-pressure-4 { background-color: #d1e7dd; }
+.bg-pressure-3 { background-color: #a3cfbb; }
+.bg-pressure-2 { background-color: #75b798; }
+.bg-pressure-1 { background-color: #479f76; }
+
+/* Observation */
+.bg-observation { background-color: #6c757d; }
+.bg-observation-4 { background-color: #e2e3e5; }
+.bg-observation-3 { background-color: #c4c8cb; }
+.bg-observation-2 { background-color: #a7acb1; }
+.bg-observation-1 { background-color: #898f97; }
+
+/* Presence */
+.bg-presence { background-color: #0dcaf0; }
+.bg-presence-4 { background-color: #cff4fc; }
+.bg-presence-3 { background-color: #9eeaf9; }
+.bg-presence-2 { background-color: #6edff6; }
+.bg-presence-1 { background-color: #3dd5f3; }
+
+/* Thermalamp */
+.bg-thermalamp { background-color: #fd7e14; }
+.bg-thermalamp-4 { background-color: #ffe5d0; }
+.bg-thermalamp-3 { background-color: #fecba1; }
+.bg-thermalamp-2 { background-color: #feb272; }
+.bg-thermalamp-1 { background-color: #fd9843; }
+
+/* Thermography */
+.bg-thermography { background-color: #20c997; }
+.bg-thermography-4 { background-color: #d2f4ea; }
+.bg-thermography-3 { background-color: #a5e9d5; }
+.bg-thermography-2 { background-color: #77dfc0; }
+.bg-thermography-1 { background-color: #4ad4ab; }
+
+/* Classroom Color Dots (Mid-shade between sensor type and first sensor box) */
+.bg-temperature-classroom { background-color: #db4660; } /* Between #dc3545 and #e35d6a */
+.bg-humidity-classroom { background-color: #2579fd; }    /* Between #0d6efd and #3d8bfd */
+.bg-luminance-classroom { background-color: #ffd340; }   /* Between #ffc107 and #ffcd39 */
+.bg-microphone-classroom { background-color: #986ed4; }  /* Between #6f42c1 and #8368da */
+.bg-motion-classroom { background-color: #e04a9f; }      /* Between #d63384 and #de5c9d */
+.bg-pressure-classroom { background-color: #2e9d68; }    /* Between #198754 and #479f76 */
+.bg-observation-classroom { background-color: #858e96; } /* Between #6c757d and #898f97 */
+.bg-presence-classroom { background-color: #1fd2f4; }    /* Between #0dcaf0 and #3dd5f3 */
+.bg-thermalamp-classroom { background-color: #fdaa45; }  /* Between #fd7e14 and #fd9843 */
+.bg-thermography-classroom { background-color: #2fddae; } /* Between #20c997 and #4ad4ab */
+.accordion-button::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    transform: rotate(-180deg);
+  }
+/* Sensor Type Level */
+.draggable-sensor-type {
+    font-size: 16px;
+    padding-left: 1rem !important;
+  }
+  
+  /* Site Level */
+  .draggable-facility {
+    font-size: 15px;
+    padding-left: 2rem !important;
+  }
+  
+  /* Location Level */
+  .draggable-location {
+    font-size: 14px;
+    padding-left: 2rem !important;
+  }
+  
+  /* Color dots alignment */
+  .draggable-sensor-type .color-dot,
+  .draggable-facility .color-dot,
+  .draggable-location .color-dot {
+    margin-right: 0.75rem;
+    transition: margin 0.2s ease;
+  }
+  
+  /* Hover effects for better interactivity */
+  .accordion-button:not(.collapsed) {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+  
+  .accordion-button:hover {
+    background-color: rgba(0, 0, 0, 0.025);
+  }
+  
+  /* Smooth transitions for accordion items */
+  .accordion-button {
+    transition: all 0.2s ease;
+  }
+/* Add to your global styles or component CSS */
+.ghost-sensor {
+    opacity: 0.7 !important;
+    background: white !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transform: scale(0.95);
+    transition: none !important;
+    pointer-events: none;
+    pointer-events: none !important;
+  }
+  .dropped-sensor {
+    margin-left: 10px !important; /* Push right instead of left */
+    padding-left: 6px !important;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+  .dropped-sensor[data-sensor-type] {
+    animation: drop-appear 0.3s ease;
+    cursor: pointer;
+    margin: 4px 0;
+    font-size: 0.68em; /* Reduced from original 0.9em */
+    padding: 4px 8px; /* Tighter padding */
+    position: relative;
+    z-index: 1;
+  }
+  /* Classroom elements - reduce by 0.2 */
+.dropped-sensor[data-classroom] {
+    font-size: 0.65em !important; /* 0.8 - 0.2 = 0.6 */
+    font-weight: 500;
+  }
+  
+  /* Sensor box elements - reduce by 0.4 */
+  .dropped-sensor[data-sensor-box] {
+    font-size: 0.5em !important; /* 0.8 - 0.4 = 0.4 */
+    letter-spacing: -0.2px;
+  }
+  .dropped-sensor .color-dot {
+    width: 6px !important;       /* Further reduced size */
+    height: 6px !important;
+    margin-right: 2px !important; /* Consistent spacing */
+    flex-shrink: 0;
+}
+  .dropped-sensor {
+    transition: all 0.2s ease;
+  }
+  .dropped-sensor span {
+    display: inline-block;
+    max-width: calc(100% - 14px); /* Account for color dot */
+    overflow: visible !important;
+    text-overflow: unset !important;
+    white-space: nowrap;
+    margin-left: 2px !important;
+    padding-left: 0 !important;
+    
+  } 
+/* Target dropped location elements specifically */
+.dropped-sensor[data-location] {
+    font-size: 0.58em !important; /* Slightly larger but still compact */
+    min-width: max-content; /* Ensure full text remains visible */
+    padding-right: 8px !important;
+    font-weight: 600 !important;
+    margin-left: 4px !important;
+    padding-left: 2px !important;
+    letter-spacing: -0.05px;
+  }
+  
+  .dropped-sensor[data-location] .color-dot {
+    width: 5px !important;
+    height: 5px !important;
+    margin-right: 3px !important;
+  }
+  
+  .dropped-sensor[data-location] span {
+    transform: translateX(2px);
+  }
+/* Add these styles to your existing CSS file */
+
+/* Custom Data Panel */
+.custom-data-panel {
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  overflow-y: auto;
+}
+
+.scrollable-area {
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #dee2e6 transparent;
+  transition: all 0.3s ease;
+}
+
+.custom-data-toggle {
+  padding: 10px;
+  background-color: white;
+  z-index: 2;
+}
+
+.custom-data-toggle .btn {
+  transition: all 0.2s ease;
+}
+
+.custom-data-toggle .btn i {
+  margin-right: 8px;
+}
+
+/* Animation for panel transition */
+.scrollable-area.custom-data-active {
+  background-color: #f8f9fa;
+}
+
+/* Ensure the accordion items in custom data panel have consistent styling */
+.custom-data-panel .accordion-button {
+  font-size: 14px;
+  padding-left: 1rem !important;
+}
+
+.custom-data-panel .accordion-button.smaller {
+  font-size: 13px;
+  padding-left: 2rem !important;
+}
+
+.custom-data-panel .color-dot {
+  margin-right: 0.75rem;
+}
+
+/* Ensure the sensor items in custom data panel are draggable */
+.custom-data-panel .sensor-item {
+  cursor: grab;
+  transition: all 0.2s ease;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.custom-data-panel .sensor-item:hover {
+  background-color: rgba(13, 110, 253, 0.05);
+}
+/* Always round, soft pastel dots */
+.pastel-dot {
+  width: 13px;
+  height: 13px;
+  min-width: 13px;
+  min-height: 13px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.85rem;
+  box-shadow: 0 1px 4px rgba(60,72,88,0.06);
+  border: 1.5px solid #f3f4f6;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+/* Pastel color by hierarchy depth */
+.pastel-dot.depth-1 { background: #957DAD; }  /* Group: blue pastel */
+.pastel-dot.depth-2 { background: #E0BBE4; }  /* Subgroup: green pastel */
+.pastel-dot.depth-3 { background: #D291BC; }  /* Column: orange pastel */
+.pastel-dot.depth-4 { background: #FEC8D8; }  /* Deeper: pink pastel */
+.pastel-dot.depth-5 { background: #FFDFD3; }  /* Even deeper: purple pastel */
+
+/* Indentation for hierarchy */
+.custom-data-item.depth-1, .sensor-item.depth-1 { padding-left: 1.5rem; }
+.custom-data-item.depth-2, .sensor-item.depth-2 { padding-left: 2.5rem; }
+.custom-data-item.depth-3, .sensor-item.depth-3 { padding-left: 3.5rem; }
+.custom-data-item.depth-4, .sensor-item.depth-4 { padding-left: 4.5rem; }
+.custom-data-item.depth-5, .sensor-item.depth-5 { padding-left: 5.5rem; }
+
+/* Space out items vertically */
+.custom-data-panel .accordion-button,
+.custom-data-panel .sensor-item {
+  margin-bottom: 0.18rem;
+  min-height: 2.1rem;
+  align-items: center;
+}
+
+/* Make sure text doesn't crowd the dot */
+.custom-data-panel .accordion-button .small,
+.custom-data-panel .sensor-item .small {
+  margin-left: 2px;
+}
+
+/* Prevent oval dots on flex containers */
+.custom-data-panel .color-dot,
+.custom-data-panel .pastel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}

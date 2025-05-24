@@ -1,0 +1,93 @@
+<!-- location-based-list.component.html -->
+<div class="fixed-sidebar">
+    <div class="bg-white shadow-panel h-100 d-flex flex-column">
+      <div class="p-3 border-bottom">
+        <div class="input-group">
+          <input type="text" 
+                 class="form-control form-control-sm" 
+                 placeholder="Search classrooms..."
+                 [(ngModel)]="searchQuery">
+          <span class="input-group-text">
+            <i class="fas fa-search"></i>
+          </span>
+        </div>
+        <h6 class="fw-bold mt-3 mb-2">Sensor Explorer</h6>
+        <p class="text-muted small mb-0">Drag sensors to Y-axis</p>
+      </div>
+  
+      <div class="scrollable-area">
+        <div class="accordion" id="locationAccordion">
+          <div *ngFor="let site of filteredData" class="accordion-item border-0">
+            <h2 class="accordion-header">
+                <button class="accordion-button py-2 px-3 small" 
+                        type="button" 
+                        (click)="toggleAccordion('site', site.siteId)">
+                    <div class="color-dot me-2" [style.backgroundColor]="site.displayColor"></div>
+                    {{ site.siteName }}
+                </button>
+            </h2>
+            <div [id]="'site' + site.siteId" 
+                 class="accordion-collapse collapse" 
+                 appAccordion
+                 [isOpenState]="isSiteOpen(site.siteId)"
+                 data-bs-parent="#locationAccordion">
+              
+              <div class="accordion-body p-0">
+                <div class="accordion">
+                  <div *ngFor="let location of site.locations" class="accordion-item border-0">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button py-2 px-3 small" 
+                                type="button" 
+                                (click)="toggleAccordion('location', location.locationId)">
+                            <div class="color-dot me-2" [style.backgroundColor]="location.displayColor"></div>
+                            {{ location.locationName }}
+                        </button>
+                    </h2>
+                    <div [id]="'loc' + location.locationId" 
+                         class="accordion-collapse collapse" 
+                         appAccordion
+                         [isOpenState]="isLocationOpen(location.locationId)">
+                      
+                      <div class="accordion-body p-0">
+                        <div class="accordion">
+                          <div *ngFor="let sensorBox of location.sensorBoxes" class="accordion-item border-0">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button py-2 px-3 small" 
+                                        type="button" 
+                                        (click)="toggleAccordion('sensorBox', sensorBox.sensorBoxId)">
+                                    <div class="color-dot me-2" [style.backgroundColor]="sensorBox.displayColor"></div>
+                                    {{ sensorBox.agentSerial }}
+                                </button>
+                            </h2>
+                            <div [id]="'sbox' + sensorBox.sensorBoxId" 
+                                 class="accordion-collapse collapse" 
+                                 appAccordion
+                                 [isOpenState]="isSensorBoxOpen(sensorBox.sensorBoxId)">
+                              
+                                 <div class="sensor-list p-2" cdkDropListGroup>
+                                  <div cdkDropList [cdkDropListData]="sensorBox.assignments"
+                                       (cdkDropListDropped)="drop($event)"
+                                       class="drop-list">
+                                    <div *ngFor="let assignment of sensorBox.assignments" 
+                                         cdkDrag
+                                         [cdkDragData]="assignment"
+                                         class="sensor-item d-flex align-items-center py-1">
+                                      <div class="color-dot me-2" 
+                                           [style.backgroundColor]="assignment.displayColor"></div>
+                                      <span class="small">{{ assignment.sensorType }}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

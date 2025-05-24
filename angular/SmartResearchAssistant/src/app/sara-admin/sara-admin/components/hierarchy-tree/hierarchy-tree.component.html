@@ -1,0 +1,43 @@
+<!-- src/app/sara-admin/components/hierarchy-tree/hierarchy-tree.component.html -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<div class="tree-container">
+    <ng-container *ngTemplateOutlet="treeTemplate; context: { $implicit: nodes, level: 0 }"></ng-container>
+  </div>
+  
+  <ng-template #treeTemplate let-nodes let-level="level">
+    <div class="tree-level">
+      <div 
+        *ngFor="let node of nodes" 
+        class="tree-node" 
+        [class.selected]="node.id === selectedId"
+        [style.padding-left.rem]="level * 1.5"
+        (click)="selectNode(node)"
+      >
+        <div class="tree-node-content">
+          <button 
+            *ngIf="node.children && node.children.length" 
+            class="toggle-button" 
+            (click)="toggleNode(node, $event)"
+            aria-label="Toggle node"
+          >
+            <i [class]="node.expanded ? 'fas fa-chevron-down' : 'fas fa-chevron-right'"></i>
+          </button>
+          <span *ngIf="!node.children || !node.children.length" class="toggle-placeholder"></span>
+          
+          <i [class]="getNodeIcon(node.type)" [style.color]="getIconColor(node.type)" class="node-icon"></i>
+          
+          <span class="node-name">{{ node.name }}</span>
+          
+          <span *ngIf="node.sensorCount !== undefined" class="node-badge">
+            {{ node.sensorCount }} sensors
+          </span>
+        </div>
+        
+        <div class="tree-children" *ngIf="node.children && node.children.length && node.expanded">
+          <ng-container 
+            *ngTemplateOutlet="treeTemplate; context: { $implicit: node.children, level: level + 1 }"
+          ></ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-template>

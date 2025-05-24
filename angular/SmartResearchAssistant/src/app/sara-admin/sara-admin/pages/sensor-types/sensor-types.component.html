@@ -1,0 +1,203 @@
+<!-- src/app/sara-admin/pages/sensor-types/sensor-types.component.html -->
+<div class="sensor-types-container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Sensor Types</h1>
+        <p class="page-description">Manage sensor types and their configurations.</p>
+      </div>
+      <button class="btn btn-primary" (click)="openDialog()">
+        <i class="fas fa-plus"></i>
+        <span>Add Sensor Type</span>
+      </button>
+    </div>
+  
+    <div class="card white-container">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="card-title">Sensor Type Management</h2>
+            <p class="card-description">View and manage all sensor types in the system.</p>
+          </div>
+          <div class="search-container  bordered-search">
+            <div class="search-input-wrapper">
+              <i class="fas fa-search search-icon"></i>
+              <input 
+                type="text" 
+                class="search-input" 
+                placeholder="Search sensor types..." 
+                (input)="search($event)"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-content">
+        <div class="loading-container" *ngIf="isLoading">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Loading sensor types...</p>
+        </div>
+        
+        <div class="table-container" *ngIf="!isLoading">
+          <table class="table">
+            <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Unit</th>
+                  <th>Display Color</th>
+                  <th>Usage</th>
+                  <th>Created</th>
+                  <th class="actions-column">Actions</th>
+                </tr>
+              </thead>
+            <tbody>
+              <tr *ngFor="let sensorType of filteredSensorTypes">
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="fas fa-gauge text-muted"></i>
+                    <span>{{ sensorType.name }}</span>
+                  </div>
+                </td>
+                <td>{{ sensorType.unit }}</td>
+                <td>
+                    <div class="color-swatch" [style.backgroundColor]="sensorType.displayColor"></div>
+                    {{ sensorType.displayColor }}
+                  </td>
+                <td>{{ sensorType.usageCount }} sensors</td>
+                <td>{{ formatDate(sensorType.created) }}</td>
+                <td>
+                  <div class="table-row-actions">
+                    <button class="btn btn-sm btn-outline btn-icon" (click)="openDialog(sensorType)" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button 
+                      class="btn btn-sm btn-outline btn-icon text-danger"
+                      (click)="confirmDelete(sensorType)" 
+                      title="Delete"
+                      [disabled]="sensorType.usageCount > 0"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="empty-state" *ngIf="filteredSensorTypes.length === 0">
+            <div class="empty-state-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <h3 class="empty-state-title">No sensor types found</h3>
+            <p class="empty-state-description">
+              No sensor types match your search criteria. Try adjusting your search or create a new sensor type.
+            </p>
+            <button class="btn btn-primary" (click)="openDialog()">
+              <i class="fas fa-plus"></i>
+              <span>Add Sensor Type</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sensor Type Form Dialog -->
+    <div class="dialog-overlay" *ngIf="showDialog" (click)="closeDialog()"></div>
+    <div class="dialog" *ngIf="showDialog">
+      <div class="dialog-header">
+        <h3 class="dialog-title">{{ editingSensorType ? 'Edit Sensor Type' : 'Add New Sensor Type' }}</h3>
+        <button class="dialog-close" (click)="closeDialog()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="dialog-content">
+        <form [formGroup]="sensorTypeForm" (ngSubmit)="submitForm()">
+          <div class="form-group">
+            <label for="name" class="form-label">Name</label>
+            <input 
+              type="text" 
+              id="name" 
+              class="form-input" 
+              [class.error]="sensorTypeForm.get('name')?.invalid && sensorTypeForm.get('name')?.touched"
+              formControlName="name" 
+              placeholder="Enter sensor type name"
+            >
+            <div class="form-error" *ngIf="sensorTypeForm.get('name')?.invalid && sensorTypeForm.get('name')?.touched">
+              <span *ngIf="sensorTypeForm.get('name')?.errors?.['required']">Name is required</span>
+              <span *ngIf="sensorTypeForm.get('name')?.errors?.['maxlength']">Name cannot exceed 100 characters</span>
+              <span *ngIf="sensorTypeForm.get('name')?.errors?.['duplicate']">
+                {{ sensorTypeForm.get('name')?.errors?.['duplicate'] }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="unit" class="form-label">Unit</label>
+            <input 
+              type="text" 
+              id="unit" 
+              class="form-input" 
+              [class.error]="sensorTypeForm.get('unit')?.invalid && sensorTypeForm.get('unit')?.touched"
+              formControlName="unit" 
+              placeholder="Enter unit of measurement (e.g., °C, %, ppm)"
+            >
+            <div class="form-error" *ngIf="sensorTypeForm.get('unit')?.invalid && sensorTypeForm.get('unit')?.touched">
+              <span *ngIf="sensorTypeForm.get('unit')?.errors?.['required']">Unit is required</span>
+              <span *ngIf="sensorTypeForm.get('unit')?.errors?.['maxlength']">Unit cannot exceed 20 characters</span>
+            </div>
+          </div>
+          <!-- Add after Unit form group -->
+            <div class="form-group">
+                <label for="displayColor" class="form-label">Display Color</label>
+                <input 
+                type="color"
+                id="displayColor"
+                class="form-input-color"
+                [class.error]="sensorTypeForm.get('displayColor')?.invalid && sensorTypeForm.get('displayColor')?.touched"
+                formControlName="displayColor"
+                >
+                <div class="form-error" *ngIf="sensorTypeForm.get('displayColor')?.invalid && sensorTypeForm.get('displayColor')?.touched">
+                <span *ngIf="sensorTypeForm.get('displayColor')?.errors?.['required']">
+                    Display color is required
+                </span>
+                </div>
+            </div>
+          
+        </form>
+      </div>
+      <div class="dialog-footer">
+        <button class="btn btn-outline" (click)="closeDialog()" [disabled]="isSubmitting">Cancel</button>
+        <button class="btn btn-primary" (click)="submitForm()" [disabled]="isSubmitting">
+          <span *ngIf="isSubmitting" class="loading-spinner-sm"></span>
+          <span>{{ editingSensorType ? 'Update' : 'Create' }}</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Delete Confirmation Dialog -->
+    <div class="dialog-overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()"></div>
+    <div class="dialog dialog-delete" *ngIf="showDeleteConfirm">
+      <div class="dialog-header">
+        <h3 class="dialog-title">Confirm Delete</h3>
+        <button class="dialog-close" (click)="cancelDelete()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="dialog-content">
+        <div class="confirm-delete-message">
+          <i class="fas fa-exclamation-triangle text-warning"></i>
+          <p>
+            Are you sure you want to delete the sensor type <strong>{{ sensorTypeToDelete?.name }}</strong>?
+            This action cannot be undone.
+          </p>
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button class="btn btn-outline" (click)="cancelDelete()">Cancel</button>
+        <button class="btn btn-destructive" (click)="deleteSensorType()">
+          <i class="fas fa-trash"></i>
+          <span>Delete</span>
+        </button>
+      </div>
+    </div>
+  </div>

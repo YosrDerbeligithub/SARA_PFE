@@ -1,0 +1,161 @@
+
+<div class="monitoring-container">
+    <!-- Header -->
+
+  <app-appbar></app-appbar>
+    <!-- Main content -->
+    <main class="monitoring-content">
+      <!-- Tabs -->
+      <div class="monitoring-tabs">
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'occupancy'" 
+        (click)="setActiveTab('occupancy')"
+        style="font-weight: 600;">
+        Occupancy
+      </button>
+
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'environmental'" 
+        (click)="setActiveTab('environmental')"
+        style="font-weight: 600;">
+        Environmental
+      </button>
+
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'thermal'" 
+        (click)="setActiveTab('thermal')"
+        style="font-weight: 600;">
+        Thermal
+      </button>
+        <div class="header-controls" style="margin-top: -8px;">
+            <!-- Global Location Selector -->
+            <div class="global-location-selector">
+                <i class="fas fa-location-dot"></i>
+              <select [(ngModel)]="globalLocation" (change)="setGlobalLocation(globalLocation)" title="Select Global Location">
+                <option *ngFor="let loc of flatLocations" [value]="loc.id">
+                  {{ loc.fullPath }}
+                </option>
+              </select>
+            </div>
+            
+            <!-- Alerts Button -->
+            <div class="alerts-dropdown">
+              <button class="alerts-button" [class.has-unread]="unreadAlertsCount > 0" title="View Alerts">
+                <i class="fas fa-bell"></i>
+              </button>
+              <div class="alerts-dropdown-content">
+                <div class="alerts-header">
+                  <div class="alerts-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Alerts ({{ alerts.length }})</h3>
+                  </div>
+                  <button *ngIf="unreadAlertsCount > 0" class="mark-read-button" (click)="markAllAlertsAsRead()">
+                    Mark all as read
+                  </button>
+                </div>
+                <div class="alerts-list">
+                  <div *ngIf="alerts.length === 0" class="no-alerts">
+                    No alerts to display
+                  </div>
+                  <div *ngFor="let alert of alerts" class="alert-item" [class.unread]="!alert.read">
+                    <div class="alert-content">
+                      <span class="alert-title">{{ alert.sensor }} ({{ alert.location }}):</span> {{ alert.message }}
+                      <div class="alert-time">{{ alert.time }}</div>
+                    </div>
+                    <button class="dismiss-button" (click)="markAlertAsRead(alert.id)" title="Dismiss alert">
+                        <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+ 
+      <!-- Tab Content -->
+      <div class="tab-content">
+
+        
+        <!-- Environmental Tab -->
+        <div *ngIf="activeTab === 'environmental'" class="sensor-grid">
+            <div class="sensor-card-wrapper" 
+                 *ngFor="let sensor of ['temperature', 'humidity', 'luminance']"
+                 [class.expanded]="expandedCards.includes(sensor)">
+                 <app-sensor-visual
+                 [sensor]="sensor"
+                 [sensorData]="sensorData[sensor]"
+                 [sensorType]="sensorTypes[sensor]"
+                 [sensorColor]="sensorColors[sensor]"
+                 [globalLocation]="globalLocation"
+                 [flatLocations]="flatLocations"
+                 [timeWindows]="timeWindows"
+                 [timeIntervals]="timeIntervals"
+                 [aggregationOptions]="aggregationOptions"
+                 [chartTypes]="chartTypes"
+                 (pauseChange)="onSensorPause($event)"
+                 (expandChange)="onCardExpand($event)"
+               ></app-sensor-visual>
+            </div>
+          </div>
+        
+        <!-- Occupancy Tab -->
+        <div *ngIf="activeTab === 'occupancy'" class="sensor-grid">
+            <div class="sensor-card-wrapper" 
+                 *ngFor="let sensor of [ 'motion', 'microphone', 'presence', 'radio', 'ble', 'thermalmap']"
+                 [class.expanded]="expandedCards.includes(sensor)">
+                 <app-sensor-visual
+
+                 [sensor]="sensor"
+                 [sensorData]="sensorData[sensor]"
+                 [sensorType]="sensorTypes[sensor]"
+                 [sensorColor]="sensorColors[sensor]"
+                 [globalLocation]="globalLocation"
+                 [flatLocations]="flatLocations"
+                 [timeWindows]="timeWindows"
+                 [timeIntervals]="timeIntervals"
+                 [aggregationOptions]="aggregationOptions"
+                 [chartTypes]="chartTypes"
+                 (pauseChange)="onSensorPause($event)"
+                 (expandChange)="onCardExpand($event)"
+               ></app-sensor-visual>
+            </div>
+          </div>
+        
+        <!-- Thermal Tab -->
+        <div *ngIf="activeTab === 'thermal'" class="sensor-grid">
+            <div class="sensor-card-wrapper" 
+                 *ngFor="let sensor of ['thermalmap', 'temperature']"
+                 [class.expanded]="expandedCards.includes(sensor)">
+                 <app-sensor-visual
+                 [sensor]="sensor"
+                 [sensorData]="sensorData[sensor]"
+                 [sensorType]="sensorTypes[sensor]"
+                 [sensorColor]="sensorColors[sensor]"
+                 [globalLocation]="globalLocation"
+                 [flatLocations]="flatLocations"
+                 [timeWindows]="timeWindows"
+                 [timeIntervals]="timeIntervals"
+                 [aggregationOptions]="aggregationOptions"
+                 [chartTypes]="chartTypes"
+                 (pauseChange)="onSensorPause($event)"
+                 (expandChange)="onCardExpand($event)"
+               ></app-sensor-visual>
+            </div>
+          </div>
+      </div>
+    </main>
+  
+    <!-- Footer -->
+    <footer class="monitoring-footer">
+      <div class="footer-update-time">
+        <i class="icon-clock"></i>
+        <span>Last updated: {{ lastUpdateTime }}</span>
+      </div>
+      <div class="footer-app-info">
+        <span>SARA Real-Time Monitoring Interface</span>
+      </div>
+    </footer>
+  </div>

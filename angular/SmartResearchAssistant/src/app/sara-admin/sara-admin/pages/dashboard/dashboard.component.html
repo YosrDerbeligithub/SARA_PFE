@@ -1,0 +1,55 @@
+<!-- src/app/sara-admin/pages/dashboard/dashboard.component.html -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<div class="dashboard-container">
+  <!-- Added header border -->
+  <div class="dashboard-header header-border">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-description modified-grey">
+      Welcome to the SARA admin dashboard. Manage your sites, locations, and sensors.
+    </p>
+  </div>
+  
+  <div class="stats-grid">
+    <app-stat-card 
+      *ngFor="let stat of stats"
+      [title]="stat.title"
+      [value]="stat.value"
+      [description]="stat.description"
+      [icon]="stat.icon"
+      [iconColor]="stat.iconColor"
+    ></app-stat-card>
+  </div>
+  
+
+
+  <div class="card card-border">
+    <div class="card-header">
+      <h1 class="card-title modified-title" *ngIf="activeTab === 'hierarchy'">Site Hierarchy</h1>
+      <h2 class="card-title modified-title" *ngIf="activeTab === 'activity'">Recent Activity</h2>
+      <p class="card-description modified-grey" *ngIf="activeTab === 'hierarchy'">
+        View and manage your site hierarchy including locations and sensor boxes.
+      </p>
+      <p class="card-description modified-grey" *ngIf="activeTab === 'activity'">
+        Recent changes to sites, locations, and sensors.
+      </p>
+    </div>
+      <div class="card-content">
+        <div class="loading-container" *ngIf="isLoading">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Loading data...</p>
+        </div>
+        
+        <!-- Hierarchy Tree View -->
+        <div class="hierarchy-view" *ngIf="activeTab === 'hierarchy' && !isLoading">
+          <app-hierarchy-tree 
+            [nodes]="hierarchyData"
+            (nodeToggled)="handleNodeToggled($event)">
+          </app-hierarchy-tree>
+        </div>
+  
+        <!-- Recent Activity View -->
+        
+
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,1016 @@
+/* Custom CSS for Sensor Dashboard */
+.container-fluid {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+.container-fluid.py-2.bg-white.shadow-sm {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+.bg-grey { 
+    background-color: #f8f9fa; 
+}
+.col-3.h-100 {
+    max-width: 20% !important;      /* Reduced from 25% */
+    flex: 1 0 20% !important;
+    padding-right: 2px !important;
+}
+.shadow-panel {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.5rem;
+}
+.button-group-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+.btn-group {
+    width: 360px; /* Adjust based on your needs */
+    max-width: 100%;
+    margin: 0 1rem;
+    height: 32px;
+}
+.btn-group .btn {
+    flex: 1; /* Equal width */
+    min-width: 0; /* Allow text truncation */
+    text-align: center;
+    white-space: nowrap;
+    padding: 0.375rem 1rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+/* Custom smaller button size */
+.btn-xs {
+    padding: 0.25rem 0.5rem;
+    line-height: 1.2;
+}
+/* Custom button styles */
+.btn-group .btn {
+    border-color: #dee2e6;
+    transition: all 0.2s ease;
+}
+.btn-group .btn-sm {
+    line-height: 1.1;
+    border-width: 1px;
+}
+.btn-group .btn-outline-secondary {
+    border-left: none;
+}
+.btn-group .btn:not(:first-child) {
+    border-left: none;
+}
+  
+  .btn-group .btn:last-child {
+    border-left: none !important;
+  }
+  /* Enhanced active state for primary button */
+.btn-group .btn-primary.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+    z-index: 2; /* Ensure active button overlaps */
+    flex: 1;
+  }
+  
+  /* Enhanced hover states */
+  .btn-group .btn-primary:not(.active):hover {
+    background-color: #0b5ed7;
+    color: white;
+  }
+  
+  .btn-group .btn-outline-secondary:not(.active):hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #0d6efd;
+  }
+.btn-outline-secondary {
+    background-color: white;
+    color: #495057;
+    border-color: #dee2e6;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #0d6efd;
+}
+
+.btn-primary.rounded-start-pill {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.btn-outline-secondary.rounded-end-pill {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+/* Active state styling */
+.btn-group .btn.active {
+    box-shadow: none;
+    position: relative;
+    z-index: 1;
+}
+/* Header text size */
+.historical-header h3 {
+    font-size: 1rem !important;
+    letter-spacing: 0.5px;
+}
+/* Height Adjustments */
+.full-height-container {
+    height: calc(100vh - 160px) !important; /* Keep original value */
+    flex: 1;
+    min-height: 0; /* Allow content compression */
+    margin-bottom: 60px;
+    padding-top: 20px;
+}
+
+body.bg-grey.d-flex.flex-column {
+    overflow: hidden;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.fixed-sidebar {
+    width: 240px;
+    height: 100%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    margin-right:20px;
+    margin-left:-2px;
+}
+
+.visualization-main { 
+    min-width: 0; 
+    flex: 1 1 60% !important;      /* Increased flex basis */
+    margin-left: -20px !important; 
+}
+
+/* Scrollable Areas */
+.scrollable-area {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #dee2e6 transparent;
+}
+
+/* Chart Section */
+.chart-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    max-height: 200px; /* Limited height */
+    overflow-y: auto;
+}
+
+.chart-icon {
+    width: 100%;
+    height: 40px;
+    background-color: #e9ecef;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.chart-icon:hover {
+    background-color: #dee2e6;
+}
+h6.fw-bold.mt-3.mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+/* Metrics Section */
+.metrics-container {
+    background-color: white; /* Match sidebar color */
+    border-radius: 0.5rem;
+    padding: 1rem;
+    height: 280px;
+    overflow-y: auto; /* Make entire section scrollable */
+}
+.metric-category {
+    margin-bottom: 0.5rem;
+}
+.metric-scroll-container {
+    height: 100px; /* Reduced height */
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: #dee2e6 transparent;
+    margin-top: 0.2rem;
+}
+
+.metric-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    padding: 0.25rem 0;
+    padding: 0.5rem 0;
+    font-size: 0.875rem;
+}
+
+.metric-switch {
+    width: 40px;
+    height: 18px;
+    background: #e9ecef;
+    border-radius: 9px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+/* Adjust switch sizing if needed */
+.form-switch .form-check-input {
+    height: 1.1em;
+    width: 2.7em;
+}
+
+/* Optional: Tighten up the layout */
+.form-switch {
+    padding-left: 3.5em;
+}
+.text-muted.small.mb-2 {
+    margin-top: 0.2rem !important; 
+    margin-bottom: 0.2rem !important; /* Reduced from 0.5rem */
+}
+/* Drag & Drop Area */
+.drag-target {
+    width: 96% !important; /* Slightly adjusted for perfect centering */
+    height: 95% !important;
+    border: 2px dashed #dee2e6;
+    background: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    margin: 0 auto; /* Center horizontally */
+    margin-right: -10px; /* Pull content to the left */
+}
+.drag-target:hover {
+    border-color: #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+
+/* Sensor Colors */
+.color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.bg-camera { background-color: #6f42c1; }
+.bg-motion { background-color: #d63384; }
+.bg-noise { background-color: #0dcaf0; }
+.bg-thermalamp { background-color: #fd7e14; }
+.bg-thermography { background-color: #20c997; }
+
+sensor-item {
+    transition: all 0.2s ease;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.sensor-item:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+/* X-Axis Container */
+.border-top.p-3 {
+    min-height: 155px !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+}
+.accordion-button {
+    padding: 0.5rem 1rem !important;
+    pointer-events: auto !important; /* Override any dragula interference */
+
+}
+.draggable-sensor-type, .draggable-classroom {
+    cursor: grab; /* Visual indicator for draggable elements */
+  }
+.accordion-button.collapsed .color-dot {
+    opacity: 0.9;
+}
+/* Nested accordion indentation */
+.accordion .accordion {
+    margin-left: 1rem;
+}
+
+/* Color dot sizing consistency */
+.color-dot {
+    width: 10px;
+    height: 10px;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+/* X-Axis Container */
+.border-top.p-3 {
+    min-height: 155px !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+}
+/* Time Range Controls */
+.time-range-btn {
+    background-color: white !important;
+    border: 1px solid #dee2e6 !important;
+    padding: 0.25rem 0.75rem !important;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    color: #495057 !important;
+    transition: all 0.2s ease;
+}
+.time-range-btn:hover {
+    background-color: #f8f9fa !important;
+}
+
+.time-range-btn.active {
+    background-color: #e9ecef !important;
+    border-color: #dee2e6 !important;
+    color: #212529 !important;
+}
+.form-control-sm {
+    padding: 0.5rem 0.75rem !important;
+}
+/* Reduced opacity for the time inputs container */
+.p-2.rounded-2.mt-2[style*="background-color: rgba(108, 117, 125, 0.1)"] {
+    background-color: rgba(108, 117, 125, 0.05) !important; /* Reduced opacity */
+}
+/* Input Group Spacing */
+.d-flex.gap-2 {
+    gap: 1rem !important;
+}
+.time-range-btn.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+.time-range-btn {
+    font-size: 0.75rem !important;
+    white-space: nowrap;
+}
+
+.fs-12 {
+    font-size: 12px !important;
+}
+.time-range-container > * {
+    opacity: 1 !important;
+}
+.bg-opacity-15 {
+    opacity: 0.15;
+}
+.datetime-input {
+    width: 160px;  /* Reduced from 200px */
+    height: 32px;
+    padding: 0.25rem 0.5rem;  /* Adjusted padding */
+    font-size: 0.825rem;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #dee2e6;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+/* Remove accordion highlight */
+.accordion {
+    /* Remove custom flex properties */
+    display: flex;
+    flex-direction: column;
+}
+.accordion-collapse {
+    transition: height 0.35s ease, opacity 0.2s linear;
+  }
+  .accordion-button:focus {
+    box-shadow: none !important;
+  }
+  .accordion-item {
+    transition: all 0.2s ease;
+  }    
+/* Accordion Behavior Fixes */
+.accordion-button:not(.collapsed) {
+    background-color: rgba(13, 110, 253, 0.05);
+    box-shadow: none;
+  }
+  .accordion-button::after {
+    transition: transform 0.25s ease;
+  }
+.accordion-button:not(.collapsed)::after {
+    transform: rotate(-180deg);
+}
+/* Drag-drop specific styles */
+.ghost-sensor {
+    opacity: 0.7 !important;
+    background: white !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transform: scale(0.95);
+    transition: none !important;
+    pointer-events: none;
+    pointer-events: none !important;
+  }
+  
+  .dropped-sensor[data-sensor-type] {
+    animation: drop-appear 0.3s ease;
+    cursor: pointer;
+    margin: 4px 0;
+    font-size: 0.64em; /* Reduced from original 0.9em */
+    padding: 4px 8px; /* Tighter padding */
+    position: relative;
+    z-index: 1;
+  }
+  /* Classroom elements - reduce by 0.2 */
+.dropped-sensor[data-classroom] {
+    font-size: 0.65em !important; /* 0.8 - 0.2 = 0.6 */
+    font-weight: 500;
+  }
+  
+  /* Sensor box elements - reduce by 0.4 */
+  .dropped-sensor[data-sensor-box] {
+    font-size: 0.56em !important; /* 0.8 - 0.4 = 0.4 */
+    letter-spacing: -0.2px;
+  }
+  .dropped-sensor .color-dot {
+    width: 6px !important;       /* Further reduced size */
+    height: 6px !important;
+    margin-right: 2px !important; /* Consistent spacing */
+    flex-shrink: 0;
+}
+  .dropped-sensor {
+    transition: all 0.2s ease;
+  }
+  .dropped-sensor span {
+    display: inline-block;
+    max-width: calc(100% - 14px); /* Account for color dot */
+    overflow: visible !important;
+    text-overflow: unset !important;
+    white-space: nowrap;
+    margin-left: 2px !important;
+    padding-left: 0 !important;
+    
+  }  
+  
+/* Y-Axis Container */
+.y-axis-container small {
+    width: 100%;
+    padding-top: 0.25rem !important; /* Reduced from 0.5rem (pt-2) */
+    margin-top: -0.25rem;
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+.y-axis-container {
+    width: 128px;
+    background: #fff;
+    padding: 8px; /* Space between container and inner dashed area */
+    border-top-left-radius: 0.5rem; /* Match shadow-panel radius */
+    border-bottom-left-radius: 0.5rem;
+    overflow: hidden; /* Keep children within rounded bounds */
+}
+
+.y-axis-drop-area {
+    border: 2px dashed #dee2e6;
+    height: calc(100% - 40px); /* Account for title + padding */
+    border-radius: 4px;
+    margin: 0 8px; /* Fixed tiny space from container borders */
+    background: rgba(255, 255, 255, 0.5);
+}
+/* Y-Axis Container Hover */
+.y-axis-container:hover {
+    border-right-color: #0d6efd; /* Blue border */
+}
+
+.y-axis-container:hover .y-axis-drop-area {
+    border-color: #0d6efd; /* Blue border for inner drop area */
+    background: rgba(13, 110, 253, 0.05);
+}
+
+/* Add transition for smooth effect */
+
+.y-axis-drop-area {
+    transition: all 0.3s ease;
+    user-select: none;
+    -webkit-user-drag: none;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 8px;
+    gap: 4px;
+    /* New positioning additions */
+    position: relative;
+    min-height: 120px; /* Adjust based on your design needs */
+     display: flex; /* Preserve flex layout */
+}
+
+/* Add cursor pointer */
+.y-axis-container:hover {
+    cursor: pointer;
+}
+.visualization-content {
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    overflow: hidden;
+}
+.drop-instruction {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    color: #6c757d;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    padding: 10px;
+    text-align: center;
+}
+
+.drop-instruction span {
+    display: inline-block;
+    white-space: nowrap;
+}
+/* Add to same-sensor-type.component.css */
+:host ::ng-deep .drop-instruction {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 100% !important;
+    color: #6c757d !important;
+    font-size: 0.75rem !important;
+    line-height: 1.4 !important;
+    padding: 10px !important;
+    text-align: center !important;
+    pointer-events: none !important;
+}
+
+/* Ensure drop zone maintains size */
+:host ::ng-deep .y-axis-drop-area {
+    position: relative !important;
+    min-height: 120px !important; /* Adjust based on your needs */
+}
+/* Match visualization area border */
+.drag-target {
+    border: 2px dashed #dee2e6;
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+/*.flex-column.justify-content-center {
+    padding: 1rem 0;
+}*/
+/* Fix switch alignment */
+.form-switch {
+    padding-left: 2.5em;
+    margin-bottom: 0;
+}
+
+.form-switch .form-check-input {
+    height: 1.1em;
+    width: 2.2em;
+    margin-left: -2.5em;
+}
+
+/* Metric item hover state */
+.metric-item:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+    border-radius: 4px;
+}
+
+/* Visualization area layout fix */
+.visualization-main .d-flex {
+    min-height: 0; /* Fix flexbox overflow */
+}
+.sensor-item {
+    cursor: grab;
+    transition: all 0.2s ease;
+    position: relative; /* Needed for accurate offset calculations */
+}
+
+.sensor-item:active {
+    cursor: grabbing;
+}
+
+/* Drag-drop specific styles */
+.ghost-sensor {
+    opacity: 0.7 !important;
+    background: white !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transform: scale(0.95);
+    transition: none !important;
+    pointer-events: none;
+    pointer-events: none !important;
+  }
+  
+  .dropped-sensor {
+    animation: drop-appear 0.3s ease;
+    cursor: pointer;
+    margin: 4px 0;
+    font-size: 0.8em; /* Reduced from original 0.9em */
+    padding: 4px 8px; /* Tighter padding */
+    max-width: 160px; /* Reduced from 200px */
+  }
+  .dropped-sensor .color-dot {
+    width: 8px; /* Reduced from 10px */
+    height: 8px;
+    margin-right: 4px; /* Reduced from 8px */
+  }
+  .dropped-sensor {
+    transition: all 0.2s ease;
+    
+  }
+  .dropped-sensor span {
+    display: inline-block;
+    max-width: calc(100% - 16px); /* Account for color dot */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }  
+  
+  @keyframes drop-appear {
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+/* Notes Section */
+.notes-container {
+    position: fixed;
+    bottom: -40px;
+    left: 40px;
+    width: 140px;
+    z-index: 1000;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    background: transparent;
+    transform: translateY(0); /* Force position */
+
+}
+
+.notes-container.expanded {
+    bottom: calc(20px + 150px);
+}
+
+.notes-toggle-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px !important;
+    background-color: #0d6efd !important;
+    border: 1px solid #0d6efd !important;
+    transition: all 0.2s ease;
+}
+
+.notes-toggle-btn:hover {
+    background-color: #0b5ed7 !important;
+}
+
+.notes-toggle-btn.active {
+    background-color: white !important;
+    border-color: #dee2e6 !important;
+}
+
+.notes-toggle-btn i {
+    font-size: 1.1rem;
+    color: white !important;
+}
+
+.notes-toggle-btn.active i {
+    color: #495057 !important;
+}
+
+.notes-textarea {
+    width: 470px;
+    height: 150px;
+    transition: all 0.15s ease;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+}
+
+.notes-textarea.collapsed {
+    height: 0;
+    opacity: 0;
+    transform: scaleY(0);
+    overflow: hidden;
+    padding: 0 !important;
+    border: none !important;
+}
+/* Close Button */
+.notes-close-btn {
+    position: absolute;
+
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #dee2e6;
+
+    transition: all 0.3s ease;
+}
+
+.notes-close-btn:hover {
+    background: #f8f9fa;
+    border-color: #0d6efd;
+}
+
+.notes-close-btn i {
+    font-size: 1rem;
+    color: #6c757d;
+}
+/* Add to your component's CSS */
+.type-mismatch-popover {
+    position: absolute;
+    z-index: 99999;
+    display: block !important;
+    opacity: 1;
+    background: #fff;
+    border: 2px solid #dc3545;
+    border-radius: 4px;
+    max-width: 300px;
+  }
+  
+  .type-mismatch-popover .popover-arrow {
+    display: block !important;
+    border-right-color: #dc3545 !important;
+  }
+  
+  .type-mismatch-popover .popover-body {
+    color: #dc3545;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+.custom-popover {
+    max-width: 300px;
+  }
+  
+  .custom-popover .popover-body {
+    height: 100px; /* Maintain your desired height */
+    padding: 0.75rem;
+  }
+  .custom-popover .popover-body > div {
+    height: 100%;
+  }
+  .custom-popover .btn-link {
+    padding: 0 0 2px 0 !important;
+    margin: 0 !important;
+  }
+  .custom-popover .position-relative {
+    margin-top: 8px;
+  }
+  .custom-popover .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+  .custom-popover p {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .custom-popover .never-show {
+    color: #6c757d !important;
+    text-decoration: underline;
+    font-size: 0.75rem;
+    padding: 0;
+    margin: 0;
+  }
+/* same-sensor-type.component.css */
+
+.popover.custom-popover {
+    max-width: 300px;
+    max-height: 100px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  .popover.custom-popover .popover-body {
+    padding: 1rem;
+  }
+  
+  .popover.custom-popover .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .popover.custom-popover .never-show {
+    color: #6c757d;
+    text-decoration: underline;
+    padding-left: 0;
+  }
+  
+  .custom-popover .delete-btn {
+    border: none;
+    color: #6c757d !important;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .custom-popover .delete-btn:hover {
+    background-color: #f8f9fa;
+  }
+  .custom-popover .delete-btn svg {
+    font-weight: 700;
+  }
+  .custom-popover .bi-x {
+    vertical-align: top;
+  }
+  .custom-popover .popover {
+    max-width: 280px;
+    min-height: 50px;
+  }
+.y-axis-drop-area {
+    border: 2px dashed #dee2e6;
+    height: calc(100% - 40px); /* Account for title + padding */
+    border-radius: 4px;
+    margin: 0 8px; /* Fixed tiny space from container borders */
+    background: rgba(255, 255, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    position: relative;
+    justify-content: center; /* Center when empty */
+    align-items: center;
+}
+.drop-instruction {
+    color: #6c757d; /* Grey color */
+    font-size: 0.75rem; /* Small font size */
+    line-height: 1.4;
+    padding: 10px;
+    z-index: 0;
+    pointer-events: none;
+}
+.chart-icon.chart-compatible {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.chart-icon.chart-selected {
+  transform: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.chart-icon.chart-disabled {
+  opacity: 0.5;
+  background-color: #e9ecef !important;
+}
+.chart-icon.chart-disabled i {
+  color: #495057 !important;
+}
+.chart-icon.chart-compatible i {
+  color: inherit !important; /* Force icon to inherit color from parent */
+}
+.chart-icon.chart-compatible[data-chart-type="Line"] { color: var(--chart-line); }
+.chart-icon.chart-compatible[data-chart-type="Heatmap"] { color: var(--chart-heatmap); }
+.chart-icon.chart-compatible[data-chart-type="Bar"] { color: var(--chart-bar); }
+.chart-icon.chart-compatible[data-chart-type="BoxPlot"] { color: var(--chart-boxplot); }
+.chart-icon.chart-compatible[data-chart-type="Area"] { color: var(--chart-area); }
+.chart-icon.chart-compatible[data-chart-type="Surface3D"] { color: var(--chart-surface3d); }
+.chart-icon.chart-compatible[data-chart-type="ErrorBand"] { color: var(--chart-errorband); }
+.chart-icon.chart-compatible[data-chart-type="Scatter"] { color: var(--chart-scatter); }
+.chart-icon.chart-compatible[data-chart-type="EventFrequency"] { color: var(--chart-eventfrequency); }
+.chart-icon.chart-compatible[data-chart-type="Step"] { color: var(--chart-step); }
+/*add these*/
+.metrics-container.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.granularity-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #495057;
+    min-width: auto;
+    text-align: center;
+    margin-left: 4px;
+    margin-right: -4px;
+    padding: 0 2px;
+}
+.pe-none {
+    pointer-events: none;
+  }
+  .echarts {
+    margin-bottom: 40px; /* Adjust based on your offset value */
+  }
+/* historical-visualization.component.css */
+:host {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+  
+  #chartContainer {
+    width: 100%;
+    height: 500px;
+    min-height: 400px;
+  }
+/* historical-visualization.component.css */
+
+  .echarts {
+    margin-bottom: 50px;
+  }
+  
+  .echarts div:last-child canvas {
+    margin-bottom: 30px !important;
+  }
+  .echarts .xAxis .axisLabel {
+    padding: 5px;
+  }
+  .echarts .xAxis:nth-child(2) .axisLabel {
+    margin-top: 10px;
+  }
+  .custom-x-axis-container {
+    width: 100%;
+    padding: 10px 0;
+  }
+
+  .fab-action-row {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 1040;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.95);
+  border-radius: 2rem;
+  box-shadow: 0 2px 12px rgba(13,110,253,0.10); /* subtle blue shadow */
+  padding: 0.2rem 0.7rem;
+  align-items: center;
+  transition: box-shadow 0.2s;
+}
+
+.fab-action-row:hover,
+.fab-action-row:focus-within {
+  box-shadow: 0 8px 32px rgba(13,110,253,0.22); /* stronger blue shadow */
+}
+
+.fab-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(13,110,253,0.10);
+  border: none;
+  transition: box-shadow 0.18s, background 0.18s, transform 0.18s;
+  color: #0d6efd; /* app accent color */
+  font-size: 1.15rem;
+}
+
+.fab-btn i {
+  color: #0d6efd !important; /* app accent color */
+  font-size: 1.15rem;
+}
+
+.fab-btn:hover,
+.fab-btn:focus {
+  background: #e7f1ff;
+  box-shadow: 0 6px 24px rgba(13,110,253,0.22);
+  transform: scale(1.12);
+  color: #0a58ca;
+}
+
+.fab-btn.active,
+.fab-btn.active i {
+  background: #e7f1ff;
+  color: #0a58ca !important;
+}
+.chart-icon.chart-compatible[data-chart-type="Heatmap"] {
+  color: #fd7e14; /* Orange accent for heatmap */
+}
+.sara-appbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1050;
+}
+
+.dropped-item.fa-folder {
+  color: #ffc107; /* Yellow color for groups */
+}

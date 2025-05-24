@@ -1,0 +1,229 @@
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">Upload Your Data</h2>
+    <p class="card-description">Upload a CSV file or paste JSON data to create your dataset</p>
+  </div>
+
+  <!-- Metadata Section -->
+  <div class="metadata-section">
+    <div class="metadata-row">
+      <div class="metadata-item">
+        <label class="metadata-label">Dataset Name</label>
+        <input
+          type="text"
+          class="metadata-input"
+          [(ngModel)]="datasetName"
+          (input)="onNameChange(datasetName)"
+          placeholder="Enter dataset name"
+          required
+        >
+        <span class="required-badge">Required</span>
+      </div>
+      
+      <div class="metadata-item">
+        <label class="metadata-label">Description</label>
+        <textarea
+          class="metadata-textarea"
+          [(ngModel)]="datasetDescription"
+          (input)="onDescriptionChange(datasetDescription)"
+          placeholder="Describe your dataset"
+          rows="3"
+          required
+        ></textarea>
+        <span class="required-badge">Required</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-content">
+    <!-- First Row: CSV Upload and JSON Editor -->
+    <div class="upload-grid">
+      <!-- CSV Upload Area -->
+      <div class="upload-area" [class.uploaded]="dataUploaded" (click)="handleUpload()">
+        <div class="upload-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+        </div>
+        <div class="upload-text">
+          @if (dataUploaded) {
+            <p class="upload-title">data.csv uploaded</p>
+            <p class="upload-subtitle">Click to change file</p>
+          } @else {
+            <p class="upload-title">Drag & drop your CSV file here</p>
+            <p class="upload-subtitle">or click to browse files</p>
+          }
+        </div>
+      </div>
+
+      <!-- JSON Editor -->
+      <div class="json-editor-container">
+        <div class="json-editor-header">
+          <h3 class="json-editor-title">Or paste JSON data</h3>
+          <button class="json-format-btn" (click)="formatJson()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            Format JSON
+          </button>
+        </div>
+        <div class="json-editor">
+          <div class="line-numbers">
+            @for (num of [1, 2, 3, 4, 5, 6, 7, 8]; track num) {
+              <div class="line-number">{{ num }}</div>
+            }
+          </div>
+          <textarea 
+            class="json-textarea"
+            placeholder='[{"timestamp": "2023-04-01T12:00:00Z", "temperature": 22.5, "humidity": 45}]'
+            [(ngModel)]="jsonContent"
+
+            (input)="handleJsonInput($event)" 
+            (click)="$event.stopPropagation()"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Row: Visibility Section -->
+    <div class="visibility-section">
+      <h3 class="visibility-title">Dataset Visibility</h3>
+      <div class="visibility-options">
+        <div class="visibility-option">
+          <input 
+            type="radio" 
+            id="public" 
+            name="visibility" 
+            value="PUBLIC" 
+            [checked]="visibility === 'PUBLIC'"
+            (change)="handleVisibilityChange('PUBLIC')"
+          >
+          <label for="public" class="visibility-label">
+            <span class="visibility-icon public">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </span>
+            <div class="visibility-text">
+              <span class="visibility-name">Public</span>
+              <span class="visibility-description">Anyone with the link can view this dataset</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="visibility-option">
+          <input 
+            type="radio" 
+            id="private" 
+            name="visibility" 
+            value="PRIVATE"
+            [checked]="visibility === 'PRIVATE'"
+            (change)="handleVisibilityChange('PRIVATE')"
+          >
+          <label for="private" class="visibility-label">
+            <span class="visibility-icon private">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                <line x1="2" x2="22" y1="2" y2="22"></line>
+              </svg>
+            </span>
+            <div class="visibility-text">
+              <span class="visibility-name">Private</span>
+              <span class="visibility-description">Only you can access this dataset</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="visibility-option">
+          <input 
+            type="radio" 
+            id="restricted" 
+            name="visibility" 
+            value="RESTRICTED"
+            [checked]="visibility === 'RESTRICTED'"
+            (change)="handleVisibilityChange('RESTRICTED')"
+          >
+          <label for="restricted" class="visibility-label">
+            <span class="visibility-icon private">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                <line x1="2" x2="22" y1="2" y2="22"></line>
+              </svg>
+            </span>
+            <div class="visibility-text">
+              <span class="visibility-name">Restricted</span>
+              <span class="visibility-description">Only you and specified collaborators can access this dataset</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      @if (visibility === 'RESTRICTED') {
+        <div class="collaborators-section">
+          <div class="collaborators-header">
+            <h4 class="collaborators-title">Collaborators</h4>
+            <button class="info-button" title="Collaborators will receive an email invitation to access this dataset">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4"></path>
+                <path d="M12 8h.01"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="collaborator-input-container">
+            <input 
+              type="email" 
+              class="collaborator-input" 
+              placeholder="Enter email address"
+              [(ngModel)]="newCollaborator"
+            >
+            <button class="add-collaborator-btn" (click)="addCollaborator()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add
+            </button>
+          </div>
+          
+          <div class="collaborators-list">
+            @if (collaborators.length > 0) {
+              @for (email of collaborators; track email) {
+                <div class="collaborator-badge">
+                  {{ email }}
+                  <button class="remove-collaborator-btn" (click)="removeCollaborator(email)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              }
+            } @else {
+              <p class="no-collaborators">No collaborators added yet</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <button 
+      class="btn btn-primary"
+      [disabled]="!dataUploaded"
+      (click)="nextStep.emit()"
+    >
+      Next: Define Schema
+    </button>
+  </div>
+</div>

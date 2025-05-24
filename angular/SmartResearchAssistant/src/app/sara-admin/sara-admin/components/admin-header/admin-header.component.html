@@ -1,0 +1,58 @@
+<!-- src/app/sara-admin/components/admin-header/admin-header.component.html -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><header class="admin-header">
+    <button class="header-button sidebar-toggle" (click)="toggleSidebar()" aria-label="Toggle Sidebar">
+      <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="header-actions">
+      <div class="notification-dropdown">
+        <button class="header-button notification-button" (click)="toggleNotifications()" aria-label="Notifications">
+          <i class="far fa-bell"></i>
+          <span class="notification-badge" *ngIf="notificationService.hasUnread()"></span>
+        </button>
+        
+        <div class="dropdown-menu notification-menu" [class.show]="notificationsOpen">
+          <div class="dropdown-header">
+            <h3 class="dropdown-title">Notifications</h3>
+          </div>
+          <div class="dropdown-content">
+            <div class="notification-item" *ngFor="let notification of notificationService.getRecent()">
+              <div class="notification-icon" [class]="notification.type">
+                <i [class]="notification.icon"></i>
+              </div>
+              <div class="notification-content">
+                <p class="notification-text">{{ notification.message }}</p>
+                <p class="notification-time">{{ notification.time }}</p>
+              </div>
+            </div>
+            <div class="empty-state" *ngIf="notificationService.getRecent().length === 0">
+              <p>No new notifications</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="user-dropdown">
+        <button class="header-button user-button" (click)="toggleUserMenu()" aria-label="User Menu">
+          <div class="avatar">
+            <span class="avatar-fallback"><i class="far fa-user"></i></span>
+          </div>
+        </button>
+        
+        <div class="dropdown-menu user-menu" [class.show]="userMenuOpen">
+          <div class="dropdown-header">
+            <h3 class="user-name">Admin User</h3>
+            <p class="user-email">adminsara.app</p>
+          </div>
+
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" (click)="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Log out</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="header-divider"></div>
+  </header>
