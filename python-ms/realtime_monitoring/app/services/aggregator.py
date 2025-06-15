@@ -37,7 +37,7 @@ class Aggregator:
             return {}
 
         # Get metadata from most recent data point (preserves id, unit, timestamps, etc)
-        latest_data = self.buffer[-1][1].copy()  # Copy to avoid modifying original
+        latest_data = self.buffer[-1][1].copy()  
         
         # Compute metric and update reading
         if self.metric == 'average':

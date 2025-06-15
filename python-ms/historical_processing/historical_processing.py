@@ -26,8 +26,7 @@ import numpy as np
 
 
 
-
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 import logging
 import math
 import json
@@ -105,32 +104,46 @@ logger = logging.getLogger("uvicorn.error")
 # Data Models (Timezone-Enhanced)
 # --------------------------
 
+
+def to_utc(value):
+    """Convert any datetime or ISO string to UTC timezone-aware datetime"""
+    if isinstance(value, str):
+        value = value.replace('Z', '+00:00')
+        dt = datetime.fromisoformat(value)
+    elif isinstance(value, datetime):
+        dt = value
+    else:
+        raise ValueError("Invalid datetime format")
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
 class TimeGap(BaseModel):
-    """
-    Represents a time range for processing.
-    Expected input: ISO 8601 datetime strings.
-    """
     start: datetime = Field(..., description="Start time of the gap (ISO 8601 format)")
     end: datetime = Field(..., description="End time of the gap (ISO 8601 format)")
 
-    @validator('start', 'end', pre=True)
-    def ensure_utc(cls, value: datetime) -> datetime:
-        """Convert any datetime to UTC timezone-aware object"""
-        if isinstance(value, str):
-            value = value.replace('Z', '+00:00')
-            dt = datetime.fromisoformat(value)
-        elif isinstance(value, datetime):
-            dt = value
-        else:
-            raise ValueError("Invalid datetime format")
+    @field_validator('start', 'end', mode='before')
+    @classmethod
+    def ensure_utc(cls, value):
+        return to_utc(value)
 
-        if dt.tzinfo is None:
-            return dt.replace(tzinfo=timezone.utc)
-        return dt.astimezone(timezone.utc)
+    model_config = ConfigDict(
+        json_encoders={datetime: lambda dt: dt.isoformat()}
+    )
+class ExportRequest(BaseModel):
+    facility: str = Field(..., pattern="^(uoa|istic)$")
+    sensor_type: str = Field(
+        ..., 
+        pattern="^(humidity|luminance|microphone|motion|presence|radio|temperature|thermalmap|thermography)$"
+    )
+    agent_serial: list[str] = Field(..., min_items=1)
+    start: datetime = Field(...)
+    end: datetime = Field(...)
+    format: str = Field("json", pattern="^(csv|json)$")
 
-    class Config:
-        json_encoders = {datetime: lambda dt: dt.isoformat()}
-
+    @field_validator('start', 'end', mode='before')
+    @classmethod
+    def ensure_utc(cls, value):
+        return TimeGap.to_utc(value)
 class SensorReading(BaseModel):
     """
     Represents a single sensor reading with full metadata.
@@ -145,8 +158,9 @@ class SensorReading(BaseModel):
     timeOfCreate: datetime = Field(default_factory=lambda: datetime.now(timezone.utc),
                                  description="Timestamp of record creation")
 
-    class Config:
-        json_encoders = {datetime: lambda dt: dt.isoformat()}
+    model_config = ConfigDict(
+        json_encoders={datetime: lambda dt: dt.isoformat()}
+    )
 
 class ProcessingRequest(BaseModel):
     """
@@ -177,8 +191,8 @@ class ProcessingRequest(BaseModel):
         description="Statistical metric (e.g., average, sum, median, skewness)"
     )
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "sensor_type": "temperature", 
                 "start": "2023-10-01T00:00:00Z",
@@ -186,7 +200,7 @@ class ProcessingRequest(BaseModel):
                 "aggregation_level": "hourly",
                 "metric": "average"
             }
-        }
+        })
 
 class CacheClearResponse(BaseModel):
     status: str
@@ -1596,4 +1610,3 @@ async def thermalmap_reading_at_time(
         "time": ts_utc,
         "reading": reading
     }
-

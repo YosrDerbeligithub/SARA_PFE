@@ -2,7 +2,8 @@ import httpx
 from app.config import settings
 import logging
 from datetime import datetime
-from pytz import timezone  
+from pytz import timezone, UTC
+import json
 
 
 logger = logging.getLogger(__name__)
@@ -11,35 +12,49 @@ logger = logging.getLogger(__name__)
 class APIClient:
     """
     Manages authentication and raw data fetching from the Sense API.
-    Used by core.scheduler.
+    Used by core.scheduler and SSE.
     """
-    def __init__(self):
+    def __init__(self, email: str):
         self.token: str = ""
-        # Keep one AsyncClient alive through the life of the app
+        self.email = email
         self.client = httpx.AsyncClient(base_url=settings.data_api_url)
 
+    # Global cache: {email: (token, expires_at)}
+    _token_cache = {}
+
+    async def ensure_token(self):
+        """
+        Use cached token if valid, else refresh from Redis and update cache.
+        """
+        now = datetime.utcnow().replace(tzinfo=UTC)
+        cached = APIClient._token_cache.get(self.email)
+        if cached:
+            token, exp = cached
+            if exp > now:
+                self.token = token
+                return
+        # Not cached or expired, refresh
+        await self.refresh_token()
+        # refresh_token updates self.token and cache
+
     async def refresh_token(self):
-        logger.info("Refreshing API token...")
-
         """
-        Obtain a new Bearer token from the API.
-        Called periodically by scheduler.
-
+        Grab the latest pre-fetched token out of Redis, under
+          key = f"user:{self.email}:token"
         """
-        try:
-            data = {
-                'username': settings.api_username,
-                'password': settings.api_password,
-                'grant_type': 'password'
-            }
-            resp = await self.client.post("/auth/token", data=data)
-            resp.raise_for_status()
-            self.token = resp.text.strip()
-            logger.info("Token refreshed successfully(from fetcher class): %s", str(self.token))
-
-        except httpx.HTTPStatusError as e:
-            logger.error("Token refresh failed with status %s: %s", e.response.status_code, e.response.text)
-
+        from app.core.redis_client import redis_client
+        key = f"user:{self.email}:token"
+        raw = await redis_client.get(key)
+        if not raw:
+            raise RuntimeError(f"No token in Redis under {key}")
+        # Spring stored a JSON-string payload {"token":…,"expiresAt":…}
+        entry = json.loads(raw)
+        exp = datetime.fromisoformat(entry["expiresAt"].replace("Z", "+00:00"))
+        if exp < datetime.utcnow().replace(tzinfo=UTC):
+            raise RuntimeError("Redis token expired at " + entry["expiresAt"])
+        self.token = entry["token"]
+        APIClient._token_cache[self.email] = (self.token, exp)
+        logger.debug("Pulled token from Redis; expires at %s", entry["expiresAt"])
 
     async def fetch_data(self, facility: str, sensor_box_id: str, sensor_type: str):
         """

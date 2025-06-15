@@ -1,6 +1,6 @@
 
 from pydantic_settings import BaseSettings
-from typing import ClassVar  # 👈 Add this import
+from typing import ClassVar  
 
 from pydantic import Field, SecretStr
 from pytz import timezone
@@ -25,9 +25,15 @@ class Settings(BaseSettings):
     # Default SSE update frequency
     default_sse_frequency: int = 60
 
-    # Security
-    api_username: str = "hajlawimelik@gmail.com"
-    api_password: str = "melik1234"
+
+
+
+   # Redis for Sense-API tokens
+    redis_url: str = Field(
+    "redis://:melik1234@sara-cache:6379/0",
+    env="REDIS_URL",
+    description="Redis connection string for token cache"
+    )
 
     class Config:
         env_file = ".env"

@@ -92,7 +92,9 @@ export class DifferentSensorTypesComponent implements OnInit, OnDestroy, AfterVi
   maxCharts = 10;
   minCharts = 2;
   nextChartId = 1;
-  
+ public showToast = false;
+public toastMessage = '';
+public toastType: 'error' | 'info' = 'error'; 
   private hasData = false;
   private timeRangeSet = false;
   private resizeObservers: ResizeObserver[] = [];
@@ -350,35 +352,21 @@ export class DifferentSensorTypesComponent implements OnInit, OnDestroy, AfterVi
     this.resizeObservers.push(observer);
   }
 
-  private setInitialOptions(chart: Chart): void {
-    if (!chart.chartInstance) return;
-    const isExpanded = chart.isExpanded;
-    chart.chartInstance.setOption({
-      grid: {
-        containLabel: true,
-        top: isExpanded ? 40 : 30,
-        bottom: isExpanded ? 80 : 50,
-        left: isExpanded ? 80 : 60,
-        right: isExpanded ? 40 : 20,
-      },
-      xAxis: {
-        type: 'time',
-        axisLabel: {
-          rotate: isExpanded ? 0 : 45,
-          margin: isExpanded ? 12 : 8,
-          interval: isExpanded ? 'auto' : 3
-        }
-      },
-      yAxis: {
-        type: 'value',
-        axisLabel: {
-          width: isExpanded ? 60 : 40,
-          overflow: 'truncate'
-        }
-      },
-      tooltip: { trigger: 'axis' }
-    });
-  }
+private setInitialOptions(chart: Chart): void {
+  if (!chart.chartInstance) return;
+  const isExpanded = chart.isExpanded;
+  chart.chartInstance.setOption({
+    grid: {
+      containLabel: true,
+      top: isExpanded ? 30 : 20,
+      bottom: isExpanded ? 20 : 7,
+      left: isExpanded ? 28 : 20,
+      right: isExpanded ? 20 : 7,
+    }
+    
+  });
+}
+
 
   private resizeAllCharts(): void {
     this.charts.forEach(chart => {
@@ -409,33 +397,20 @@ export class DifferentSensorTypesComponent implements OnInit, OnDestroy, AfterVi
     }, 350);
   }
 
-  private updateChartOptions(chart: Chart): void {
-    if (!chart.chartInstance || chart.droppedSensors.length === 0) return;
-    const isExpanded = chart.isExpanded;
-    const options = {
-      grid: {
-        top: isExpanded ? 40 : 30,
-        bottom: isExpanded ? 80 : 50,
-        left: isExpanded ? 80 : 60,
-        right: isExpanded ? 40 : 20,
-        containLabel: true
-      },
-      xAxis: {
-        axisLabel: {
-          rotate: isExpanded ? 0 : 45,
-          margin: isExpanded ? 12 : 8,
-          interval: isExpanded ? 'auto' : 3
-        }
-      },
-      yAxis: {
-        axisLabel: {
-          width: isExpanded ? 60 : 40,
-          formatter: (value: number) => value.toFixed(1)
-        }
-      }
-    };
-    chart.chartInstance.setOption(options);
-  }
+private updateChartOptions(chart: Chart): void {
+  if (!chart.chartInstance || chart.droppedSensors.length === 0) return;
+  const isExpanded = chart.isExpanded;
+  chart.chartInstance.setOption({
+    grid: {
+      top: isExpanded ? 30 : 20,
+      bottom: isExpanded ? 20 : 7,
+      left: isExpanded ? 28 : 20,
+      right: isExpanded ? 20 : 7,
+      containLabel: true
+    }
+    
+  });
+}
 
   // --- CDK Drag and Drop Handlers Only ---
   onSensorDrop(event: CdkDragDrop<DraggableSensorAssignment[]>, chart: Chart): void {
@@ -550,41 +525,20 @@ export class DifferentSensorTypesComponent implements OnInit, OnDestroy, AfterVi
     );
   }
 
-  increaseGranularity(): void {
-    if (this.canIncreaseGranularity()) {
-      const granularityLevels = ['minute', 'hour', 'day', 'month', 'year'];
-      const currentIndex = granularityLevels.indexOf(this.visualizationService.currentGranularity);
-      if (currentIndex < granularityLevels.length - 1) {
-        const newGranularity = granularityLevels[currentIndex + 1];
-        this.visualizationService.setGranularity(newGranularity as any);
-        if (this.startDate && this.endDate) {
-          const newStart = this.visualizationService.alignDateToGranularity(this.startDate.getTime());
-          const newEnd = this.visualizationService.alignDateToGranularity(this.endDate.getTime());
-          this.startDate = new Date(newStart);
-          this.endDate = new Date(newEnd);
-        }
-        this.cdr.detectChanges();
-      }
-    }
+increaseGranularity() {
+  if (this.canIncreaseGranularity()) {
+    this.visualizationService.updateGranularity("up");
+    // Optionally align dates here
+    this.cdr.detectChanges();
   }
-
-  decreaseGranularity(): void {
-    if (this.canDecreaseGranularity()) {
-      const granularityLevels = ['minute', 'hour', 'day', 'month', 'year'];
-      const currentIndex = granularityLevels.indexOf(this.visualizationService.currentGranularity);
-      if (currentIndex > 0) {
-        const newGranularity = granularityLevels[currentIndex - 1];
-        this.visualizationService.setGranularity(newGranularity as any);
-        if (this.startDate && this.endDate) {
-          const newStart = this.visualizationService.alignDateToGranularity(this.startDate.getTime());
-          const newEnd = this.visualizationService.alignDateToGranularity(this.endDate.getTime());
-          this.startDate = new Date(newStart);
-          this.endDate = new Date(newEnd);
-        }
-        this.cdr.detectChanges();
-      }
-    }
+}
+decreaseGranularity() {
+  if (this.canDecreaseGranularity()) {
+    this.visualizationService.updateGranularity("down");
+    // Optionally align dates here
+    this.cdr.detectChanges();
   }
+}
 
   get canApply(): boolean {
     const checks = {
@@ -604,6 +558,7 @@ export class DifferentSensorTypesComponent implements OnInit, OnDestroy, AfterVi
     try {
       this.isLoading = true;
       this.errorMessage = undefined;
+      const emptySerials: string[] = [];
       await Promise.all(this.charts.map(async (chart) => {
         if (chart.droppedSensors.length === 0) {
           return;
@@ -612,6 +567,8 @@ export class DifferentSensorTypesComponent implements OnInit, OnDestroy, AfterVi
         if (!chart.chartInstance) {
           await this.initializeChart(chart);
         }
+        console.log('Current granularity:', this.visualizationService.currentGranularity);
+        console.log('Mapped aggregation_level:', this.mapGranularity(this.visualizationService.currentGranularity));
         const params: SensorDataParams = {
           facility: sensor.facility,
           sensor_type: sensor.sensorType,
@@ -627,8 +584,10 @@ export class DifferentSensorTypesComponent implements OnInit, OnDestroy, AfterVi
         try {
           console.log('fetching data for', params);
           const rawData = await this.httpRequestsService.fetchSensorData(params).toPromise();
+          console.log('Fetched data for', sensor.agentSerial, rawData);
           if (!rawData) {
             console.error('[Apply] Empty response for', sensor.agentSerial);
+            emptySerials.push(sensor.agentSerial);
             return;
           }
           const processedData = this.visualizationService.processAggregatedData(
@@ -636,6 +595,7 @@ export class DifferentSensorTypesComponent implements OnInit, OnDestroy, AfterVi
             this.startDate,
             this.endDate
           );
+          console.log('Processed data for', sensor.agentSerial, processedData);
           this.visualizationService.updateChart(
             chart.id.toString(),
             { 
@@ -654,10 +614,19 @@ export class DifferentSensorTypesComponent implements OnInit, OnDestroy, AfterVi
             }
           }
         } catch (error) {
+          emptySerials.push(sensor.agentSerial);
           console.error(`[Apply] Failed for sensor ${sensor.agentSerial}:`, error);
           this.errorMessage = `Error fetching data for ${sensor.sensorType} (${sensor.agentSerial})`;
         }
       }));
+          // Show toast if any agent serials had no data
+    if (emptySerials.length > 0) {
+      this.showToast = true;
+      this.toastType = 'error';
+      this.toastMessage = `No data was fetched from the following agent serials: ${emptySerials.join(', ')}`;
+      this.cdr.detectChanges();
+      setTimeout(() => this.showToast = false, 8000);
+    }
     } catch (error) {
       console.error('[Apply] General failure:', error);
       this.errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -666,7 +635,10 @@ export class DifferentSensorTypesComponent implements OnInit, OnDestroy, AfterVi
       this.cdr.detectChanges();
     }
   }
-
+onGranularityChange(granularity: string): void {
+  this.visualizationService.setGranularity(granularity as any);
+  this.cdr.detectChanges();
+}
   private mapGranularity(granularity: string): AggregationLevel {
     const mapping: Record<string, AggregationLevel> = {
       minute: "minute",
@@ -674,8 +646,8 @@ export class DifferentSensorTypesComponent implements OnInit, OnDestroy, AfterVi
       day: "daily",
       month: "monthly",
       year: "yearly",
-    };
-    return mapping[granularity] || "minute";
+    }
+    return mapping[granularity] || "minute"
   }
 
   toggleAccordion(type: 'site' | 'location' | 'sensorBox', id: number): void {

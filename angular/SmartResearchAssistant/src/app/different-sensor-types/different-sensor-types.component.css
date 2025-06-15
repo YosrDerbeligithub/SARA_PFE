@@ -282,17 +282,20 @@
     margin: 8px;
     padding: 8px;
 }
+.container-fluid.mt-3 {
+    margin-top: 0 !important;
+}
 
 .x-axis-container {
-    
-    height: 145px;
+    min-height: 150px;
+    height: 150px;
     background: white;
     border-radius: 0.5rem;
     margin: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     margin-top: auto; /* Push to bottom */
     position: relative;
-    bottom: -10px; /* Match sidebar's bottom spacing */
+    bottom: -15px; /* Match sidebar's bottom spacing */
     flex-shrink: 0;
 
 }
@@ -894,7 +897,7 @@ body.bg-grey.d-flex.flex-column {
 }
 .add-graph-container {
     position: fixed;
-    top: 100px;
+    top: 75px;
     left: 950px;
     z-index: 1000;}
 .btn-add-graph {
@@ -964,8 +967,8 @@ body.bg-grey.d-flex.flex-column {
 .chart-container {
     position: relative;
     transition: height 0.3s ease;
-    height: 185px;
-    min-height: 185px;
+    height: 223px;
+    min-height: 223px;
 
 }
 
@@ -982,8 +985,12 @@ body.bg-grey.d-flex.flex-column {
     left: 1px;
 }
 .chart-container.expanded {
-    height: 371px !important; /* Adjust based on your needs */
-    min-height: 371px !important;
+    height: 445px !important; /* Adjust based on your needs */
+    min-height: 445px !important;
+}
+
+#chartScrollArea, .scrollable-charts {
+    height: calc(100% - 220px);
 }
 /* Drag & Drop Styles */
 .cdk-drag-preview {
@@ -1278,3 +1285,28 @@ body.bg-grey.d-flex.flex-column {
 
   
 
+/* Toast styles */
+.custom-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  min-width: 320px;
+  max-width: 90vw;
+  padding: 16px 32px;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #fff;
+  background: #323232;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  text-align: center;
+  opacity: 0.98;
+  transition: opacity 0.3s;
+}
+.custom-toast.error {
+  background: #e53935;
+}
+.custom-toast.info {
+  background: #1976d2;
+}

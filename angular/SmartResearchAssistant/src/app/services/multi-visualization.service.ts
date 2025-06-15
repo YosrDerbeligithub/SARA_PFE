@@ -86,86 +86,61 @@ export class MultiVisualizationService {
   /**
    * Update a chart with new data
    */
-updateChart(chartId: string, data: { 
-    values: [number, number][], 
+updateChart(
+  chartId: string,
+  data: {
+    values: [number, number][],
     sensorType: string,
-    chartType: 'line' | 'bar' | 'scatter' | 'area' | 'step'
-  }): void {
-    const chart = this.chartRegistry.get(chartId);
-    if (!chart) return;
+    chartType: 'line' | 'bar' | 'scatter' | 'area' | 'step',
+    grid?: { top?: number, bottom?: number, left?: number, right?: number }
+  }
+): void {
+  const chart = this.chartRegistry.get(chartId);
+  if (!chart) return;
 
-    // Get chart type-specific options
-      let options: echarts.EChartsOption;
-  
-  switch (data.chartType) {
-  case 'area':
-    options = this.getAreaChartOptions(data);
-    break;
-  case 'bar':
-    options = this.getBarChartOptions(data);
-    break;
-  case 'scatter':
-    options = this.getScatterOptions(data);
-    break;
-  case 'step':
-    options = this.getStepChartOptions(data);
-    break;
-  case 'line':
-    // Add a getLineChartOptions method or use getFullChartOptions with 'line'
-    options = this.getFullChartOptions(data, { ...chart.config, chartType: 'line' });
-    break;
-  default:
-    options = this.getFullChartOptions(data, chart.config);
-  }
-    
-    // Apply options with animation disabled for first update
-    chart.instance.setOption(options, true);
-    
-    // Resize to ensure proper rendering
-    requestAnimationFrame(() => {
-      chart.instance.resize();
-    });
-  }
+  // Always use getFullChartOptions for all chart types
+  const options = this.getFullChartOptions(data, { ...chart.config, chartType: data.chartType, grid: data.grid });
+  chart.instance.setOption(options, true);
+  requestAnimationFrame(() => {
+    chart.instance.resize();
+  });
+}
 
   /**
    * Process raw sensor data into format needed for charts
    */
-  public processAggregatedData(
-    response: SensorDataResponse,
-    requestStart: Date,
-    requestEnd: Date
-  ): { values: [number, number][], sensorType: string } {
-    const dataPoints: [number, number][] = [];
-    const sensorType = response.sensor_type || 'Unknown Sensor';
+public processAggregatedData(
+  response: SensorDataResponse,
+  requestStart: Date,
+  requestEnd: Date
+): { values: [number, number][], sensorType: string } {
+  const dataPoints: [number, number][] = [];
+  const sensorType = response.sensor_type || 'Unknown Sensor';
 
-    if (!response?.aggregated_results) {
-      return { values: [], sensorType };
-    }
-   
-    const startTime = requestStart.getTime();
-    const endTime = requestEnd.getTime();
-   
-    // Process all groups maintaining their original structure
-    for (const [month, points] of Object.entries(response.aggregated_results)) {
-      for (const point of points) {
-        try {
-          const timestamp = Date.parse(point.time);
-          // Only include points within the requested range
-          if (timestamp >= startTime && timestamp <= endTime) {
-            dataPoints.push([timestamp, point.value]);
-          }
-        } catch (e) {
-          console.warn('Invalid data point:', point);
+  if (!response?.aggregated_results) {
+    return { values: [], sensorType };
+  }
+
+  // Always include all points returned by the backend
+  for (const group of Object.values(response.aggregated_results)) {
+    for (const point of group as any[]) {
+      try {
+        const timestamp = Date.parse(point.time);
+        if (!isNaN(timestamp)) {
+          dataPoints.push([timestamp, point.value]);
         }
+      } catch (e) {
+        console.warn('Invalid data point:', point);
       }
     }
-   
-    // Sort by timestamp
-    return {
-      values: dataPoints.sort((a, b) => a[0] - b[0]),
-      sensorType
-    };
   }
+
+  // Sort by timestamp
+  return {
+    values: dataPoints.sort((a, b) => a[0] - b[0]),
+    sensorType
+  };
+}
 
   /**
    * Set the chart type for all charts
@@ -322,21 +297,99 @@ updateChart(chartId: string, data: {
   private getFullChartOptions(data: { values: [number, number][], sensorType: string }, config: {
     granularity: string;
     chartType: 'line' | 'bar' | 'scatter' | 'area' | 'step';
+    grid?: { top?: number, bottom?: number, left?: number, right?: number }
   }): echarts.EChartsOption {
     const baseOptions = this.getBaseChartOptions(data);
-   
+     let xAxis: XAXisOption, yAxis: YAXisOption;
+  xAxis = this.getEnhancedXAxisOptions(data.values);
+  yAxis = this.getEnhancedYAxisOptions(data.values);
     return {
       ...baseOptions,
-      xAxis: this.getEnhancedXAxisOptions(data.values),
-      yAxis: this.getEnhancedYAxisOptions(data.values),
-      series: [{
-        type: config.chartType as 'line' | 'bar' | 'scatter',
-        data: data.values,
-        showSymbol: config.chartType !== 'bar',
-        itemStyle: { color: '#6366f1' },
-        ...(config.chartType === 'area' && { areaStyle: {} }),
-        ...(config.chartType === 'bar' && { barWidth: this.calculateBarWidth() })
-      }] as echarts.SeriesOption[],
+    toolbox: {
+      feature: {
+        saveAsImage: {
+          name: `${data.sensorType}_chart`,
+          title: 'Save as Image',
+          type: 'png',
+          backgroundColor: '#FFFFFF',
+          excludeComponents: ['toolbox'],
+          pixelRatio: 2
+        }
+      },
+      right: '20px',
+      top: '10px',
+      itemSize: 16
+    },
+    grid: {
+      ...baseOptions.grid,
+      ...(config.grid || { bottom: 7, left: 7, right: 7, top: 20 }),
+    },
+    xAxis,
+    yAxis,
+          dataZoom: [
+      {
+        type: 'inside',
+        xAxisIndex: 0,
+        zoomLock: false,
+        start: 0,
+        end: 100,
+        minSpan: 1,
+        filterMode: 'filter' as 'filter',
+        rangeMode: ['value', 'value'],
+        zoomOnMouseWheel: false,
+        moveOnMouseMove: true,
+        moveOnMouseWheel: true,
+        preventDefaultMouseMove: false
+      },
+      {
+        type: 'inside',
+        yAxisIndex: 0,
+        zoomLock: false,
+        filterMode: 'none' as 'none',
+        zoomOnMouseWheel: false,
+        moveOnMouseMove: true,
+        moveOnMouseWheel: true,
+        preventDefaultMouseMove: false
+      },
+      {
+        type: 'inside',
+        xAxisIndex: 0,
+        orient: 'horizontal',
+        zoomOnMouseWheel: true,
+        throttle: 0,
+        start: 0,
+        end: 100,
+        zoomLock: false,
+        filterMode: 'none' as 'none'
+      },
+      {
+        type: 'inside',
+        yAxisIndex: 0,
+        orient: 'vertical',
+        zoomOnMouseWheel: true,
+        throttle: 0,
+        start: 0,
+        end: 100,
+        zoomLock: false,
+        filterMode: 'none' as 'none'
+      }
+    ],
+series: [{
+  type: (
+    config.chartType === 'area' ||
+    config.chartType === 'step' ||
+    config.chartType === 'line'
+      ? 'line'
+      : config.chartType
+  ) as 'line' | 'bar' | 'scatter',
+  data: data.values,
+  showSymbol: false,
+  symbol: (config.chartType === 'line' || config.chartType === 'area' || config.chartType === 'step') ? 'none' : undefined,
+  itemStyle: { color: '#6366f1' },
+  ...(config.chartType === 'area' && { areaStyle: { opacity: 0.4 } }),
+  ...(config.chartType === 'bar' && { barWidth: this.calculateBarWidth() }),
+  ...(config.chartType === 'step' && { step: 'middle' }),
+}] as echarts.SeriesOption[],
       tooltip: {
         trigger: 'axis',
         formatter: (params: any) => this.tooltipFormatter(params, data.sensorType)
@@ -412,99 +465,94 @@ updateChart(chartId: string, data: {
   /**
    * Get area chart specific options
    */
-  private getAreaChartOptions(data: { values: [number, number][], sensorType: string }): echarts.EChartsOption {
-    return {
-      ...this.getBaseChartOptions(data),
-      xAxis: this.getEnhancedXAxisOptions(data.values),
-      yAxis: this.getEnhancedYAxisOptions(data.values),
-      series: [{
-        type: 'line',
-        data: data.values,
-        smooth: true,
-        areaStyle: {
-          opacity: 0.4,
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: '#6366f1' },
-            { offset: 1, color: 'rgba(99, 102, 241, 0.1)' }
-          ])
-        },
-        lineStyle: {
-          color: '#6366f1',
-          width: 2
-        },
-        symbol: 'none'
-      }]
-    };
-  }
+private getAreaChartOptions(data: { values: [number, number][], sensorType: string }): echarts.EChartsOption {
+  return {
+    ...this.getBaseChartOptions(data),
+    xAxis: this.getEnhancedXAxisOptions(data.values), // type: 'time'
+    yAxis: this.getEnhancedYAxisOptions(data.values), // type: 'value'
+    dataZoom: this.getDataZoomConfig(),
+    series: [{
+      type: 'line',
+      data: data.values,
+      smooth: true,
+      areaStyle: {
+        opacity: 0.4,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#6366f1' },
+          { offset: 1, color: 'rgba(99, 102, 241, 0.1)' }
+        ])
+      },
+      lineStyle: {
+        color: '#6366f1',
+        width: 2
+      },
+      symbol: 'none'
+    }]
+  };
+}
 
-  /**
-   * Get bar chart specific options
-   */
-  private getBarChartOptions(data: { values: [number, number][], sensorType: string }): echarts.EChartsOption {
-    return {
-      ...this.getBaseChartOptions(data),
-      xAxis: this.getEnhancedXAxisOptions(data.values),
-      yAxis: this.getEnhancedYAxisOptions(data.values),
-      series: [{
-        type: 'bar',
-        data: data.values,
-        barWidth: this.calculateBarWidth(),
+private getBarChartOptions(data: { values: [number, number][], sensorType: string }): echarts.EChartsOption {
+  return {
+    ...this.getBaseChartOptions(data),
+    xAxis: this.getEnhancedXAxisOptions(data.values), // type: 'time'
+    yAxis: this.getEnhancedYAxisOptions(data.values), // type: 'value'
+    dataZoom: this.getDataZoomConfig(),
+    series: [{
+      type: 'bar',
+      data: data.values,
+      barWidth: this.calculateBarWidth(),
+      itemStyle: {
+        color: '#6366f1',
+        borderRadius: [3, 3, 0, 0]
+      },
+      emphasis: {
         itemStyle: {
-          color: '#6366f1',
-          borderRadius: [3, 3, 0, 0]
-        },
-        emphasis: {
-          itemStyle: {
-            color: '#4f46e5'
-          }
+          color: '#4f46e5'
         }
-      }]
-    };
-  }
+      }
+    }]
+  };
+}
 
-  /**
-   * Get scatter chart specific options
-   */
-  private getScatterOptions(data: { values: [number, number][], sensorType: string }): echarts.EChartsOption {
-    return {
-      ...this.getBaseChartOptions(data),
-      xAxis: this.getEnhancedXAxisOptions(data.values),
-      yAxis: this.getEnhancedYAxisOptions(data.values),
-      series: [{
-        type: 'scatter',
-        data: data.values,
-        symbolSize: 8,
-        itemStyle: {
-          color: '#6366f1',
-          opacity: 0.8,
-          borderColor: '#fff',
-          borderWidth: 1
-        }
-      }]
-    };
-  }
+private getStepChartOptions(data: { values: [number, number][], sensorType: string }): echarts.EChartsOption {
+  return {
+    ...this.getBaseChartOptions(data),
+    xAxis: this.getEnhancedXAxisOptions(data.values), // type: 'time'
+    yAxis: this.getEnhancedYAxisOptions(data.values), // type: 'value'
+    dataZoom: this.getDataZoomConfig(),
+    series: [{
+      type: 'line',
+      data: data.values,
+      step: 'middle',
+      smooth: false,
+      lineStyle: {
+        color: '#6366f1',
+        width: 2
+      },
+      symbol: 'none'
+    }]
+  };
+}
 
-  /**
-   * Get step chart specific options
-   */
-  private getStepChartOptions(data: { values: [number, number][], sensorType: string }): echarts.EChartsOption {
-    return {
-      ...this.getBaseChartOptions(data),
-      xAxis: this.getEnhancedXAxisOptions(data.values),
-      yAxis: this.getEnhancedYAxisOptions(data.values),
-      series: [{
-        type: 'line',
-        data: data.values,
-        step: 'middle',
-        smooth: false,
-        lineStyle: {
-          color: '#6366f1',
-          width: 2
-        },
-        symbol: 'none'
-      }]
-    };
-  }
+private getScatterOptions(data: { values: [number, number][], sensorType: string }): echarts.EChartsOption {
+  return {
+    ...this.getBaseChartOptions(data),
+    xAxis: { type: 'value', scale: true },
+    yAxis: { type: 'value', scale: true },
+    dataZoom: this.getDataZoomConfig(),
+    series: [{
+      type: 'scatter',
+      data: data.values,
+      symbolSize: 8,
+      itemStyle: {
+        color: '#6366f1',
+        opacity: 0.8,
+        borderColor: '#fff',
+        borderWidth: 1
+      }
+    }]
+  };
+}
 
   /**
    * Get enhanced X-axis options based on data and granularity
@@ -665,27 +713,25 @@ updateChart(chartId: string, data: {
   /**
    * Format date based on granularity
    */
-  private formatDate(value: number, granularity: string): string {
-    if (!value) return '';
-   
-    const date = new Date(value);
-    if (isNaN(date.getTime())) return '';
-   
-    switch (granularity) {
-      case 'minute':
-        return echarts.time.format(date, '{HH}:{mm}', true); // Last param true for UTC
-      case 'hour':
-        return echarts.time.format(date, '{HH}:00', true);
-      case 'day':
-        return echarts.time.format(date, '{MMM} {dd}', true);
-      case 'month':
-        return echarts.time.format(date, '{yyyy} {MMM}', true);
-      case 'year':
-        return echarts.time.format(date, '{yyyy}', true);
-      default:
-        return '';
-    }
+private formatDate(value: number, granularity: string): string {
+  if (!value) return '';
+  const date = new Date(value);
+  if (isNaN(date.getTime())) return '';
+  switch (granularity) {
+    case 'minute':
+      return echarts.time.format(date, '{HH}:{mm}', true);
+    case 'hour':
+      return echarts.time.format(date, '{HH}:00', true);
+    case 'day':
+      return echarts.time.format(new Date(date.getTime() + 86400000), '{MMM} {dd}', true); // Add 1 day
+    case 'month':
+      return echarts.time.format(new Date(date.setMonth(date.getMonth() + 1)), '{yyyy} {MMM}', true); // Add 1 month
+    case 'year':
+      return echarts.time.format(new Date(date.setFullYear(date.getFullYear() + 1)), '{yyyy}', true); // Add 1 year
+    default:
+      return '';
   }
+}
 
   /**
    * Get appropriate time interval for the current granularity

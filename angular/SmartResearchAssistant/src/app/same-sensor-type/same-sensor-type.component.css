@@ -1014,3 +1014,28 @@ sensor-item {
 .dropped-item.fa-folder {
   color: #ffc107; /* Yellow color for groups */
 }
+/* Toast styles */
+.custom-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  min-width: 320px;
+  max-width: 90vw;
+  padding: 16px 32px;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #fff;
+  background: #323232;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  text-align: center;
+  opacity: 0.98;
+  transition: opacity 0.3s;
+}
+.custom-toast.error {
+  background: #e53935;
+}
+.custom-toast.info {
+  background: #1976d2;
+}

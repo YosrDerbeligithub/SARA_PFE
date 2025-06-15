@@ -1,23 +1,20 @@
-# Use the official Python image from Docker Hub
-FROM python:3.9-slim
+# New merged Dockerfile for historical_processing
+FROM --platform=linux/arm64 python:3.11-slim  
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements file to the container
-COPY ./requirements.txt /app/requirements.txt
+# Preserve cache permission fix from old version
+RUN mkdir -p /app/.cache && chmod 777 /app/.cache
 
-# Install the Python dependencies
+# Keep dependency installation from both versions
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of your application code into the container
-COPY *.py /app
+# Keep code copy structure from new version
+COPY . .
 
-# Expose the port your FastAPI app will run on
-EXPOSE 5000
-
-# Set the environment variable to allow uvicorn to be executed
+# Maintain environment variable from new version
 ENV PYTHONPATH=/app
 
-# Run the FastAPI app with Uvicorn on port 5000, listening on all interfaces
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
+# Keep development-friendly reload from new version
+CMD ["uvicorn", "historical_processing:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]

@@ -1,3 +1,4 @@
+import asyncio
 from collections import defaultdict
 import logging
 
@@ -19,26 +20,30 @@ class EventBus:
     def __init__(self):
         # Initialize only once
         if not hasattr(self, "latest"):
-            self.latest = {}  # key: (box_id, sensor_type) -> latest data
+            self.latest: dict[tuple[str, str, str], dict] = {}
         if not hasattr(self, "subscriptions"):
-            self.subscriptions = set()  # Track active subscriptions
+            # Now track (email, facility, box, sensor)
+            self.subscriptions: set[tuple[str, str, str, str]] = set()
+        if not hasattr(self, "events"):
+            # One asyncio.Event per sensor key
+            self.events: dict[tuple[str, str, str], asyncio.Event] = defaultdict(asyncio.Event)
 
-    def subscribe(self, facility: str, box_id: str, sensor_type: str):
+    def subscribe(self, email: str, facility: str, box_id: str, sensor_type: str):
         """
         Add a subscription for a specific sensor box and type.
 
         """
         logger.info("New subscription: %s/%s", box_id, sensor_type)
-        self.subscriptions.add((facility, box_id, sensor_type))
+        self.subscriptions.add((email, facility, box_id, sensor_type))
 
-    def unsubscribe(self, facility: str, box_id: str, sensor_type: str):
+    def unsubscribe(self, email: str, facility: str, box_id: str, sensor_type: str):
         """
         Remove a subscription for a specific sensor box and type.
         """
         logger.info("Unsubscribing: %s/%s", box_id, sensor_type)
-        self.subscriptions.discard((facility, box_id, sensor_type))
+        self.subscriptions.discard((email, facility, box_id, sensor_type))
 
-    def publish(self, facility: str, box_id: str, sensor_type: str, data: dict):  # noqa
+    def publish(self, facility: str, box_id: str, sensor_type: str, data: dict):  
         """
         Store latest data for sensor. Overwrites previous.
         Called by scheduler after each fetch.
@@ -48,6 +53,10 @@ class EventBus:
         key = (facility, box_id, sensor_type)
         self.latest[key] = data
         logger.info("Published data for %s/%s: %s", facility, box_id, sensor_type, data)
+        # Notify all listeners
+        if key not in self.events:
+            self.events[key] = asyncio.Event()
+        self.events[key].set()
 
     def get_latest(self, facility: str, box_id: str, sensor_type: str) -> dict:
         """
@@ -55,3 +64,14 @@ class EventBus:
         Called by SSE event_generator.
         """
         return self.latest.get((facility, box_id, sensor_type), {})
+
+    async def wait_for_update(self, facility: str, box_id: str, sensor_type: str):
+        """
+        Wait until there is a new update for the given sensor.
+        """
+        key = (facility, box_id, sensor_type)
+        if key not in self.events:
+            self.events[key] = asyncio.Event()
+        event = self.events[key]
+        await event.wait()
+        event.clear()

@@ -1,4 +1,3 @@
-# realtime_monitoring/app/api/sse_stream.py
 import asyncio
 from fastapi import APIRouter, Depends, Request
 from sse_starlette.sse import EventSourceResponse
@@ -11,6 +10,8 @@ from app.config import settings
 import logging
 import json
 from datetime import datetime
+from pydantic import EmailStr
+
 
 logger = logging.getLogger(__name__)
 
@@ -20,12 +21,16 @@ bus = EventBus()
 
 # Dependency to parse and validate StreamRequest
 async def get_stream_params(
-    facility: str, sensor_box_id: str, sensor_type: str
+    facility: str,
+    sensor_box_id: str,
+    sensor_type: str,
+    email: EmailStr,  
 ) -> StreamRequest:
     return StreamRequest(
         facility=facility,
         sensor_box_id=sensor_box_id,
-        sensor_type=sensor_type
+        sensor_type=sensor_type,
+        email=email, 
     )
 
 @stream_router.get("/{facility}/{sensor_box_id}/{sensor_type}")
@@ -39,40 +44,70 @@ async def stream_data(
     agg = Aggregator(metric=control.aggregation_metric, buffer_time=control.buffer_time)
 
     async def event_generator():
-        # 1) Subscribe
-        bus.subscribe(stream_params.facility, stream_params.sensor_box_id, stream_params.sensor_type)
-        logger.info("SSE SUBSCRIBE %s at %s", session_key, datetime.utcnow().isoformat())
-
-        # 2) Immediate one-off fetch so client doesn’t wait
-        client = APIClient()
-        await client.refresh_token()
-        initial = await client.fetch_data(
+        bus.subscribe(
+            stream_params.email,
             stream_params.facility,
             stream_params.sensor_box_id,
             stream_params.sensor_type
         )
-        if initial:
-            bus.publish(stream_params.facility, stream_params.sensor_box_id, stream_params.sensor_type, initial)
+        logger.info("SSE SUBSCRIBE %s at %s", session_key, datetime.utcnow().isoformat())
 
-        freq = control.frequency or settings.default_sse_frequency
-        logger.info("SSE frequency set to %d seconds for %s", freq, session_key)
+        # Send latest value in bus immediately if available
+        data = bus.get_latest(
+            stream_params.facility,
+            stream_params.sensor_box_id,
+            stream_params.sensor_type
+        )
+        if data and data.get("reading") is not None:
+            if control.aggregation_metric and control.buffer_time:
+                agg.add(data)
+                payload = agg.compute()
+            else:
+                payload = data
+
+            yield {
+                "event": "update",
+                "data": json.dumps(payload, default=str)
+            }
+        else:
+            # Optionally: fetch directly if nothing in bus
+            client = APIClient(email=stream_params.email)
+            await client.ensure_token()
+            fetched = await client.fetch_data(
+                stream_params.facility,
+                stream_params.sensor_box_id,
+                stream_params.sensor_type
+            )
+            if fetched and fetched.get("reading") is not None:
+                if control.aggregation_metric and control.buffer_time:
+                    agg.add(fetched)
+                    payload = agg.compute()
+                else:
+                    payload = fetched
+
+                yield {
+                    "event": "update",
+                    "data": json.dumps(payload, default=str)
+                }
 
         try:
             while True:
-                # 3) Exit if client closed the connection
+                await bus.wait_for_update(
+                    stream_params.facility,
+                    stream_params.sensor_box_id,
+                    stream_params.sensor_type
+                )
+
                 if await request.is_disconnected():
                     logger.info("Client disconnected for %s — exiting generator", session_key)
                     break
 
-                # 4) Pause logic
-                if state.is_paused(session_key):
-                    await asyncio.sleep(1)
-                    continue
-
-                # 5) Publish only real readings
-                data = bus.get_latest(stream_params.facility, stream_params.sensor_box_id, stream_params.sensor_type)
+                data = bus.get_latest(
+                    stream_params.facility,
+                    stream_params.sensor_box_id,
+                    stream_params.sensor_type
+                )
                 if data and data.get("reading") is not None:
-                    # aggregation
                     if control.aggregation_metric and control.buffer_time:
                         agg.add(data)
                         payload = agg.compute()
@@ -83,12 +118,13 @@ async def stream_data(
                         "event": "update",
                         "data": json.dumps(payload, default=str)
                     }
-
-                await asyncio.sleep(freq)
-
         finally:
-            # 6) Always unsubscribe once
-            bus.unsubscribe(stream_params.facility, stream_params.sensor_box_id, stream_params.sensor_type)
+            bus.unsubscribe(
+                stream_params.email,
+                stream_params.facility,
+                stream_params.sensor_box_id,
+                stream_params.sensor_type
+            )
             logger.info("SSE UNSUBSCRIBE %s at %s", session_key, datetime.utcnow().isoformat())
 
     return EventSourceResponse(

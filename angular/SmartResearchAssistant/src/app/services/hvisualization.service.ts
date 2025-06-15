@@ -55,21 +55,32 @@ export class VisualizationService {
     if (this._chartInstance) this._chartInstance.dispose();
     this._chartInstance = echarts.init(domElement);
   }
+private getSuperGranularityLabels(response: SensorDataResponse): string[] {
+  const keys = Object.keys(response.aggregated_results || {});
+  // For "all", return a single label
+  if (keys.length === 1 && keys[0] === 'all') {
+    return ['All'];
+  }
+  return keys;
+}
+public processAggregatedData(
+  response: SensorDataResponse,
+  requestStart: Date,
+  requestEnd: Date
+): { values: [number, number][], sensorType: string } {
+  const dataPoints: [number, number][] = [];
+  const sensorType = response.sensor_type || 'Unknown Sensor';
 
-  public processAggregatedData(  response: SensorDataResponse,requestStart: Date,requestEnd: Date): { values: [number, number][],sensorType: string  } {
-    const dataPoints: [number, number][] = [];
-    const sensorType = response.sensor_type || 'Unknown Sensor';
+  if (!response?.aggregated_results) {
+    return { values: [], sensorType };
+  }
 
-    if (!response?.aggregated_results) return { values: [], sensorType  };
-  const startTime = requestStart.getTime();
-  const endTime = requestEnd.getTime();
-    // Process all groups maintaining their original structure
-  for (const [month, points] of Object.entries(response.aggregated_results)) {
-    for (const point of points) {
+  // Always include all points returned by the backend
+  for (const group of Object.values(response.aggregated_results)) {
+    for (const point of group as any[]) {
       try {
         const timestamp = Date.parse(point.time);
-        // Only include points within the requested range
-        if (timestamp >= startTime && timestamp <= endTime) {
+        if (!isNaN(timestamp)) {
           dataPoints.push([timestamp, point.value]);
         }
       } catch (e) {
@@ -77,20 +88,22 @@ export class VisualizationService {
       }
     }
   }
- 
-    return {
-      values: dataPoints.sort((a, b) => a[0] - b[0]),
-      sensorType
-    };
-  }
+
+  // Sort by timestamp for correct plotting
+  return {
+    values: dataPoints.sort((a, b) => a[0] - b[0]),
+    sensorType
+  };
+}
 updateChart(
   data: { values: [number, number][], sensorType: string, chartType?: 'line' | 'bar' | 'scatter' | 'area' | 'step'},
-  chartInstance: echarts.ECharts
+  chartInstance: echarts.ECharts,
+  rawResponse?: SensorDataResponse
 ): void {
     if (!this._chartInstance) return;
 
   // Get common chart options (axes, tooltip, etc.)
-  const commonOptions = this.getCommonChartOptions(data);
+  const commonOptions = this.getCommonChartOptions(data, rawResponse); 
  
   // Get series-specific configuration
   const seriesConfig = this.getSeriesConfig(data, data.chartType || this.currentChartType);
@@ -102,12 +115,39 @@ updateChart(
   this._chartInstance.setOption(finalOptions, true);
 }
 
-private getCommonChartOptions(data: { values: [number, number][], sensorType: string }): echarts.EChartsOption {
-    const superiorGranularity = this.getSuperiorGranularity(this.currentGranularity);
-    const superiorValues = new Set<string>(
-      data.values.map(point => this.formatDate(point[0], superiorGranularity))
-    );
-    const option = {
+private getCommonChartOptions(
+  data: { values: [number, number][], sensorType: string },
+  rawResponse?: SensorDataResponse // <-- add this param if needed
+): echarts.EChartsOption {
+  // Only use real super granularity keys from backend
+  let superLabels: string[] = [];
+  if (rawResponse && rawResponse.aggregated_results) {
+    superLabels = Object.keys(rawResponse.aggregated_results);
+if (superLabels.length === 1 && superLabels[0] === 'all') {
+if (this.currentGranularity === 'minute' && data.values.length > 0) {
+  let lastDay: string | null = null;
+  superLabels = data.values.reduce((acc: string[], [timestamp]) => {
+    const d = new Date(timestamp);
+    const dayLabel = `${d.getUTCDate().toString().padStart(2, '0')} ${d.toLocaleString('en-US', { month: 'short' })} ${d.getUTCFullYear()}`;
+    if (dayLabel !== lastDay) {
+      acc.push(dayLabel);
+      lastDay = dayLabel;
+    }
+    return acc;
+  }, []);
+}  else if (this.currentGranularity === 'year' && data.values.length > 0) {
+    // For yearly, extract unique years from data
+    superLabels = Array.from(new Set(
+      data.values.map(([timestamp]) => {
+        const d = new Date(timestamp);
+        return d.getUTCFullYear().toString();
+      })
+    ));
+  } else {
+    superLabels = ['All'];
+  }
+}
+  }const option = {
       ...this.getBaseChartOptions(data),
       xAxis: [
         this.getEnhancedXAxisOptions(data.values),
@@ -115,8 +155,30 @@ private getCommonChartOptions(data: { values: [number, number][], sensorType: st
           type: 'category'as const,
           position: 'bottom',
           offset: 30,
-          data: Array.from(superiorValues),
+          data: superLabels,
           axisLabel: {
+  formatter: (value: string) => {
+    if (this.currentGranularity === 'hour') {
+      return value;
+    }
+    if (this.currentGranularity === 'day') {
+      // value: '2023-10'
+      const [year, month] = value.split('-');
+      if (year && month) {
+        return `${new Date(Number(year), Number(month) - 1).toLocaleString('en-US', { month: 'short', year: 'numeric' })}`;
+      }
+      return value;
+    }
+    if (this.currentGranularity === 'month') {
+      // value: '2023'
+      return value;
+    }
+    if (this.currentGranularity === 'year') {
+      return value;
+    }
+    return value;
+  },
+
             color: '#666',
             fontSize: 11,
             fontWeight: 'normal',
@@ -204,20 +266,12 @@ private getSeriesConfig(data: { values: [number, number][], sensorType: string }
       };
   }
 }
-  private getChartOptions(data: { values: [number, number][], sensorType: string }, chartType: string): echarts.EChartsOption {
-  switch(chartType) {
-    case 'area': return this.getAreaChartOptions(data);
-    case 'bar': return this.getBarChartOptions(data);
-    case 'scatter': return this.getScatterOptions(data);
-    case 'step': return this.getStepChartOptions(data);
-    default: return this.getBaseChartOptions(data);
-  }
-}
+
   private getBaseChartOptions(data: { values: [number, number][], sensorType: string  }): echarts.EChartsOption {
     return {
       grid: {
         top: '5%',
-        bottom: '7%',
+        bottom: '2%',
         left: '2%',
         right: '4%',
         containLabel: true
@@ -265,7 +319,7 @@ private getSeriesConfig(data: { values: [number, number][], sensorType: string }
           zoomLock: false,
           start: 0, // Force initial full view
           end: 100,
-          minSpan: 5, // Minimum 30% of total range (prevents over-zooming)
+          minSpan: 1, // Minimum 30% of total range (prevents over-zooming)
          filterMode: 'filter',
           rangeMode: ['value', 'value'],
           zoomOnMouseWheel: false,
@@ -313,70 +367,9 @@ private getSeriesConfig(data: { values: [number, number][], sensorType: string }
       }] : []
     };
   }
-  private getAreaChartOptions(data: { values: [number, number][] , sensorType: string}): echarts.EChartsOption {
-  return {
-    ...this.getBaseChartOptions(data),
-    series: [{
-      type: 'line',
-      data: data.values,
-      smooth: true,
-      areaStyle: {},
-      lineStyle: {
-        color: '#6366f1',
-        width: 2
-      },
-      symbol: 'none'
-    }]
-  };
-}
-private getBarChartOptions(data: { values: [number, number][] ,sensorType: string}): echarts.EChartsOption {
-  return {
-    ...this.getBaseChartOptions(data),
-    series: [{
-      type: 'bar',
-      data: data.values,
-      barWidth: this.calculateBarWidth(),
-      itemStyle: {
-        color: '#6366f1'
-      },
-      emphasis: {
-        itemStyle: {
-          color: '#4f46e5'
-        }
-      }
-    }]
-  };
-}
-private getScatterOptions(data: { values: [number, number][],sensorType: string }): echarts.EChartsOption {
-  return {
-    ...this.getBaseChartOptions(data),
-    series: [{
-      type: 'scatter',
-      data: data.values,
-      symbolSize: 8,
-      itemStyle: {
-        color: '#6366f1',
-        opacity: 0.8
-      }
-    }]
-  };
-}
-private getStepChartOptions(data: { values: [number, number][],sensorType: string}): echarts.EChartsOption {
-  return {
-    ...this.getBaseChartOptions(data),
-    series: [{
-      type: 'line',
-      data: data.values,
-      step: 'middle',
-      smooth: false,
-      lineStyle: {
-        color: '#6366f1',
-        width: 2
-      },
-      symbol: 'none'
-    }]
-  };
-}
+
+
+
 
   private getEnhancedXAxisOptions(data: [number, number][]): XAXisOption {
     const baseConfig = this.getXAxisOptions();
@@ -509,16 +502,6 @@ setGranularity(granularity: 'minute' | 'hour' | 'day' | 'month' | 'year'): void 
 }
 
 
-private calculateTimeBucketWidth(): number {
-  const widthMap: Record<string, number> = {
-    'minute': 2,
-    'hour': 10,
-    'day': 20,
-    'month': 30,
-    'year': 40
-  };
-  return widthMap[this.currentGranularity] || 20;
-}
 
 
   private formatDate(value: number, granularity: string): string {
@@ -541,11 +524,7 @@ private calculateTimeBucketWidth(): number {
     }
   }
 
-private getSuperiorGranularity(current: string): string {
-  const levels = ['minute', 'hour', 'day', 'month', 'year'];
-  const index = levels.indexOf(current);
-  return index < levels.length - 1 ? levels[index + 1] : '';
-}
+
   applyMetric(metric: string): void {
     this.currentMetric = metric;
   }
@@ -954,6 +933,21 @@ updateCustomChart(
     const xAxisType = typeof firstX === 'number' ? 'value' : 'category';
 
     const options: echarts.EChartsOption = {
+      toolbox: {
+        feature: {
+          saveAsImage: {
+            name: `${data.yLabel || 'custom'}_chart`,
+            title: 'Save as Image',
+            type: 'png',
+            backgroundColor: '#FFFFFF',
+            excludeComponents: ['toolbox'],
+            pixelRatio: 2
+          }
+        },
+        right: '20px',
+        top: '10px',
+        itemSize: 16
+      },
       xAxis: {
         name: data.xLabel || 'X',
         type: xAxisType,
@@ -978,6 +972,54 @@ updateCustomChart(
           }).join('<hr>');
         }
       },
+      dataZoom: [
+        {
+          type: 'inside',
+          xAxisIndex: 0,
+          zoomLock: false,
+          start: 0,
+          end: 100,
+          minSpan: 5,
+          filterMode: 'filter',
+          rangeMode: ['value', 'value'],
+          zoomOnMouseWheel: false,
+          moveOnMouseMove: true,
+          moveOnMouseWheel: true,
+          preventDefaultMouseMove: false
+        },
+        {
+          type: 'inside',
+          yAxisIndex: 0,
+          zoomLock: false,
+          filterMode: 'none',
+          zoomOnMouseWheel: false,
+          moveOnMouseMove: true,
+          moveOnMouseWheel: true,
+          preventDefaultMouseMove: false
+        },
+        {
+          type: 'inside',
+          xAxisIndex: 0,
+          orient: 'horizontal',
+          zoomOnMouseWheel: true,
+          throttle: 0,
+          start: 0,
+          end: 100,
+          zoomLock: false,
+          filterMode: 'none'
+        },
+        {
+          type: 'inside',
+          yAxisIndex: 0,
+          orient: 'vertical',
+          zoomOnMouseWheel: true,
+          throttle: 0,
+          start: 0,
+          end: 100,
+          zoomLock: false,
+          filterMode: 'none'
+        }
+      ],
       series: filteredSeries.map(series => {
         let type = data.chartType;
         let extra: any = {};
@@ -1036,19 +1078,31 @@ private getSeriesStyleConfig(chartType: string) {
 
  updateMultiSeriesChart(
     data: { series: { name: string, data: [number, number][] }[], chartType: string },
-    chartInstance: echarts.ECharts
+    chartInstance: echarts.ECharts,
+    metaByAgentSerial: Record<string, { facility: string; location: string; sensorType: string }>
   ) {
     // Build legend and series
     const legendData = data.series.map(s => s.name);
-    const series = data.series.map(s => ({
-      name: s.name,
-      type: data.chartType,
-      data: s.data,
-      showSymbol: false,
-      smooth: true,
-      emphasis: { focus: 'series' },
-      // Add more styling as needed
-    }));
+const series = data.series.map(s => {
+  let type = data.chartType;
+  let extra: any = {};
+  if (type === 'area') {
+    type = 'line';
+    extra = { areaStyle: {}, smooth: true };
+  }
+  if (type === 'step') {
+    type = 'line';
+    extra = { step: 'middle', smooth: false };
+  }
+  return {
+    name: s.name,
+    type,
+    data: s.data,
+    showSymbol: false,
+    emphasis: { focus: 'series' },
+    ...extra
+  };
+});
 
     // X axis: time (assume all series aligned on time)
     chartInstance.setOption({
@@ -1056,6 +1110,21 @@ private getSeriesStyleConfig(chartType: string) {
     '#5470C6', '#91CC75', '#EE6666', '#FAC858', '#73C0DE',
     '#3BA272', '#FC8452', '#9A60B4', '#EA7CCC'
   ],
+      toolbox: {
+      feature: {
+        saveAsImage: {
+          name: 'multi_sensor_chart',
+          title: 'Save as Image',
+          type: 'png',
+          backgroundColor: '#FFFFFF',
+          excludeComponents: ['toolbox'],
+          pixelRatio: 2
+        }
+      },
+      right: '20px',
+      top: '10px',
+      itemSize: 16
+    },
       dataZoom: [
       {
         type: 'inside',
@@ -1063,7 +1132,7 @@ private getSeriesStyleConfig(chartType: string) {
         zoomLock: false,
         start: 0,
         end: 100,
-        minSpan: 5,
+        minSpan: 1,
         filterMode: 'filter',
         rangeMode: ['value', 'value'],
         zoomOnMouseWheel: false,
@@ -1104,10 +1173,46 @@ private getSeriesStyleConfig(chartType: string) {
         filterMode: 'none'
       }
     ],
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: { type: 'cross' }
-      },
+tooltip: {
+  trigger: 'axis',
+  axisPointer: { type: 'cross' },
+formatter: (params: any) => {
+  if (!params || !params.length) return '';
+  const date = new Date(params[0].value[0]);
+  const sensorType = (metaByAgentSerial[params[0].seriesName]?.sensorType ?? '');
+
+  // Smaller font for time and sensor type, same weight, same line
+  const header = `
+    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95em; font-weight: 500;">
+      <span>
+        ${date.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          timeZone: 'UTC'
+        })}
+        (${date.toLocaleDateString('en-US', {
+          weekday: 'short',
+          timeZone: 'UTC'
+        })})
+        ${date.getUTCHours().toString().padStart(2, '0')}:${date.getUTCMinutes().toString().padStart(2, '0')} UTC
+      </span>
+      <span style="margin-left:16px;">${sensorType}</span>
+    </div>
+  `;
+  // Body: one line per series
+  const lines = params.map((p: any) => {
+    const meta = metaByAgentSerial[p.seriesName] || {};
+    return `
+      <div>
+        <span style="display:inline-block;width:10px;height:10px;background:${p.color};border-radius:50%;margin-right:6px;"></span>
+        ${meta.facility || '-'}, ${meta.location || '-'}, ${p.value[1] != null ? p.value[1].toFixed(2) : '-'}
+      </div>
+    `;
+  }).join('');
+  return header + lines;
+}
+},
       legend: {
         data: legendData,
         top: 9,

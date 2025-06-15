@@ -5,7 +5,7 @@ from fastapi.responses import Response, JSONResponse
 import csv
 from io import StringIO
 import asyncio
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, field_validator, Field
 from httpx import AsyncClient, HTTPStatusError
 import json
 import logging
@@ -14,9 +14,8 @@ from datetime import datetime
 from typing import List, Dict
 import csv
 import io
-from fastapi.responses import StreamingResponse
-
-
+from typing import Any
+from historical_processing import to_utc
 # Reuse components from historical_processing.py
 from historical_processing import (
     get_api_client,
@@ -43,8 +42,10 @@ class ExportRequest(BaseModel):
     end: datetime = Field(...)
     format: str = Field("json", pattern="^(csv|json)$")
 
-    _validate_start = validator('start', allow_reuse=True)(TimeGap.ensure_utc)
-    _validate_end = validator('end', allow_reuse=True)(TimeGap.ensure_utc)
+    @field_validator('start', 'end', mode='before')
+    @classmethod
+    def ensure_utc(cls, value):
+        return to_utc(value)
 
 
 def convert_to_csv(records: List[Dict]) -> str:

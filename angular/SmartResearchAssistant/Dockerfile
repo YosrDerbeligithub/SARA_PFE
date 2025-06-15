@@ -1,23 +1,17 @@
-# Use the official Node.js image
-FROM node:18
-
-# Set the working directory inside the container
+# Merged Dockerfile for Angular (ARM optimized)
+FROM --platform=linux/arm64 node:20-alpine  
 WORKDIR /app
 
-# Install Angular CLI globally
-RUN npm install -g @angular/cli
+# Install Angular CLI with version pinning
+RUN npm install -g @angular/cli@latest --force
 
-# Copy package.json and package-lock.json first (to cache dependencies)
-COPY package*.json ./
+# Dependency caching optimization
+COPY package.json package-lock.json ./
+RUN npm install --legacy-peer-deps --no-audit  # Combine best of both
 
-# Install dependencies
-RUN npm install --legacy-peer-deps --force --no-audit
-
-# Copy the rest of the Angular project files
+# Copy source code (preserve old pattern)
 COPY . .
 
-# Expose the Angular default port
+# Development optimizations from old version
 EXPOSE 4200
-
-# Start the Angular app in development mode with hot reloading
-CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4200"]
+CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4200", "--poll", "2000", "--disable-host-check"]

@@ -2,6 +2,9 @@
 <app-appbar></app-appbar>
 
 <body class="bg-grey d-flex flex-column">
+    <div *ngIf="showToast" class="custom-toast" [ngClass]="toastType">
+  {{ toastMessage }}
+</div>
     <div class="fab-action-row">
   <button class="btn fab-btn"
           (click)="toggleNotes()"
@@ -135,7 +138,7 @@
                       </div>
                       <div class="chart-icon" [attr.data-chart-type]="ChartType.Bar"
                            [class.chart-selected]="selectedChartType === ChartType.Bar">
-                          <i class="fas fa-chart-bar" 
+                          <i class="fas fa-chart-column" 
                              (click)="selectChartType(ChartType.Bar)"></i>
                       </div>
 

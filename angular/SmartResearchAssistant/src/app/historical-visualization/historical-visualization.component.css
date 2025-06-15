@@ -11,7 +11,7 @@
     background-color: #f8f9fa; 
 }
 .col-3.h-100 {
-    max-width: 17% !important;      /* Reduced from 25% */
+    max-width: 20% !important;
     flex: 1 0 20% !important;
     padding-right: 2px !important;
 }
@@ -32,14 +32,17 @@
 }
 /* Height Adjustments */
 .full-height-container {
-    height: calc(100vh - 160px) !important; /* Keep original value */
+    height: calc(100vh - 200px) !important; /* Keep original value */
     display: flex;
     min-height: 0; /* Allow content compression */
-    margin-bottom: 60px;
+    margin-bottom: 40px;
     padding-top: 20px;
     flex-direction: column;
 }
-
+.chart-placeholder-overlay {
+    pointer-events: none;
+    user-select: none;
+}
 .bg-white.shadow-panel.h-100.d-flex.flex-column {
     min-height: 0; /* Add this line */
   }
@@ -56,7 +59,7 @@
 
 .visualization-main { 
     min-width: 0; 
-    flex: 1 1 60% !important;      /* Increased flex basis */
+    flex: 1 1 60% !important;
     margin-left: -20px !important; 
 }
 
@@ -355,7 +358,7 @@ h6.fw-bold.mt-3.mb-2 {
 /* Ensure proper chart sizing */
 .chart-container {
     position: relative;
-    min-height: 360px;
+    min-height: 320px;
   }
   
   /* Hide placeholder when chart is active */
@@ -1189,3 +1192,28 @@ body.bg-grey.d-flex.flex-column {
   color: var(--displayColor);
 }
 
+/* Toast styles */
+.custom-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  min-width: 320px;
+  max-width: 90vw;
+  padding: 16px 32px;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #fff;
+  background: #323232;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  text-align: center;
+  opacity: 0.98;
+  transition: opacity 0.3s;
+}
+.custom-toast.error {
+  background: #e53935;
+}
+.custom-toast.info {
+  background: #1976d2;
+}

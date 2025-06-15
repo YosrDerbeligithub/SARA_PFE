@@ -1,5 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
+import { AuthService } from './auth.service'; 
 
 @Injectable()
 export class SensorStreamService {
@@ -26,7 +27,7 @@ export class SensorStreamService {
   private connectScheduled = false;
   private connectTimer: any = null;
 
-  constructor(private zone: NgZone) {}
+  constructor(private zone: NgZone, private auth: AuthService) {}
 
   /**
    * Called when facility/box/sensor path params change.
@@ -176,17 +177,18 @@ export class SensorStreamService {
    * @param includeTimestamp if true, adds a cache-buster `_` param
    */
   private buildUrl(opts: { includeTimestamp: boolean }): string | null {
-    var { facility, box, sensor } = this.currentParams;
+    let { facility, box, sensor } = this.currentParams;
     if (!facility || !box || !sensor) {
       return null;
     }
     if (sensor === 'ble') {
-    sensor = 'radio';
-  }
-
+      sensor = 'radio';
+    }
 
     const base = `http://localhost:8002/monitoring/${facility}/${box}/${sensor}`;
     const params = new URLSearchParams();
+
+    // existing params…
     if (this.controls.frequency != null) {
       params.set('frequency', this.controls.frequency.toString());
     }
@@ -197,6 +199,14 @@ export class SensorStreamService {
     }
     if (opts.includeTimestamp) {
       params.set('_', Date.now().toString());
+    }
+
+    // 3) Append the user’s email
+    const user = this.auth.currentUser;
+    if (!user?.user?.email) {
+      console.warn('[SERVICE] no email in session; SSE may fail');
+    } else {
+      params.set('email', user.user.email);
     }
 
     return `${base}?${params.toString()}`;

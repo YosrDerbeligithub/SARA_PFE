@@ -1,13 +1,14 @@
+import { HistoricalVisualizationComponent } from './../historical-visualization/historical-visualization.component';
 import { TestBed } from '@angular/core/testing';
 
-import { HvisualizationService } from './hvisualization.service';
+import { VisualizationService} from './hvisualization.service';
 
 describe('HvisualizationService', () => {
-  let service: HvisualizationService;
+  let service: VisualizationService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(HvisualizationService);
+    service = TestBed.inject(VisualizationService);
   });
 
   it('should be created', () => {

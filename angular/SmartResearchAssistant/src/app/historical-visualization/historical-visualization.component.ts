@@ -71,6 +71,10 @@ export class HistoricalVisualizationComponent implements AfterViewInit {
   public customYAxisColumn: CustomColumn | null = null
   public isLoading = false
 private chartInstance!: echarts.ECharts; 
+public showToast = false;
+public toastMessage = '';
+public toastType: 'error' | 'info' = 'error';
+
 
   // Chart compatibility mapping
 private chartCompatibility: ChartCompatibility = {
@@ -80,10 +84,8 @@ private chartCompatibility: ChartCompatibility = {
   microphone: [ChartType.Line, ChartType.Area, ChartType.Bar, ChartType.Scatter, ChartType.Step],
   motion: [ChartType.Line, ChartType.Area, ChartType.Bar, ChartType.Scatter, ChartType.Step],
   radio: [ChartType.Line, ChartType.Area, ChartType.Bar, ChartType.Scatter, ChartType.Step],
-  pressure: [ChartType.Line, ChartType.Area, ChartType.Bar, ChartType.Scatter, ChartType.Step],
-  presence: [ChartType.Bar, ChartType.EventFrequency],
+  presence: [ChartType.Line, ChartType.Area, ChartType.Bar, ChartType.Scatter, ChartType.Step],
   thermalmap: [ChartType.Heatmap],
-  thermography: [ChartType.Heatmap],
   ble: [ChartType.BleDevices], 
 }
 
@@ -112,18 +114,16 @@ private chartCompatibility: ChartCompatibility = {
 public currentSensor: {
   sensorType: string;
   agentSerial: string;
-  facility: string;          // Added facility from site
+  facility: string;         
   unit: string;
   location?: string;
 } | null = null;
 
-  // Add to your class:
 public exportMessage: string = '';
 public exportMessageType: 'success' | 'error' | '' = '';
 
   private initializeParameters() {
-    // Default values but don't set sensorDropped to true initially
-    this.selectedMetric = null
+    this.selectedMetric = null;
     this.selectedChartType = null
     this.sensorDropped = false
     this.timeRangeSet = false
@@ -200,7 +200,7 @@ onEndDateChange(value: string) {
   }
 canApply(): boolean {
   if (this.isCustomDataMode) {
-    return !!this.customYAxisColumn &&!!this.customXAxisColumn && !!this.selectedChartType ;
+    return !!this.customYAxisColumn && !!this.customXAxisColumn && !!this.selectedChartType;
   }
 
   const isHeatmap = this.selectedChartType === 'heatmap';
@@ -213,12 +213,15 @@ canApply(): boolean {
     return hasSensor && hasStart;
   }
 
-  // For other charts, require sensor, metric, chart type, and full date range
   const hasMetric = !!this.selectedMetric;
   const hasChartType = !!this.selectedChartType;
   const hasFullRange = !!this.startDate && !!this.endDate && this.startDate < this.endDate;
   const hasValidGranularity = !!this.visualizationService.currentGranularity;
 
+  // Only require metric if granularity is not 'minute'
+  if (this.visualizationService.currentGranularity === 'minute') {
+    return hasSensor && hasChartType && hasFullRange && hasValidGranularity;
+  }
   return hasSensor && hasMetric && hasChartType && hasFullRange && hasValidGranularity;
 }
 
@@ -506,39 +509,61 @@ const datasetId = metadata.datasetId;
 
 
   // Handle custom data mode toggle from TypeBasedListComponent
-  onCustomDataModeChanged(isCustomMode: boolean) {
-    this.isCustomDataMode = isCustomMode
+onCustomDataModeChanged(isCustomMode: boolean) {
+  this.isCustomDataMode = isCustomMode;
 
-    // Clear existing data when switching modes
-    if (isCustomMode) {
-      this.currentSensor = null,
-      this.uiState.chartsEnabled = true;
-    } else {
-      this.customXAxisColumn = null
-      this.customYAxisColumn = null
-      this.sensorDropped = false
+  // Destroy chart instance if it exists
+  this.visualizationService.clearChart();
+  this.chartInitialized = false;
 
-      // Disable UI elements when switching modes
-      this.uiState.chartsEnabled = false
-      this.uiState.metricsEnabled = false
-      this.uiState.timeControlsEnabled = false
-      this.selectedChartType = null
-      this.selectedMetric = null
-      this.tryAutoVisualizeCustomData();
-    }
+  // Reset all relevant state
+  this.sensorDropped = false;
+  this.selectedMetric = null;
+  this.selectedChartType = null;
+  this.customXAxisColumn = null;
+  this.customYAxisColumn = null;
+  this.currentSensor = null;
+  this.hasData = false;
+  this.isLoading = false;
+  this.startDate = undefined;
+  this.endDate = undefined;
 
-    // Update drop zone instructions
-    this.updateDropZoneInstructions()
+  // Reset UI state flags
+  this.uiState = {
+    chartsEnabled: false,
+    metricsEnabled: false,
+    timeControlsEnabled: false,
+  };
 
-    // Force change detection
-    this.cdr.detectChanges()
+  // --- Robustly clear Y and X axis drop zones ---
 
-    // Reinitialize drag handlers after DOM update
-    setTimeout(() => {
-      this.dragDropService.initializeSensors()
-      this.dragDropService.initializeDragDrop()
-    }, 0)
+  // Remove all dropped elements from Y-axis drop zone
+  if (this.yAxisDropZone?.nativeElement) {
+    this.yAxisDropZone.nativeElement.querySelectorAll('.dropped-item, .dropped-sensor').forEach((el: Element) => el.remove());
+    this.yAxisDropZone.nativeElement.innerHTML = '';
   }
+  // Remove all dropped elements from X-axis drop zone
+  if (this.xAxisDropZone?.nativeElement) {
+    this.xAxisDropZone.nativeElement.querySelectorAll('.dropped-item, .dropped-sensor').forEach((el: Element) => el.remove());
+    this.xAxisDropZone.nativeElement.innerHTML = '';
+  }
+
+  // Clear DragDropService state for both drop zones
+  this.dragDropService.clearDropZone("main-y-axis");
+  this.dragDropService.clearDropZone("x-axis-drop");
+
+  // Update drop zone instructions
+  this.updateDropZoneInstructions();
+
+  // Force change detection
+  this.cdr.detectChanges();
+
+  // Reinitialize drag handlers after DOM update
+  setTimeout(() => {
+    this.dragDropService.initializeSensors();
+    this.dragDropService.initializeDragDrop();
+  }, 0);
+}
 
   private updateDropZoneInstructions() {
     // Update Y-axis drop zone
@@ -607,9 +632,9 @@ this.visualizationService.setChartType(type as unknown as 'line' | 'bar' | 'scat
 
 
 
-  private async updateChartData() {
+ private async updateChartData() {
     if (!this.canApply()) {
-      
+     
       console.log("Cannot apply changes: conditions not met")
       return;}
     this.errorMessage = "";
@@ -645,7 +670,7 @@ this.visualizationService.setChartType(type as unknown as 'line' | 'bar' | 'scat
       };
       console.log("[BLE] Request params:", bleParams);
 
-      
+     
 
       const response = await this.httpRequestsService
         .fetchBleDevicesAtTime(bleParams)
@@ -655,6 +680,10 @@ this.visualizationService.setChartType(type as unknown as 'line' | 'bar' | 'scat
 
       if (!response || !response.devices || response.devices.length === 0) {
         this.errorMessage = "No BLE devices data received.";
+        this.showAgentErrorToast(this.currentSensor?.agentSerial || 'unknown');
+          if (this.chartInstance) {
+    this.chartInstance.clear(); // <-- Add this line
+  }
         this.isLoading = false;
         return;
       }
@@ -702,27 +731,62 @@ this.visualizationService.setChartType(type as unknown as 'line' | 'bar' | 'scat
         .toPromise();
       console.log("Thermalmap response:", response);
 
-      if (!response || !response.reading) {
-        this.errorMessage = "No thermalmap data received.";
-        this.isLoading = false;
-        return;
-      }
+if (!response || !response.reading || !Array.isArray(response.reading) || response.reading.length === 0) {
+  this.errorMessage = "No thermalmap data received.";
+  this.showAgentErrorToast(this.currentSensor?.agentSerial || 'unknown');
+  if (this.chartInstance) {
+    this.chartInstance.clear();
+    this.chartInstance.setOption({
+      title: { show: false },
+      xAxis: { show: false, data: [] },
+      yAxis: { show: false, data: [] },
+      series: [],
+      grid: { show: false },
+      visualMap: { show: false }
+    }, true);
+  }
+  this.isLoading = false;
+  return;
+}
+const hasInvalid = response.reading.some(
+  (row: any[]) => !Array.isArray(row) || row.some((v) => v == null || isNaN(v))
+);
+if (hasInvalid) {
+  this.errorMessage = "Thermalmap data contains invalid values.";
+  this.showAgentErrorToast(this.currentSensor?.agentSerial || 'unknown');
+  if (this.chartInstance) {
+    this.chartInstance.clear();
+    this.chartInstance.setOption({
+      title: { show: false },
+      xAxis: { show: false, data: [] },
+      yAxis: { show: false, data: [] },
+      series: [],
+      grid: { show: false },
+      visualMap: { show: false }
+    }, true);
+  }
+  this.isLoading = false;
+  return;
+}
 
-      // Render heatmap
-      if (!this.chartInitialized) {
-        await this.initializeChart();
-      }
-      this.visualizationService.renderThermalmapHeatmap(
-        response.reading,
-        {
-          facility: thermalmapParams.facility,
-          agent_serial: thermalmapParams.agent_serial,
-          timestamp: response.time
-        },
-        this.chartInstance
-      );
-      this.isLoading = false;
-      return;
+
+// Wait for Angular to render the chart container
+await new Promise(resolve => setTimeout(resolve, 0));
+
+if (!this.chartInitialized) {
+  await this.initializeChart();
+}
+this.visualizationService.renderThermalmapHeatmap(
+  response.reading,
+  {
+    facility: thermalmapParams.facility,
+    agent_serial: thermalmapParams.agent_serial,
+    timestamp: response.time
+  },
+  this.chartInstance
+);
+this.isLoading = false;
+return;
     }
     else{
          const params: SensorDataParams = {
@@ -732,8 +796,8 @@ this.visualizationService.setChartType(type as unknown as 'line' | 'bar' | 'scat
       aggregation_level: this.mapGranularity(
         this.visualizationService.currentGranularity
       ),
-  metric: this.selectedMetric!,
-  start: this.startDate?.toISOString() ?? '', 
+  metric: this.visualizationService.currentGranularity === 'minute' ? 'average' : this.selectedMetric!,
+  start: this.startDate?.toISOString() ?? '',
   end: this.endDate?.toISOString() ?? ''
 };
 
@@ -762,6 +826,10 @@ const rawData = await this.httpRequestsService
 
         if (!rawData) {
           console.error("Received empty response from API")
+          this.showAgentErrorToast(this.currentSensor?.agentSerial || 'unknown');
+            if (this.chartInstance) {
+            this.chartInstance.clear(); // <-- Add this line
+         }
           this.isLoading = false
           return
         }
@@ -775,18 +843,20 @@ const rawData = await this.httpRequestsService
 
         this.visualizationService.updateChart(      {
         ...processedData,
-        chartType: ChartType[this.selectedChartType as keyof typeof ChartType] as 
+        chartType: ChartType[this.selectedChartType as keyof typeof ChartType] as
           'line' | 'bar' | 'scatter' | 'area' | 'step'
       },
-      this.chartInstance // Add the chart instance parameter
+      this.chartInstance,
+      rawData
     );
       }
     }
   } catch (error) {
     console.error("Chart update failed:", error);
-    this.errorMessage = error instanceof Error 
-      ? error.message 
+    this.errorMessage = error instanceof Error
+      ? error.message
       : "Failed to load data. Please check your parameters";
+      this.showAgentErrorToast(this.currentSensor?.agentSerial || 'unknown');
   } finally {
       this.isLoading = false
     }
@@ -796,6 +866,7 @@ const rawData = await this.httpRequestsService
 
 
  
+
 
   private mapGranularity(granularity: string): AggregationLevel {
     const mapping: Record<string, AggregationLevel> = {
@@ -808,7 +879,7 @@ const rawData = await this.httpRequestsService
     return mapping[granularity] || "minute"
   }
 
-  updateMetric(metric: string, isChecked: boolean) {
+   updateMetric(metric: string, isChecked: boolean) {
     // Only allow selection if metrics are enabled
     if (!this.uiState.metricsEnabled) {
       return
@@ -817,7 +888,7 @@ const rawData = await this.httpRequestsService
     this.selectedMetric = isChecked ? metric : null
     if (isChecked) {
       this.visualizationService.applyMetric(metric)
-      
+     
     }
   }
 
@@ -964,56 +1035,35 @@ public allConditionsMet(): boolean {
     this.notesState.setNotesState(this.routePath, this.showNotes, "")
   }
 
+  
   canIncreaseGranularity(): boolean {
     return (
       this.uiState.timeControlsEnabled &&
-      this.visualizationService.currentGranularity !== "year" 
-      
+      this.visualizationService.currentGranularity !== "year"
+     
     )
   }
 
   canDecreaseGranularity(): boolean {
     return (
       this.uiState.timeControlsEnabled &&
-      this.visualizationService.currentGranularity !== "minute" 
-      
+      this.visualizationService.currentGranularity !== "minute"
+     
     )
   }
 
-  increaseGranularity() {
-    if (this.canIncreaseGranularity()) {
-      this.visualizationService.updateGranularity("up")
-
-      // Adjust time range to natural boundaries
-      const newStart = this.visualizationService.alignDateToGranularity(this.startDate!.getTime())
-      const newEnd = this.visualizationService.alignDateToGranularity(
-      this.endDate!.getTime()
-    );
-
-      this.startDate = new Date(newStart)
-         this.endDate = new Date(
-      Math.max(newEnd, this.endDate!.getTime()) // Ensure end doesn't go backward
-    );
-
-this.cdr.detectChanges(); 
-    }
+increaseGranularity() {
+  if (this.canIncreaseGranularity()) {
+    this.visualizationService.updateGranularity("up");
+    this.cdr.detectChanges();
   }
-
-  decreaseGranularity() {
-    if (this.canDecreaseGranularity()) {
-      // Update service state first
-      this.visualizationService.updateGranularity("down")
-
-      // Get mapped HTTP parameter
-      const newGranularity = this.mapGranularity(this.visualizationService.currentGranularity)
-
-      // Update component state
-      this.selectedGranularity = newGranularity
-
-      // Refresh data
-this.cdr.detectChanges(); 
-    }
+}
+decreaseGranularity() {
+  if (this.canDecreaseGranularity()) {
+    this.visualizationService.updateGranularity("down");
+    this.cdr.detectChanges();
   }
+}
 
   showChartDebugInfo() {
     if (!this.visualizationService.chartInstance) return
@@ -1100,6 +1150,14 @@ this.cdr.detectChanges();
     this.dragDropService.initializeSensors();
     this.dragDropService.initializeDragDrop();
   }, 0);
+}
+
+
+private showAgentErrorToast(agentSerial: string) {
+  this.toastMessage = `No data was fetched from the agent serial: ${agentSerial}`;
+  this.toastType = 'error';
+  this.showToast = true;
+  setTimeout(() => this.showToast = false, 5000); // Hide after 5 seconds
 }
 
 

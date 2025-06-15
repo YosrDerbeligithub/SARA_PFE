@@ -84,7 +84,9 @@ classroomThermographyOpen = signal(false);
     metricsEnabled: false,
     timeControlsEnabled: false,
   }
-  
+ public showToast = false;
+public toastMessage = '';
+public toastType: 'error' | 'info' = 'error'; 
  private chartCompatibility: ChartCompatibility = {
   temperature: [ChartType.Line, ChartType.Area, ChartType.Bar, ChartType.Scatter, ChartType.Step],
   humidity:[ChartType.Line, ChartType.Area, ChartType.Bar, ChartType.Scatter, ChartType.Step], // Changed to lowercase
@@ -121,6 +123,12 @@ public droppedSensors: {
   onNotesInput(event: Event): void {
     this.notesContent = (event.target as HTMLTextAreaElement).value;
   }
+  private showNoDataToast(agentSerials: string[]) {
+  this.toastMessage = `No data was fetched from the following agent serials: ${agentSerials.join(', ')}`;
+  this.toastType = 'error';
+  this.showToast = true;
+  setTimeout(() => this.showToast = false, 8000);
+}
   ngOnInit(): void {
     this.viewSubscription = this.viewStateService.currentView$.subscribe(view => {
       this.currentView = view;
@@ -455,17 +463,33 @@ private async updateChartData() {
     });
 
     // Wait for all requests to complete
-    const results = await forkJoin(requests).toPromise();
-console.log("the results are",results)
-    // Filter out failed/null responses
-    const validResults = (results as (SensorDataResponse | null)[]).filter(r => !!r) as SensorDataResponse[];
-console.log("the calid results are",validResults)
-    if (validResults.length === 0) {
-      this.errorMessage = "No data received for any sensor.";
-      this.isLoading = false;
-      return;
-    }
+const results = await forkJoin(requests).toPromise();
+const emptySerials: string[] = [];
+const validResults: SensorDataResponse[] = [];
 
+(results as (SensorDataResponse | null)[]).forEach((r, idx) => {
+  // Get all arrays in aggregated_results
+  const allValues = r && r.aggregated_results
+    ? Object.values(r.aggregated_results).flat()
+    : [];
+  if (!r || allValues.length === 0) {
+    emptySerials.push(this.droppedSensors[idx].agentSerial);
+  } else {
+    validResults.push(r);
+  }
+});
+
+if (emptySerials.length > 0 && validResults.length > 0 || validResults.length === 0) {
+  this.showNoDataToast(emptySerials);
+}
+const metaByAgentSerial: Record<string, { facility: string; location: string; sensorType: string }> = {};
+this.droppedSensors.forEach(sensor => {
+  metaByAgentSerial[sensor.agentSerial] = {
+    facility: sensor.facility,
+    location: sensor.location ?? '',
+    sensorType: sensor.sensorType
+  };
+});
     // Process each result and build series for the chart
 const series = validResults.map((rawData, idx) => {
   const processed = this.visualizationService.processAggregatedData(rawData, this.startDate!, this.endDate!);
@@ -482,10 +506,10 @@ const series = validResults.map((rawData, idx) => {
     }
 
     // Update chart with all series
-    this.visualizationService.updateMultiSeriesChart({
-      series,
-      chartType: this.selectedChartType as 'line' | 'bar' | 'scatter' | 'area' | 'step'
-    }, this.chartInstance);
+this.visualizationService.updateMultiSeriesChart({
+  series,
+  chartType: this.selectedChartType as 'line' | 'bar' | 'scatter' | 'area' | 'step'
+}, this.chartInstance, metaByAgentSerial);
 
   } catch (error) {
     console.error("Chart update failed:", error);

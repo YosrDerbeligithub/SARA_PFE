@@ -1,5 +1,8 @@
 <app-appbar></app-appbar>
 <body class="bg-grey d-flex flex-column">
+    <div *ngIf="showToast" class="custom-toast" [ngClass]="toastType">
+  {{ toastMessage }}
+</div>
     <div class="fab-action-row">
   <button class="btn fab-btn"
           (click)="toggleNotes()"

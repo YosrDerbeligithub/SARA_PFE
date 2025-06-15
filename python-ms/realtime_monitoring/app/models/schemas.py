@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Literal, Optional
 
 class StreamRequest(BaseModel):
@@ -8,7 +8,9 @@ class StreamRequest(BaseModel):
         'device','humidity','luminance','microphone',
         'motion','presence','radio','temperature',
         'thermalmap','thermography'
-    ] = Field(..., description="Type of sensor")
+    ] = Field(..., description="Type of sensor"),
+    email: EmailStr = Field(..., description="Authenticated user’s email")
+
 
 class RealTimeControl(BaseModel):
     frequency: Optional[int] = Field(
